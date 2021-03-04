@@ -15,7 +15,7 @@ The vorticity is directed along
 ![\\boldsymbol e\_y](https://latex.codecogs.com/png.latex?%5Cboldsymbol%20e_y "\boldsymbol e_y"):
 
 ![\\begin{equation}
-\\bm \\omega = \\left(
+\\boldsymbol \\omega = \\left(
 \\begin{array}{c}
 \\omega\_x \\\\
 \\omega\_y \\\\
@@ -41,9 +41,9 @@ w
 \\left(
 \\frac{\\partial u}{\\partial z} - 
 \\frac{\\partial w}{\\partial x}
-\\right) \\bm e\_y
-\\end{equation} \\qquad (1)](https://latex.codecogs.com/png.latex?%5Cbegin%7Bequation%7D%0A%5Cbm%20%5Comega%20%3D%20%5Cleft%28%0A%5Cbegin%7Barray%7D%7Bc%7D%0A%5Comega_x%20%5C%5C%0A%5Comega_y%20%5C%5C%0A%5Comega_z%0A%5Cend%7Barray%7D%0A%5Cright%29%20%3D%0A%5Cleft.%0A%5Cbegin%7Barray%7D%7Bc%7D%0A%5Cpartial_x%20%5C%5C%0A0%20%5C%5C%0A%5Cpartial_z%0A%5Cend%7Barray%7D%0A%5Cright%7C%0A%5Ctimes%0A%5Cleft%7C%0A%5Cbegin%7Barray%7D%7Bc%7D%0Au%20%5C%5C%0A0%20%5C%5C%0Aw%0A%5Cend%7Barray%7D%0A%5Cright.%0A%3D%0A%5Cleft%28%0A%5Cfrac%7B%5Cpartial%20u%7D%7B%5Cpartial%20z%7D%20-%20%0A%5Cfrac%7B%5Cpartial%20w%7D%7B%5Cpartial%20x%7D%0A%5Cright%29%20%5Cbm%20e_y%0A%5Cend%7Bequation%7D%20%5Cqquad%20%281%29 "\begin{equation}
-\bm \omega = \left(
+\\right) \\boldsymbol e\_y
+\\end{equation} \\qquad (1)](https://latex.codecogs.com/png.latex?%5Cbegin%7Bequation%7D%0A%5Cboldsymbol%20%5Comega%20%3D%20%5Cleft%28%0A%5Cbegin%7Barray%7D%7Bc%7D%0A%5Comega_x%20%5C%5C%0A%5Comega_y%20%5C%5C%0A%5Comega_z%0A%5Cend%7Barray%7D%0A%5Cright%29%20%3D%0A%5Cleft.%0A%5Cbegin%7Barray%7D%7Bc%7D%0A%5Cpartial_x%20%5C%5C%0A0%20%5C%5C%0A%5Cpartial_z%0A%5Cend%7Barray%7D%0A%5Cright%7C%0A%5Ctimes%0A%5Cleft%7C%0A%5Cbegin%7Barray%7D%7Bc%7D%0Au%20%5C%5C%0A0%20%5C%5C%0Aw%0A%5Cend%7Barray%7D%0A%5Cright.%0A%3D%0A%5Cleft%28%0A%5Cfrac%7B%5Cpartial%20u%7D%7B%5Cpartial%20z%7D%20-%20%0A%5Cfrac%7B%5Cpartial%20w%7D%7B%5Cpartial%20x%7D%0A%5Cright%29%20%5Cboldsymbol%20e_y%0A%5Cend%7Bequation%7D%20%5Cqquad%20%281%29 "\begin{equation}
+\boldsymbol \omega = \left(
 \begin{array}{c}
 \omega_x \\
 \omega_y \\
@@ -69,7 +69,7 @@ w
 \left(
 \frac{\partial u}{\partial z} - 
 \frac{\partial w}{\partial x}
-\right) \bm e_y
+\right) \boldsymbol e_y
 \end{equation} \qquad (1)")
 
 Introducing the viscous shear stress ![\\tau\_{xz} = \\mu \\left(
