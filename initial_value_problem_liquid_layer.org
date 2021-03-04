@@ -19,7 +19,6 @@ citet:Cortelezzi1981.
 * Vorticity production
 
 The vorticity is directed along $\boldsymbol e_y$:
-#+BEGIN_SRC latex
 \begin{equation}
 \boldsymbol \omega = \left(
 \begin{array}{c}
@@ -48,7 +47,6 @@ w
 \frac{\partial w}{\partial x}
 \right) \boldsymbol e_y
 \end{equation}
-#+END_SRC
 Introducing the viscous shear stress $\tau_{xz} = \mu \left(
 \frac{\partial u}{\partial z} + \frac{\partial w}{\partial x} \right)$
 we can express the vorticity in terms of viscous shear stress:
