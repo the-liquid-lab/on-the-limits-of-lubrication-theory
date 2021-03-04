@@ -41,8 +41,7 @@ u \\
 0 \\
 w
 \end{array}
-\right.
-=
+\right. =
 \left(
 \frac{\partial u}{\partial z} - 
 \frac{\partial w}{\partial x}
