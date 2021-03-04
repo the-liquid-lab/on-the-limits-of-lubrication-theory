@@ -12,15 +12,22 @@ results can be directly transposed to 3D, see citet:Cortelezzi1981.
 Vorticity production
 ====================
 
-The vorticity is directed along **e**<sub>*y*</sub>:
+The vorticity is directed along
+![\\boldsymbol e\_y](https://latex.codecogs.com/png.latex?%5Cboldsymbol%20e_y "\boldsymbol e_y"):
 
-Introducing the viscous shear stress $\\tau\_{xz} = \\mu \\left(
-\\frac{\\partial u}{\\partial z} + \\frac{\\partial w}{\\partial x} \\right)$
+Introducing the viscous shear stress ![\\tau\_{xz} = \\mu \\left(
+\\frac{\\partial u}{\\partial z} + \\frac{\\partial w}{\\partial x} \\right)](https://latex.codecogs.com/png.latex?%5Ctau_%7Bxz%7D%20%3D%20%5Cmu%20%5Cleft%28%0A%5Cfrac%7B%5Cpartial%20u%7D%7B%5Cpartial%20z%7D%20%2B%20%5Cfrac%7B%5Cpartial%20w%7D%7B%5Cpartial%20x%7D%20%5Cright%29 "\tau_{xz} = \mu \left(
+\frac{\partial u}{\partial z} + \frac{\partial w}{\partial x} \right)")
 we can express the vorticity in terms of viscous shear stress:
-$$
+
+![
 \\omega\_y = \\frac{\\tau\_{xz}}{\\mu} - 2 \\frac{\\partial w}{\\partial x}
-$$
+](https://latex.codecogs.com/png.latex?%0A%5Comega_y%20%3D%20%5Cfrac%7B%5Ctau_%7Bxz%7D%7D%7B%5Cmu%7D%20-%202%20%5Cfrac%7B%5Cpartial%20w%7D%7B%5Cpartial%20x%7D%0A "
+\omega_y = \frac{\tau_{xz}}{\mu} - 2 \frac{\partial w}{\partial x}
+")
+
 At the free surface, the tangential shear stress vanishes so
-$\\omega\_y = - 2 \\frac{\\partial w}{\\partial x}$ there.
+![\\omega\_y = - 2 \\frac{\\partial w}{\\partial x}](https://latex.codecogs.com/png.latex?%5Comega_y%20%3D%20-%202%20%5Cfrac%7B%5Cpartial%20w%7D%7B%5Cpartial%20x%7D "\omega_y = - 2 \frac{\partial w}{\partial x}")
+there.
 
 bibliographystyle:abbrvnat bibliography:suppl<sub>note</sub>.bib
