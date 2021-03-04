@@ -19,7 +19,7 @@ citet:Cortelezzi1981.
 * Vorticity production
 
 The vorticity is directed along $\boldsymbol e_y$:
-\begin{equation}
+\[
 \boldsymbol \omega = \left(
 \begin{array}{c}
 \omega_x \\
@@ -46,13 +46,13 @@ w
 \frac{\partial u}{\partial z} - 
 \frac{\partial w}{\partial x}
 \right) \boldsymbol e_y
-\end{equation}
+\]
 Introducing the viscous shear stress $\tau_{xz} = \mu \left(
 \frac{\partial u}{\partial z} + \frac{\partial w}{\partial x} \right)$
 we can express the vorticity in terms of viscous shear stress:
-\begin{equation}
+\[
 \omega_y = \frac{\tau_{xz}}{\mu} - 2 \frac{\partial w}{\partial x}
-\end{equation}
+\]
 At the free surface, the tangential shear stress vanishes so
 $\omega_y = - 2 \frac{\partial w}{\partial x}$ there.
 
