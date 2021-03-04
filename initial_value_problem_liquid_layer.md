@@ -14,34 +14,8 @@ results can be directly transposed to 3D, see \[@Cortelezzi1981\].
 The vorticity is directed along
 ![\\boldsymbol e\_y](https://latex.codecogs.com/png.latex?%5Cboldsymbol%20e_y "\boldsymbol e_y"):
 
-![
-\\boldsymbol \\omega = \\left(
-\\begin{array}{c}
-\\omega\_x \\\\
-\\omega\_y \\\\
-\\omega\_z
-\\end{array}
-\\right) =
-\\left.
-\\begin{array}{c}
-\\partial\_x \\\\
-0 \\\\
-\\partial\_z
-\\end{array}
-\\right\|
-\\times
-\\left\|
-\\begin{array}{c}
-u \\\\
-0 \\\\
-w
-\\end{array}
-\\right. =
-\\left(
-\\frac{\\partial u}{\\partial z} - 
-\\frac{\\partial w}{\\partial x}
-\\right) \\boldsymbol e\_y
-](https://latex.codecogs.com/png.latex?%0A%5Cboldsymbol%20%5Comega%20%3D%20%5Cleft%28%0A%5Cbegin%7Barray%7D%7Bc%7D%0A%5Comega_x%20%5C%5C%0A%5Comega_y%20%5C%5C%0A%5Comega_z%0A%5Cend%7Barray%7D%0A%5Cright%29%20%3D%0A%5Cleft.%0A%5Cbegin%7Barray%7D%7Bc%7D%0A%5Cpartial_x%20%5C%5C%0A0%20%5C%5C%0A%5Cpartial_z%0A%5Cend%7Barray%7D%0A%5Cright%7C%0A%5Ctimes%0A%5Cleft%7C%0A%5Cbegin%7Barray%7D%7Bc%7D%0Au%20%5C%5C%0A0%20%5C%5C%0Aw%0A%5Cend%7Barray%7D%0A%5Cright.%20%3D%0A%5Cleft%28%0A%5Cfrac%7B%5Cpartial%20u%7D%7B%5Cpartial%20z%7D%20-%20%0A%5Cfrac%7B%5Cpartial%20w%7D%7B%5Cpartial%20x%7D%0A%5Cright%29%20%5Cboldsymbol%20e_y%0A "
+``` latex
+\begin{equation}
 \boldsymbol \omega = \left(
 \begin{array}{c}
 \omega_x \\
@@ -68,7 +42,8 @@ w
 \frac{\partial u}{\partial z} - 
 \frac{\partial w}{\partial x}
 \right) \boldsymbol e_y
-")
+\end{equation}
+```
 
 Introducing the viscous shear stress ![\\tau\_{xz} = \\mu \\left(
 \\frac{\\partial u}{\\partial z} + \\frac{\\partial w}{\\partial x} \\right)](https://latex.codecogs.com/png.latex?%5Ctau_%7Bxz%7D%20%3D%20%5Cmu%20%5Cleft%28%0A%5Cfrac%7B%5Cpartial%20u%7D%7B%5Cpartial%20z%7D%20%2B%20%5Cfrac%7B%5Cpartial%20w%7D%7B%5Cpartial%20x%7D%20%5Cright%29 "\tau_{xz} = \mu \left(
