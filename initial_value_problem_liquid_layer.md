@@ -87,6 +87,6 @@ there.
 
 # Bibliography
 
-## Cortelezzi, L. and Prosperetti, A. - Small-amplitude waves on the surface of a layer of a viscous liquid
+* Cortelezzi, L. and Prosperetti, A. - Small-amplitude waves on the surface of a layer of a viscous liquid
 
-## Prosperetti, Andrea - Viscous effects on small-amplitude surface waves
+* Prosperetti, Andrea - Viscous effects on small-amplitude surface waves
