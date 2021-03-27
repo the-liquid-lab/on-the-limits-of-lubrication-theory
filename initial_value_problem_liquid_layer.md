@@ -157,6 +157,8 @@ Linearisation yields to flatten this condition at
 Dynamical boundary conditions
 -----------------------------
 
+*# At the free surface
+
 At the free surface, the normal stress jump is balanced by surface
 tension:
 
@@ -176,6 +178,16 @@ and the shear stress is required to vanish (*free surface* assumption):
 \tau_{xz} = 0 \quad \text{on} \quad F = 0
 \end{equation} \qquad (9)")
 
+*# At the bottom
+
+Impermeability and adherence impose:
+
+![\\begin{equation}
+u(y=-h) = w(y=-h) = 0
+\\end{equation} \\qquad (10)](https://latex.codecogs.com/png.latex?%0Au%28y%3D-h%29%20%3D%20w%28y%3D-h%29%20%3D%200%0A%20%5Cqquad%20%2810%29 "\begin{equation}
+u(y=-h) = w(y=-h) = 0
+\end{equation} \qquad (10)")
+
 Potential and viscous parts
 ---------------------------
 
@@ -184,9 +196,27 @@ dynamical fields into a *potential* and a *viscous* part:
 
 ![\\begin{equation}
 \\boldsymbol u = \\boldsymbol u\_p + \\boldsymbol u\_v \\quad ; \\quad p = p\_p + p\_v
-\\end{equation} \\qquad (10)](https://latex.codecogs.com/png.latex?%0A%5Cboldsymbol%20u%20%3D%20%5Cboldsymbol%20u_p%20%2B%20%5Cboldsymbol%20u_v%20%5Cquad%20%3B%20%5Cquad%20p%20%3D%20p_p%20%2B%20p_v%0A%20%5Cqquad%20%2810%29 "\begin{equation}
+\\end{equation} \\qquad (11)](https://latex.codecogs.com/png.latex?%0A%5Cboldsymbol%20u%20%3D%20%5Cboldsymbol%20u_p%20%2B%20%5Cboldsymbol%20u_v%20%5Cquad%20%3B%20%5Cquad%20p%20%3D%20p_p%20%2B%20p_v%0A%20%5Cqquad%20%2811%29 "\begin{equation}
 \boldsymbol u = \boldsymbol u_p + \boldsymbol u_v \quad ; \quad p = p_p + p_v
-\end{equation} \qquad (10)")
+\end{equation} \qquad (11)")
+
+** ![\\rhd](https://latex.codecogs.com/png.latex?%5Crhd "\rhd") The potential problem.
+
+![(\\boldsymbol u\_p,p\_p)](https://latex.codecogs.com/png.latex?%28%5Cboldsymbol%20u_p%2Cp_p%29 "(\boldsymbol u_p,p_p)")
+is solution to the following problem
+
+Note that eqref:eq:kinematic<sub>potential</sub> reads
+
+![\\begin{equation}
+w\_p = \\frac{\\partial \\eta}{\\partial t} \\label{eq:kinematic\_potential\_simplified}
+\\end{equation} \\qquad (13)](https://latex.codecogs.com/png.latex?%0Aw_p%20%3D%20%5Cfrac%7B%5Cpartial%20%5Ceta%7D%7B%5Cpartial%20t%7D%20%5Clabel%7Beq%3Akinematic_potential_simplified%7D%0A%20%5Cqquad%20%2813%29 "\begin{equation}
+w_p = \frac{\partial \eta}{\partial t} \label{eq:kinematic_potential_simplified}
+\end{equation} \qquad (13)")
+
+** ![\\rhd](https://latex.codecogs.com/png.latex?%5Crhd "\rhd") The viscous correction.
+
+![(\\boldsymbol u\_v,p\_v)](https://latex.codecogs.com/png.latex?%28%5Cboldsymbol%20u_v%2Cp_v%29 "(\boldsymbol u_v,p_v)")
+are then governed by the following equations:
 
 Bibliography
 ============
