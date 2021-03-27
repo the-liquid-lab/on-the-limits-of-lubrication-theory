@@ -3,7 +3,7 @@
 #+AUTHOR: Clément & Arnaud
 #+STARTUP: indent latexpreview
 #+LATEX_HEADER: \usepackage[round]{natbib} \usepackage{bm}  \setlength{\parindent}{0}
-#+OPTIONS: toc:nil
+#+OPTIONS: toc:nil H:5
 # --------------------------------------------------------------------
 
 citet:Cortelezzi1981 propose a derivation of the equations governing
@@ -99,6 +99,8 @@ condition at $z=0$:
 
 ** Dynamical boundary conditions
 
+*** At the free surface
+
 At the free surface, the normal stress jump is balanced by surface
 tension:
 \begin{equation}
@@ -110,6 +112,13 @@ and the shear stress is required to vanish (/free surface/ assumption):
 \tau_{xz} = 0 \quad \text{on} \quad F = 0
 \end{equation}
 
+*** At the bottom
+
+Impermeability and adherence impose:
+\begin{equation}
+u(y=-h) = w(y=-h) = 0
+\end{equation}
+
 ** Potential and viscous parts
 
 As demonstrated in citet:Prosperetti1976 it is convenient to split the
@@ -117,6 +126,32 @@ dynamical fields into a /potential/ and a /viscous/ part:
 \begin{equation}
 \boldsymbol u = \boldsymbol u_p + \boldsymbol u_v \quad ; \quad p = p_p + p_v
 \end{equation}
+
+**** $\rhd$ The potential problem.
+$(\boldsymbol u_p,p_p)$ is solution to the following problem
+\begin{subequations}
+\begin{align}
+&\boldsymbol u_p = \nabla \phi,\\
+&\nabla^2 \phi = 0,\\
+&\frac{\partial \boldsymbol u_p}{\partial t} = -\frac{1}{\rho} \nabla p_p - g \boldsymbol e_z,  \\
+&\frac{\partial F}{\partial t} + w_p \frac{\partial F}{\partial z} = 0 \quad \text{on} \quad z = 0, \label{eq:kinematic_potential} \\
+&\frac{\partial \phi}{\partial z} = 0  \quad \text{on} \quad z = -h.\\
+\end{align}
+\end{subequations}
+Note that eqref:eq:kinematic_potential reads
+\begin{equation}
+w_p = \frac{\partial \eta}{\partial t} \label{eq:kinematic_potential_simplified}
+\end{equation}
+**** $\rhd$ The viscous correction.
+$(\boldsymbol u_v,p_v)$ are then governed by the following equations:
+\begin{subequations}
+\begin{align}
+&\nabla \cdot u_v = 0,\\
+&\frac{\partial \boldsymbol u_v}{\partial t} = -\frac{1}{\rho} \nabla p_v + \nu \nabla^2 \boldsymbol u_v,\\
+&w_v \frac{\partial F}{\partial z} = 0 \quad \text{on} \quad z = 0,\\
+&w_v = u_p + u_v = 0  \quad \text{on} \quad z = -h.
+\end{align}
+\end{subequations}
 
 bibliographystyle:abbrvnat
 bibliography:suppl_note.bib
