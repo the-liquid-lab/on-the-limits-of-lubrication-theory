@@ -1,11 +1,12 @@
-propose a derivation of the equations governing the initial value
-problem for a disturbed layer of viscous fluid, considering both the
-effects of gravity and surface tension. We here propose to revisit this
-paper by following an alternative derivation based on the ideas of .
-More specifically we split the dynamical variables into a potential and
-a viscous contribution. We restrict the analysis to a 2D setting, and
-note that all the obtained results can be directly transposed to 3D, see
-.
+Cortelezzi and Prosperetti (1981) propose a derivation of the equations
+governing the initial value problem for a disturbed layer of viscous
+fluid, considering both the effects of gravity and surface tension. We
+here propose to revisit this paper by following an alternative
+derivation based on the ideas of Prosperetti (1976). More specifically
+we split the dynamical variables into a potential and a viscous
+contribution. We restrict the analysis to a 2D setting, and note that
+all the obtained results can be directly transposed to 3D, see
+Cortelezzi and Prosperetti (1981).
 
 Vorticity production
 ====================
@@ -149,8 +150,8 @@ Impermeability and adherence impose:
 Potential and viscous parts
 ---------------------------
 
-As demonstrated in it is convenient to split the dynamical fields into a
-*potential* and a *viscous* part:
+As demonstrated in Prosperetti (1976) it is convenient to split the
+dynamical fields into a *potential* and a *viscous* part:
 
 ![\\boldsymbol u = \\boldsymbol u\_p + \\boldsymbol u\_v \\quad ; \\quad p = p\_p + p\_v](https://latex.codecogs.com/png.latex?%5Cboldsymbol%20u%20%3D%20%5Cboldsymbol%20u_p%20%2B%20%5Cboldsymbol%20u_v%20%5Cquad%20%3B%20%5Cquad%20p%20%3D%20p_p%20%2B%20p_v "\boldsymbol u = \boldsymbol u_p + \boldsymbol u_v \quad ; \quad p = p_p + p_v")
 
@@ -191,3 +192,22 @@ are then governed by the following equations:
 &\frac{\partial \boldsymbol u_v}{\partial t} = -\frac{1}{\rho} \nabla p_v + \nu \nabla^2 \boldsymbol u_v,\\
 &w_v \frac{\partial F}{\partial z} = 0 \quad \text{on} \quad z = 0,\\
 &w_v = u_p + u_v = 0  \quad \text{on} \quad z = -h.\end{aligned}")
+
+<div id="refs" class="references csl-bib-body hanging-indent">
+
+<div id="ref-Cortelezzi1981" class="csl-entry">
+
+Cortelezzi, L., and A. Prosperetti. 1981. “Small-Amplitude Waves on the
+Surface of a Layer of a Viscous Liquid.” *Q. Appl. Math.* 38 (4):
+375–89.
+
+</div>
+
+<div id="ref-Prosperetti1976" class="csl-entry">
+
+Prosperetti, Andrea. 1976. “Viscous Effects on Small-Amplitude Surface
+Waves.” *Phys. Fluids* 19 (2): 195.
+
+</div>
+
+</div>
