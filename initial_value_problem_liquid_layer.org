@@ -4,7 +4,7 @@
 #+STARTUP: indent latexpreview
 #+LATEX_HEADER: \usepackage[text={18cm,26cm},centering]{geometry}
 #+LATEX_HEADER: \usepackage[round]{natbib} \usepackage{bm}  \setlength{\parindent}{0pt}
-#+OPTIONS: toc:nil H:3
+#+OPTIONS: toc:nil H:4
 # --------------------------------------------------------------------
 
 #+BEGIN_EXPORT html
@@ -178,6 +178,9 @@ dynamical fields into a /potential/ and a /viscous/ part:
 \end{equation}
 
 **** $\rhd$ The potential problem.
+:PROPERTIES:
+:UNNUMBERED: t
+:END:
 $(\boldsymbol u_p,p_p)$ is solution to the following problem
 
 \begin{align}
@@ -193,6 +196,9 @@ Note that eqref:eq:kinematic_potential reads
 w_p = \frac{\partial \eta}{\partial t} \label{eq:kinematic_potential_simplified}
 \end{equation}
 **** $\rhd$ The viscous correction.
+:PROPERTIES:
+:UNNUMBERED: t
+:END:
 $(\boldsymbol u_v,p_v)$ are then governed by the following equations:
 \begin{subequations}
 \begin{eqnarray}
