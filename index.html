@@ -7,12 +7,12 @@ title: Home
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2021-03-28 Sun 22:58 -->
+<!-- 2021-03-29 Mon 14:50 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>A minimal (non-)working example</title>
+<title>Initial value problem for a viscous liquid layer</title>
 <meta name="generator" content="Org mode" />
-<meta name="author" content="Arnaud Antkowiak" />
+<meta name="author" content="Clément &amp; Arnaud" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
   .title  { text-align: center;
@@ -220,6 +220,32 @@ title: Home
 // @license-end
 </script>
 <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Initial value problem for a viscous liquid layer</h1>
+<script type="text/x-mathjax-config">
 MathJax.Extension['TeX/subequations'] = {
   version: "1.0.0",
   subEq: false,
@@ -263,52 +289,228 @@ MathJax.Hub.Register.StartupHook('TeX Jax Ready', function () {
   MathJax.Hub.Startup.signal.Post("TeX subequations Ready");
 });
 </script>
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        displayAlign: "center",
-        displayIndent: "0em",
 
-        "HTML-CSS": { scale: 100,
-                        linebreaks: { automatic: "false" },
-                        webFont: "TeX"
-                       },
-        SVG: {scale: 100,
-              linebreaks: { automatic: "false" },
-              font: "TeX"},
-        NativeMML: {scale: 100},
-        TeX: { equationNumbers: {autoNumber: "AMS"},
-               MultLineWidth: "85%",
-               TagSide: "right",
-               TagIndent: ".8em"
-             }
-});
-</script>
-<script type="text/javascript"
-        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
-</head>
-<body>
-<div id="content">
-<h1 class="title">A minimal (non-)working example</h1>
 <p>
-Let's consider these two equations
+<a class='org-ref-reference' href="#Cortelezzi1981">Cortelezzi1981</a> propose a derivation of the equations governing
+the initial value problem for a disturbed layer of viscous fluid,
+considering both the effects of gravity and surface tension. We here
+propose to revisit this paper by following an alternative derivation
+based on the ideas of <a class='org-ref-reference' href="#Prosperetti1976">Prosperetti1976</a>. More specifically we
+split the dynamical variables into a potential and a viscous
+contribution. We restrict the analysis to a 2D setting, and note that
+all the obtained results can be directly transposed to 3D, see
+<a class='org-ref-reference' href="#Cortelezzi1981">Cortelezzi1981</a>.
 </p>
 
+
+<div id="outline-container-org254ca9b" class="outline-2">
+<h2 id="org254ca9b"><span class="section-number-2">1</span> Vorticity production</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+The vorticity is directed along \(\boldsymbol e_y\):
+</p>
+<div class="LATEX" id="org5de3fe1">
+\begin{equation}
+\boldsymbol \omega = \left(
+\begin{array}{c}
+\omega_x \\
+\omega_y \\
+\omega_z
+\end{array}
+\right) =
+\left.
+\begin{array}{c}
+\partial_x \\
+0 \\
+\partial_z
+\end{array}
+\right|
+\times
+\left|
+\begin{array}{c}
+u \\
+0 \\
+w
+\end{array}
+\right. =
+\left(
+\frac{\partial u}{\partial z} - 
+\frac{\partial w}{\partial x}
+\right) \boldsymbol e_y
+\end{equation}
+
+</div>
+<p>
+Introducing the viscous shear stress \(\tau_{xz} = \mu \left(
+\frac{\partial u}{\partial z} + \frac{\partial w}{\partial x} \right)\)
+we can express the vorticity in terms of viscous shear stress:
+</p>
+\begin{equation}
+\omega_y = \frac{\tau_{xz}}{\mu} - 2 \frac{\partial w}{\partial x}
+\end{equation}
+<p>
+At the free surface, the tangential shear stress vanishes so
+\(\omega_y = - 2 \frac{\partial w}{\partial x}\) there.
+This can be further reexpressed in terms of local free surface slope
+variation with the help of the linearised kinematic condition \(w =
+\frac{\partial \eta}{\partial t}\), where \(\eta(x,t)\) denotes the free
+surface position. This relation reveals that vorticity production at
+the free surface is equal to the time variation of the local slope:
+</p>
+\begin{equation}
+\omega_y = - 2 \frac{\partial^2 \eta}{\partial x \partial t}
+\end{equation}
+</div>
+</div>
+
+<div id="outline-container-org7645113" class="outline-2">
+<h2 id="org7645113"><span class="section-number-2">2</span> Problem splitting: the potential and the viscous</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+The equations governing the problem are associated with mass
+conservation:
+</p>
+\begin{equation}
+\nabla \cdot \boldsymbol u = 0,
+\end{equation}
+<p>
+and momentum conservation:
+</p>
+\begin{equation}
+\frac{\partial \boldsymbol u}{\partial t} = - \frac{1}{\rho} \nabla p + \nu \nabla^2\boldsymbol u - g \boldsymbol e_z.
+\end{equation}
+</div>
+
+<div id="outline-container-org6266918" class="outline-3">
+<h3 id="org6266918"><span class="section-number-3">2.1</span> Kinematical description of the interface</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+The interface is tracked at all times with the help of the color
+function \(F(x,z,t) = z - \eta(x,t)\) which cancels at the free
+surface. We here look for <i>standing waves</i> for which \(\eta(x,t) = a(t)
+\cos(kx)\).
+From this definition we can derive the expression of the
+<i>linearised</i> outward normal:
+</p>
+\begin{equation}
+\boldsymbol n = \frac{\nabla F}{\|\nabla F\|} \simeq \left(k a(t) \sin (kx), 1 \right)
+\end{equation}
+<p>
+This approximation is valid as long as the <i>amplitude</i> (not the layer
+thickness!) is small in front of the wavelength (i.e. \(k a(t) \ll 1\)).
+Finally we require the function \(F\) to satisfy the <i>kinematical
+boundary condition</i> \(DF/Dt=0\). Linearisation yields to flatten this
+condition at \(z=0\):
+</p>
+\begin{equation}
+\frac{\partial F}{\partial t} + w \frac{\partial F}{\partial z} = 0 \quad \text{on z = 0}
+\end{equation}
+</div>
+</div>
+
+<div id="outline-container-org7eb9230" class="outline-3">
+<h3 id="org7eb9230"><span class="section-number-3">2.2</span> Dynamical boundary conditions</h3>
+<div class="outline-text-3" id="text-2-2">
+</div>
+<div id="outline-container-orgdb58ddb" class="outline-4">
+<h4 id="orgdb58ddb"><span class="section-number-4">2.2.1</span> At the free surface</h4>
+<div class="outline-text-4" id="text-2-2-1">
+<p>
+At the free surface, the normal stress jump is balanced by surface
+tension:
+</p>
+\begin{equation}
+-p + 2 \mu \frac{\partial w}{\partial z} = - \gamma \nabla \cdot
+\boldsymbol n \quad \text{on} \quad F = 0
+\end{equation}
+<p>
+and the shear stress is required to vanish (<i>free surface</i> assumption):
+</p>
+\begin{equation}
+\tau_{xz} = 0 \quad \text{on} \quad F = 0
+\end{equation}
+</div>
+</div>
+
+<div id="outline-container-org0f82896" class="outline-4">
+<h4 id="org0f82896"><span class="section-number-4">2.2.2</span> At the bottom</h4>
+<div class="outline-text-4" id="text-2-2-2">
+<p>
+Impermeability and adherence impose:
+</p>
+\begin{equation}
+u(y=-h) = w(y=-h) = 0
+\end{equation}
+</div>
+</div>
+</div>
+
+<div id="outline-container-org09d3225" class="outline-3">
+<h3 id="org09d3225"><span class="section-number-3">2.3</span> Potential and viscous parts</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+As demonstrated in <a class='org-ref-reference' href="#Prosperetti1976">Prosperetti1976</a> it is convenient to split the
+dynamical fields into a <i>potential</i> and a <i>viscous</i> part:
+</p>
+\begin{equation}
+\boldsymbol u = \boldsymbol u_p + \boldsymbol u_v \quad ; \quad p = p_p + p_v
+\end{equation}
+</div>
+
+<div id="outline-container-orgc8e6ec4" class="outline-5">
+<h5 id="orgc8e6ec4"><span class="section-number-5">2.3.0.1</span> \(\rhd\) The potential problem.</h5>
+<div class="outline-text-5" id="text-2-3-0-1">
+<p>
+\((\boldsymbol u_p,p_p)\) is solution to the following problem
+</p>
+
+\begin{align}
+&\boldsymbol u_p = \nabla \phi,\\[1em]
+&\nabla^2 \phi = 0,\\[1em]
+&\frac{\partial \boldsymbol u_p}{\partial t} = -\frac{1}{\rho} \nabla p_p - g \boldsymbol e_z,  \\[1em]
+&\frac{\partial F}{\partial t} + w_p \frac{\partial F}{\partial z} = 0 \quad \text{on} \quad z = 0, \label{eq:kinematic_potential} \\[1em]
+&\frac{\partial \phi}{\partial z} = 0  \quad \text{on} \quad z = -h.
+\end{align}
+
+<p>
+Note that \eqref{eq:kinematic_potential} reads
+</p>
+\begin{equation}
+w_p = \frac{\partial \eta}{\partial t} \label{eq:kinematic_potential_simplified}
+\end{equation}
+</div>
+</div>
+<div id="outline-container-org9d6708d" class="outline-5">
+<h5 id="org9d6708d"><span class="section-number-5">2.3.0.2</span> \(\rhd\) The viscous correction.</h5>
+<div class="outline-text-5" id="text-2-3-0-2">
+<p>
+\((\boldsymbol u_v,p_v)\) are then governed by the following equations:
+</p>
 \begin{subequations}
 \begin{eqnarray}
-e^{i\pi} &=& -1\\
-\int_1^\infty \frac{1}{1+x^2} \, \mathrm dx &=& \frac{\pi}{4}
-\label{eq:integral_definition_of_pi}
+\nabla \cdot \boldsymbol u_v = 0,\\[1em]
+\frac{\partial \boldsymbol u_v}{\partial t} = -\frac{1}{\rho} \nabla p_v + \nu \nabla^2 \boldsymbol u_v,\\[1em]
+w_v \frac{\partial F}{\partial z} = 0 \quad \text{on} \quad z = 0,\\[1em]
+w_v = u_p + u_v = 0  \quad \text{on} \quad z = -h.
 \end{eqnarray}
 \end{subequations}
 
+
 <p>
-Equation \eqref{eq:integral_definition_of_pi} is an integral definition
-of \(\pi\).
+
+<h1 class='org-ref-bib-h1'>Bibliography</h1>
+<ul class='org-ref-bib'><li><a id="Cortelezzi1981">[Cortelezzi1981]</a> <a name="Cortelezzi1981"></a>Cortelezzi & Prosperetti, Small-amplitude waves on the surface of a layer of a viscous liquid, <i>Q. Appl. Math.</i>, <b>38(4)</b>, 375-389 (1981).</li>
+<li><a id="Prosperetti1976">[Prosperetti1976]</a> <a name="Prosperetti1976"></a>Prosperetti, Viscous effects on small-amplitude surface waves, <i>Phys. Fluids</i>, <b>19(2)</b>, 195 (1976).</li>
+</ul>
 </p>
 </div>
+</div>
+</div>
+</div>
+</div>
 <div id="postamble" class="status">
-<p class="author">Author: Arnaud Antkowiak</p>
-<p class="date">Created: 2021-03-28 Sun 22:58</p>
+<p class="author">Author: Clément &amp; Arnaud</p>
+<p class="date">Created: 2021-03-29 Mon 14:50</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
