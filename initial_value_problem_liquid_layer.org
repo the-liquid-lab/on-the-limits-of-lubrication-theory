@@ -2,13 +2,6 @@
 #+TITLE:   Initial value problem for a viscous liquid layer
 #+AUTHOR: Clément & Arnaud
 #+STARTUP: indent latexpreview
-#+BEGIN_EXPORT html
----
-layout: default
-title: Benighted on the Ben.
-excerpt: An unplanned bivouac on Ben Nevis.
----
-#+END_EXPORT
 #+LATEX_HEADER: \usepackage[text={18cm,26cm},centering]{geometry}
 #+LATEX_HEADER: \usepackage[round]{natbib} \usepackage{bm}  \setlength{\parindent}{0pt}
 #+OPTIONS: toc:nil H:5
