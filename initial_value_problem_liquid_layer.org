@@ -1,3 +1,6 @@
+# Local Variables:
+# org-html-preamble: "test"
+# End:
 # --------------------------------------------------------------------
 #+TITLE:   Initial value problem for a viscous liquid layer
 #+AUTHOR: Clément & Arnaud
