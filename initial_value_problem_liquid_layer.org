@@ -1,13 +1,10 @@
-# Local Variables:
-# org-html-preamble: "test"
-# End:
 # --------------------------------------------------------------------
 #+TITLE:   Initial value problem for a viscous liquid layer
 #+AUTHOR: Clément & Arnaud
 #+STARTUP: indent latexpreview
 #+LATEX_HEADER: \usepackage[text={18cm,26cm},centering]{geometry}
 #+LATEX_HEADER: \usepackage[round]{natbib} \usepackage{bm}  \setlength{\parindent}{0pt}
-#+OPTIONS: toc:nil H:5
+#+OPTIONS: toc:nil H:3
 # --------------------------------------------------------------------
 
 #+BEGIN_EXPORT html
