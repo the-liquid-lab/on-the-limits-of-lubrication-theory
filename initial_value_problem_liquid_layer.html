@@ -1,0 +1,268 @@
+---
+layout: default
+title: Initial value problem for a viscous liquid layer
+excerpt: We solve the problem by spltting it into a potential and a viscous part
+---
+
+<script type="text/x-mathjax-config">
+MathJax.Extension['TeX/subequations'] = {
+  version: "1.0.0",
+  subEq: false,
+  subNo: 0
+};
+
+MathJax.Hub.Register.StartupHook('TeX Jax Ready', function () {
+  var TEX = MathJax.InputJax.TeX,
+      TEXDEF = TEX.Definitions;
+  var SUBEQ = MathJax.Extension['TeX/subequations'];
+  var CONFIG = MathJax.Hub.config.TeX.equationNumbers;
+
+  SUBEQ.oldFormat = CONFIG.formatNumber;
+  CONFIG.formatNumber = function (n) {
+    n = SUBEQ.oldFormat(n);
+    if (!SUBEQ.subEq) return n;
+    MathJax.Extension['TeX/AMSmath'].number--;
+    var m = ++SUBEQ.subNo;
+    return n + String.fromCharCode(0x60 + m);
+  };
+
+  TEXDEF.Add({
+    environment: {
+      subequations: ['SubEquationsBegin', 'SubEquationsEnd']
+    }
+  });
+
+  TEX.Parse.Augment({
+    SubEquationsBegin: function (begin) {
+      SUBEQ.subEq = true;
+      SUBEQ.subNo = 0;
+      return begin;
+    },
+    SubEquationsEnd: function (begin, row) {
+      SUBEQ.subEq = false;
+      MathJax.Extension['TeX/AMSmath'].number++;
+      return row;
+    }
+  });
+
+  MathJax.Hub.Startup.signal.Post("TeX subequations Ready");
+});
+</script>
+
+<p>
+<a class='org-ref-reference' href="#Cortelezzi1981">Cortelezzi1981</a> propose a derivation of the equations governing
+the initial value problem for a disturbed layer of viscous fluid,
+considering both the effects of gravity and surface tension. We here
+propose to revisit this paper by following an alternative derivation
+based on the ideas of <a class='org-ref-reference' href="#Prosperetti1976">Prosperetti1976</a>. More specifically we
+split the dynamical variables into a potential and a viscous
+contribution. We restrict the analysis to a 2D setting, and note that
+all the obtained results can be directly transposed to 3D, see
+<a class='org-ref-reference' href="#Cortelezzi1981">Cortelezzi1981</a>.
+</p>
+
+
+<div id="outline-container-orgf199f83" class="outline-2">
+<h2 id="orgf199f83"><span class="section-number-2">1</span> Vorticity production</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+The vorticity is directed along \(\boldsymbol e_y\):
+</p>
+<div class="LATEX" id="org76775eb">
+\begin{equation}
+\boldsymbol \omega = \left(
+\begin{array}{c}
+\omega_x \\
+\omega_y \\
+\omega_z
+\end{array}
+\right) =
+\left.
+\begin{array}{c}
+\partial_x \\
+0 \\
+\partial_z
+\end{array}
+\right|
+\times
+\left|
+\begin{array}{c}
+u \\
+0 \\
+w
+\end{array}
+\right. =
+\left(
+\frac{\partial u}{\partial z} - 
+\frac{\partial w}{\partial x}
+\right) \boldsymbol e_y
+\end{equation}
+
+</div>
+<p>
+Introducing the viscous shear stress \(\tau_{xz} = \mu \left(
+\frac{\partial u}{\partial z} + \frac{\partial w}{\partial x} \right)\)
+we can express the vorticity in terms of viscous shear stress:
+</p>
+\begin{equation}
+\omega_y = \frac{\tau_{xz}}{\mu} - 2 \frac{\partial w}{\partial x}
+\end{equation}
+<p>
+At the free surface, the tangential shear stress vanishes so
+\(\omega_y = - 2 \frac{\partial w}{\partial x}\) there.
+This can be further reexpressed in terms of local free surface slope
+variation with the help of the linearised kinematic condition \(w =
+\frac{\partial \eta}{\partial t}\), where \(\eta(x,t)\) denotes the free
+surface position. This relation reveals that vorticity production at
+the free surface is equal to the time variation of the local slope:
+</p>
+\begin{equation}
+\omega_y = - 2 \frac{\partial^2 \eta}{\partial x \partial t}
+\end{equation}
+</div>
+</div>
+
+<div id="outline-container-orgce1e666" class="outline-2">
+<h2 id="orgce1e666"><span class="section-number-2">2</span> Problem splitting: the potential and the viscous</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+The equations governing the problem are associated with mass
+conservation:
+</p>
+\begin{equation}
+\nabla \cdot \boldsymbol u = 0,
+\end{equation}
+<p>
+and momentum conservation:
+</p>
+\begin{equation}
+\frac{\partial \boldsymbol u}{\partial t} = - \frac{1}{\rho} \nabla p + \nu \nabla^2\boldsymbol u - g \boldsymbol e_z.
+\end{equation}
+</div>
+
+<div id="outline-container-orgf9000fb" class="outline-3">
+<h3 id="orgf9000fb"><span class="section-number-3">2.1</span> Kinematical description of the interface</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+The interface is tracked at all times with the help of the color
+function \(F(x,z,t) = z - \eta(x,t)\) which cancels at the free
+surface. We here look for <i>standing waves</i> for which \(\eta(x,t) = a(t)
+\cos(kx)\).
+From this definition we can derive the expression of the
+<i>linearised</i> outward normal:
+</p>
+\begin{equation}
+\boldsymbol n = \frac{\nabla F}{\|\nabla F\|} \simeq \left(k a(t) \sin (kx), 1 \right)
+\end{equation}
+<p>
+This approximation is valid as long as the <i>amplitude</i> (not the layer
+thickness!) is small in front of the wavelength (i.e. \(k a(t) \ll 1\)).
+Finally we require the function \(F\) to satisfy the <i>kinematical
+boundary condition</i> \(DF/Dt=0\). Linearisation yields to flatten this
+condition at \(z=0\):
+</p>
+\begin{equation}
+\frac{\partial F}{\partial t} + w \frac{\partial F}{\partial z} = 0 \quad \text{on z = 0}
+\end{equation}
+</div>
+</div>
+
+<div id="outline-container-orgd7d3222" class="outline-3">
+<h3 id="orgd7d3222"><span class="section-number-3">2.2</span> Dynamical boundary conditions</h3>
+<div class="outline-text-3" id="text-2-2">
+</div>
+<div id="outline-container-orgb24fd50" class="outline-4">
+<h4 id="orgb24fd50"><span class="section-number-4">2.2.1</span> At the free surface</h4>
+<div class="outline-text-4" id="text-2-2-1">
+<p>
+At the free surface, the normal stress jump is balanced by surface
+tension:
+</p>
+\begin{equation}
+-p + 2 \mu \frac{\partial w}{\partial z} = - \gamma \nabla \cdot
+\boldsymbol n \quad \text{on} \quad F = 0
+\end{equation}
+<p>
+and the shear stress is required to vanish (<i>free surface</i> assumption):
+</p>
+\begin{equation}
+\tau_{xz} = 0 \quad \text{on} \quad F = 0
+\end{equation}
+</div>
+</div>
+
+<div id="outline-container-orge5fc258" class="outline-4">
+<h4 id="orge5fc258"><span class="section-number-4">2.2.2</span> At the bottom</h4>
+<div class="outline-text-4" id="text-2-2-2">
+<p>
+Impermeability and adherence impose:
+</p>
+\begin{equation}
+u(y=-h) = w(y=-h) = 0
+\end{equation}
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8346efe" class="outline-3">
+<h3 id="org8346efe"><span class="section-number-3">2.3</span> Potential and viscous parts</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+As demonstrated in <a class='org-ref-reference' href="#Prosperetti1976">Prosperetti1976</a> it is convenient to split the
+dynamical fields into a <i>potential</i> and a <i>viscous</i> part:
+</p>
+\begin{equation}
+\boldsymbol u = \boldsymbol u_p + \boldsymbol u_v \quad ; \quad p = p_p + p_v
+\end{equation}
+</div>
+
+<div id="outline-container-org529e0ac" class="outline-5">
+<h5 id="org529e0ac"><span class="section-number-5">2.3.0.1</span> \(\rhd\) The potential problem.</h5>
+<div class="outline-text-5" id="text-2-3-0-1">
+<p>
+\((\boldsymbol u_p,p_p)\) is solution to the following problem
+</p>
+
+\begin{align}
+&\boldsymbol u_p = \nabla \phi,\\[1em]
+&\nabla^2 \phi = 0,\\[1em]
+&\frac{\partial \boldsymbol u_p}{\partial t} = -\frac{1}{\rho} \nabla p_p - g \boldsymbol e_z,  \\[1em]
+&\frac{\partial F}{\partial t} + w_p \frac{\partial F}{\partial z} = 0 \quad \text{on} \quad z = 0, \label{eq:kinematic_potential} \\[1em]
+&\frac{\partial \phi}{\partial z} = 0  \quad \text{on} \quad z = -h.
+\end{align}
+
+<p>
+Note that \eqref{eq:kinematic_potential} reads
+</p>
+\begin{equation}
+w_p = \frac{\partial \eta}{\partial t} \label{eq:kinematic_potential_simplified}
+\end{equation}
+</div>
+</div>
+<div id="outline-container-org04dd2cf" class="outline-5">
+<h5 id="org04dd2cf"><span class="section-number-5">2.3.0.2</span> \(\rhd\) The viscous correction.</h5>
+<div class="outline-text-5" id="text-2-3-0-2">
+<p>
+\((\boldsymbol u_v,p_v)\) are then governed by the following equations:
+</p>
+\begin{subequations}
+\begin{eqnarray}
+\nabla \cdot \boldsymbol u_v = 0,\\[1em]
+\frac{\partial \boldsymbol u_v}{\partial t} = -\frac{1}{\rho} \nabla p_v + \nu \nabla^2 \boldsymbol u_v,\\[1em]
+w_v \frac{\partial F}{\partial z} = 0 \quad \text{on} \quad z = 0,\\[1em]
+w_v = u_p + u_v = 0  \quad \text{on} \quad z = -h.
+\end{eqnarray}
+\end{subequations}
+
+
+<p>
+
+<h1 class='org-ref-bib-h1'>Bibliography</h1>
+<ul class='org-ref-bib'><li><a id="Cortelezzi1981">[Cortelezzi1981]</a> <a name="Cortelezzi1981"></a>Cortelezzi & Prosperetti, Small-amplitude waves on the surface of a layer of a viscous liquid, <i>Q. Appl. Math.</i>, <b>38(4)</b>, 375-389 (1981).</li>
+<li><a id="Prosperetti1976">[Prosperetti1976]</a> <a name="Prosperetti1976"></a>Prosperetti, Viscous effects on small-amplitude surface waves, <i>Phys. Fluids</i>, <b>19(2)</b>, 195 (1976).</li>
+</ul>
+</p>
+</div>
+</div>
+</div>
+</div>
