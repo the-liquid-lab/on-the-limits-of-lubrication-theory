@@ -2,9 +2,64 @@
 #+TITLE:   Initial value problem for a viscous liquid layer
 #+AUTHOR: Clément & Arnaud
 #+STARTUP: indent latexpreview
+#+BEGIN_EXPORT html
+---
+layout: default
+title: Benighted on the Ben.
+excerpt: An unplanned bivouac on Ben Nevis.
+---
+#+END_EXPORT
+#+LATEX_HEADER: \usepackage[text={18cm,26cm},centering]{geometry}
 #+LATEX_HEADER: \usepackage[round]{natbib} \usepackage{bm}  \setlength{\parindent}{0pt}
 #+OPTIONS: toc:nil H:5
 # --------------------------------------------------------------------
+
+#+BEGIN_EXPORT html
+<script type="text/x-mathjax-config">
+MathJax.Extension['TeX/subequations'] = {
+  version: "1.0.0",
+  subEq: false,
+  subNo: 0
+};
+
+MathJax.Hub.Register.StartupHook('TeX Jax Ready', function () {
+  var TEX = MathJax.InputJax.TeX,
+      TEXDEF = TEX.Definitions;
+  var SUBEQ = MathJax.Extension['TeX/subequations'];
+  var CONFIG = MathJax.Hub.config.TeX.equationNumbers;
+
+  SUBEQ.oldFormat = CONFIG.formatNumber;
+  CONFIG.formatNumber = function (n) {
+    n = SUBEQ.oldFormat(n);
+    if (!SUBEQ.subEq) return n;
+    MathJax.Extension['TeX/AMSmath'].number--;
+    var m = ++SUBEQ.subNo;
+    return n + String.fromCharCode(0x60 + m);
+  };
+
+  TEXDEF.Add({
+    environment: {
+      subequations: ['SubEquationsBegin', 'SubEquationsEnd']
+    }
+  });
+
+  TEX.Parse.Augment({
+    SubEquationsBegin: function (begin) {
+      SUBEQ.subEq = true;
+      SUBEQ.subNo = 0;
+      return begin;
+    },
+    SubEquationsEnd: function (begin, row) {
+      SUBEQ.subEq = false;
+      MathJax.Extension['TeX/AMSmath'].number++;
+      return row;
+    }
+  });
+
+  MathJax.Hub.Startup.signal.Post("TeX subequations Ready");
+});
+</script>
+#+END_EXPORT
 
 citet:Cortelezzi1981 propose a derivation of the equations governing
 the initial value problem for a disturbed layer of viscous fluid,
@@ -20,6 +75,7 @@ citet:Cortelezzi1981.
 * Vorticity production
 
 The vorticity is directed along $\boldsymbol e_y$:
+#+BEGIN_LATEX
 \begin{equation}
 \boldsymbol \omega = \left(
 \begin{array}{c}
@@ -48,6 +104,7 @@ w
 \frac{\partial w}{\partial x}
 \right) \boldsymbol e_y
 \end{equation}
+#+END_LATEX
 Introducing the viscous shear stress $\tau_{xz} = \mu \left(
 \frac{\partial u}{\partial z} + \frac{\partial w}{\partial x} \right)$
 we can express the vorticity in terms of viscous shear stress:
@@ -129,15 +186,15 @@ dynamical fields into a /potential/ and a /viscous/ part:
 
 **** $\rhd$ The potential problem.
 $(\boldsymbol u_p,p_p)$ is solution to the following problem
-\begin{subequations}
+
 \begin{align}
-&\boldsymbol u_p = \nabla \phi,\\
-&\nabla^2 \phi = 0,\\
-&\frac{\partial \boldsymbol u_p}{\partial t} = -\frac{1}{\rho} \nabla p_p - g \boldsymbol e_z,  \\
-&\frac{\partial F}{\partial t} + w_p \frac{\partial F}{\partial z} = 0 \quad \text{on} \quad z = 0, \label{eq:kinematic_potential} \\
-&\frac{\partial \phi}{\partial z} = 0  \quad \text{on} \quad z = -h.\\
+&\boldsymbol u_p = \nabla \phi,\\[1em]
+&\nabla^2 \phi = 0,\\[1em]
+&\frac{\partial \boldsymbol u_p}{\partial t} = -\frac{1}{\rho} \nabla p_p - g \boldsymbol e_z,  \\[1em]
+&\frac{\partial F}{\partial t} + w_p \frac{\partial F}{\partial z} = 0 \quad \text{on} \quad z = 0, \label{eq:kinematic_potential} \\[1em]
+&\frac{\partial \phi}{\partial z} = 0  \quad \text{on} \quad z = -h.
 \end{align}
-\end{subequations}
+
 Note that eqref:eq:kinematic_potential reads
 \begin{equation}
 w_p = \frac{\partial \eta}{\partial t} \label{eq:kinematic_potential_simplified}
@@ -145,13 +202,14 @@ w_p = \frac{\partial \eta}{\partial t} \label{eq:kinematic_potential_simplified}
 **** $\rhd$ The viscous correction.
 $(\boldsymbol u_v,p_v)$ are then governed by the following equations:
 \begin{subequations}
-\begin{align}
-&\nabla \cdot u_v = 0,\\
-&\frac{\partial \boldsymbol u_v}{\partial t} = -\frac{1}{\rho} \nabla p_v + \nu \nabla^2 \boldsymbol u_v,\\
-&w_v \frac{\partial F}{\partial z} = 0 \quad \text{on} \quad z = 0,\\
-&w_v = u_p + u_v = 0  \quad \text{on} \quad z = -h.
-\end{align}
+\begin{eqnarray}
+\nabla \cdot \boldsymbol u_v = 0,\\[1em]
+\frac{\partial \boldsymbol u_v}{\partial t} = -\frac{1}{\rho} \nabla p_v + \nu \nabla^2 \boldsymbol u_v,\\[1em]
+w_v \frac{\partial F}{\partial z} = 0 \quad \text{on} \quad z = 0,\\[1em]
+w_v = u_p + u_v = 0  \quad \text{on} \quad z = -h.
+\end{eqnarray}
 \end{subequations}
+
 
 bibliographystyle:abbrvnat
 bibliography:suppl_note.bib
