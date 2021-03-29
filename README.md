@@ -1,2 +1,2 @@
-# on-the-limits-of-lubrication-theory
-Placeholder for the codes for our project on the limits of lubrication theory
+# On thick films
+Supplementary material for "On thick films" by Clément Robert *et al.*
