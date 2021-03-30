@@ -3,7 +3,7 @@
 #+AUTHOR: Clément & Arnaud
 #+STARTUP: indent latexpreview
 #+LATEX_HEADER: \usepackage[text={18cm,26cm},centering]{geometry}
-#+LATEX_HEADER: \usepackage[round]{natbib} \usepackage{bm}  \setlength{\parindent}{0pt}
+#+LATEX_HEADER: \usepackage{mathtools} \usepackage[round]{natbib} \usepackage{bm}  \setlength{\parindent}{0pt}
 #+OPTIONS: toc:nil H:4
 # --------------------------------------------------------------------
 
@@ -131,9 +131,7 @@ and momentum conservation:
 
 The interface is tracked at all times with the help of the color
 function $F(x,z,t) = z - \eta(x,t)$ which cancels at the free
-surface. We here look for /standing waves/ for which $\eta(x,t) = a(t)
-\cos(kx)$.
-From this definition we can derive the expression of the
+surface. We here look for /standing waves/ for which $\eta(x,t) = a(t) \cos(kx)$.  From this definition we can derive the expression of the
 /linearised/ outward normal:
 \begin{equation}
 \boldsymbol n = \frac{\nabla F}{\|\nabla F\|} \simeq \left(k a(t) \sin (kx), 1 \right)
@@ -209,6 +207,21 @@ w_v = u_p + u_v = 0  \quad \text{on} \quad z = -h.
 \end{eqnarray}
 \end{subequations}
 
+** The potential solution
+
+As we look for a standing wave-like solution, we search for a general
+solution for the potential by exploiting variable separation. The
+structure of the kinematical boundary condition
+eqref:eq:kinematic_potential_simplified motivates the following
+ansatz:
+\begin{equation}
+\phi(x,z,t) = F(z) \dot a(t) \cos (kx)
+\end{equation}
+eqref:eq:kinematic_potential_simplified and impermeability at the
+bottom allow to precise $F(z)$:
+\begin{equation}
+\phi(x,z,t) = \frac{1}{k} \dot a(t) \underbrace{\frac{\cosh\left(k(z+h)\right)}{\sinh(kh)}}_{\underset{h\to\infty}{\to} \,e^{kz}}\cos(kx)
+\end{equation}
 
 bibliographystyle:abbrvnat
 bibliography:suppl_note.bib
