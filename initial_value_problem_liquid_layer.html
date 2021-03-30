@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2021-03-30 Tue 23:07 -->
+<!-- 2021-03-30 Tue 23:16 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Initial value problem for a viscous liquid layer</title>
@@ -299,13 +299,13 @@ all the obtained results can be directly transposed to 3D, see
 </p>
 
 
-<div id="outline-container-org25c074e" class="outline-2">
-<h2 id="org25c074e"><span class="section-number-2">1</span> Vorticity production</h2>
+<div id="outline-container-orgb5d1ac6" class="outline-2">
+<h2 id="orgb5d1ac6"><span class="section-number-2">1</span> Vorticity production at the free surface</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 The vorticity is directed along \(\boldsymbol e_y\):
 </p>
-<div class="LATEX" id="org5cbcdf2">
+<div class="LATEX" id="orgceb4f5c">
 \begin{equation}
 \boldsymbol \omega = \left(
 \begin{array}{c}
@@ -359,8 +359,8 @@ the free surface is equal to the time variation of the local slope:
 </div>
 </div>
 
-<div id="outline-container-orgd81b1ca" class="outline-2">
-<h2 id="orgd81b1ca"><span class="section-number-2">2</span> Problem splitting: the potential and the viscous</h2>
+<div id="outline-container-org1b380bd" class="outline-2">
+<h2 id="org1b380bd"><span class="section-number-2">2</span> Problem splitting: the potential and the viscous</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 The equations governing the problem are associated with mass
@@ -377,8 +377,8 @@ and momentum conservation:
 \end{equation}
 </div>
 
-<div id="outline-container-org9a57d0f" class="outline-3">
-<h3 id="org9a57d0f"><span class="section-number-3">2.1</span> Kinematical description of the interface</h3>
+<div id="outline-container-org8413501" class="outline-3">
+<h3 id="org8413501"><span class="section-number-3">2.1</span> Kinematical description of the interface</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 The interface is tracked at all times with the help of the color
@@ -402,12 +402,12 @@ condition at \(z=0\):
 </div>
 </div>
 
-<div id="outline-container-org02da6e5" class="outline-3">
-<h3 id="org02da6e5"><span class="section-number-3">2.2</span> Dynamical boundary conditions</h3>
+<div id="outline-container-org2d7c123" class="outline-3">
+<h3 id="org2d7c123"><span class="section-number-3">2.2</span> Dynamical boundary conditions</h3>
 <div class="outline-text-3" id="text-2-2">
 </div>
-<div id="outline-container-orgebd0756" class="outline-4">
-<h4 id="orgebd0756"><span class="section-number-4">2.2.1</span> At the free surface</h4>
+<div id="outline-container-org76b9f4f" class="outline-4">
+<h4 id="org76b9f4f"><span class="section-number-4">2.2.1</span> At the free surface</h4>
 <div class="outline-text-4" id="text-2-2-1">
 <p>
 At the free surface, the normal stress jump is balanced by surface
@@ -426,8 +426,8 @@ and the shear stress is required to vanish (<i>free surface</i> assumption):
 </div>
 </div>
 
-<div id="outline-container-org60860e1" class="outline-4">
-<h4 id="org60860e1"><span class="section-number-4">2.2.2</span> At the bottom</h4>
+<div id="outline-container-orgbd65f5f" class="outline-4">
+<h4 id="orgbd65f5f"><span class="section-number-4">2.2.2</span> At the bottom</h4>
 <div class="outline-text-4" id="text-2-2-2">
 <p>
 Impermeability and adherence impose:
@@ -439,8 +439,8 @@ u(y=-h) = w(y=-h) = 0
 </div>
 </div>
 
-<div id="outline-container-orgbdb1f96" class="outline-3">
-<h3 id="orgbdb1f96"><span class="section-number-3">2.3</span> Potential and viscous parts</h3>
+<div id="outline-container-org951d923" class="outline-3">
+<h3 id="org951d923"><span class="section-number-3">2.3</span> Potential and viscous parts</h3>
 <div class="outline-text-3" id="text-2-3">
 <p>
 As demonstrated in <a class='org-ref-reference' href="#Prosperetti1976">Prosperetti1976</a> it is convenient to split the
@@ -451,9 +451,9 @@ dynamical fields into a <i>potential</i> and a <i>viscous</i> part:
 \end{equation}
 </div>
 
-<div id="outline-container-orgcb1c916" class="outline-5">
-<h5 id="orgcb1c916">\(\rhd\) The potential problem.</h5>
-<div class="outline-text-5" id="text-orgcb1c916">
+<div id="outline-container-org3d24609" class="outline-5">
+<h5 id="org3d24609">\(\rhd\) The potential problem.</h5>
+<div class="outline-text-5" id="text-org3d24609">
 <p>
 \((\boldsymbol u_p,p_p)\) is solution to the following problem
 </p>
@@ -474,9 +474,9 @@ w_p = \frac{\partial \eta}{\partial t} \label{eq:kinematic_potential_simplified}
 \end{equation}
 </div>
 </div>
-<div id="outline-container-org5eb0eeb" class="outline-5">
-<h5 id="org5eb0eeb">\(\rhd\) The viscous correction.</h5>
-<div class="outline-text-5" id="text-org5eb0eeb">
+<div id="outline-container-org34206ad" class="outline-5">
+<h5 id="org34206ad">\(\rhd\) The viscous correction.</h5>
+<div class="outline-text-5" id="text-org34206ad">
 <p>
 \((\boldsymbol u_v,p_v)\) are then governed by the following equations:
 </p>
@@ -492,8 +492,8 @@ w_v = u_p + u_v = 0  \quad \text{on} \quad z = -h.
 </div>
 </div>
 
-<div id="outline-container-org3f2f241" class="outline-3">
-<h3 id="org3f2f241"><span class="section-number-3">2.4</span> The potential solution</h3>
+<div id="outline-container-orga23197b" class="outline-3">
+<h3 id="orga23197b"><span class="section-number-3">2.4</span> The potential solution</h3>
 <div class="outline-text-3" id="text-2-4">
 <p>
 As we look for a standing wave-like solution, we search for a general
@@ -542,7 +542,7 @@ are intertwined, this determination is postponed.
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Clément &amp; Arnaud</p>
-<p class="date">Created: 2021-03-30 Tue 23:07</p>
+<p class="date">Created: 2021-03-30 Tue 23:16</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

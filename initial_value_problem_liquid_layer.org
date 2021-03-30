@@ -65,7 +65,7 @@ all the obtained results can be directly transposed to 3D, see
 citet:Cortelezzi1981.
 
 
-* Vorticity production
+* Vorticity production at the free surface
 
 The vorticity is directed along $\boldsymbol e_y$:
 #+BEGIN_LATEX
