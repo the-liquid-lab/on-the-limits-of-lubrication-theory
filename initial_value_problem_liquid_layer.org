@@ -222,6 +222,18 @@ bottom allow to precise $F(z)$:
 \begin{equation}
 \phi(x,z,t) = \frac{1}{k} \dot a(t) \underbrace{\frac{\cosh\left(k(z+h)\right)}{\sinh(kh)}}_{\underset{h\to\infty}{\to} \,e^{kz}}\cos(kx)
 \end{equation}
+The linearised form of Bernoulli equation  $p + \rho \frac{\partial
+\phi}{\partial t} + \rho g z = 0$
+associated with the expression for $\phi$ allows to deduce the pressure
+field:
+\begin{equation}
+p_p(x,z,t) = -\rho\left(gz + \frac{1}{k} \frac{\mathrm d^2 a}{\mathrm dt^2} \frac{\cosh\left(k(z+h)\right)}{\sinh(kh)}\cos(kx)\right)
+\end{equation}
+These two expressions reduce to citeauthor:Prosperetti1976 expressions
+in the deep layer limit. In the classic potential problem, $a(t)$ is
+determined by the dynamical boundary condition on the free surface,
+but as in the present problem both the viscous and the potential parts
+are intertwined, this determination is postponed.
 
 bibliographystyle:abbrvnat
 bibliography:suppl_note.bib
