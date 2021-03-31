@@ -64,6 +64,7 @@ contribution. We restrict the analysis to a 2D setting, and note that
 all the obtained results can be directly transposed to 3D, see
 citet:Cortelezzi1981.
 
+<<toc>>
 #+TOC: headlines 2
 
 * Vorticity production at the free surface
@@ -267,13 +268,73 @@ for the vorticity and streamfunction fields:
 \begin{subequations}
 \begin{eqnarray}
 &&\omega_y(x,z,t)=\Omega(z,t)\sin\left(kx\right)\\[1em]
-&&\psi(x,z,t)=\Psi(z,t)\sin\left(kx\right)
+&&\psi(x,z,t)=\Psi(z,t)\sin\left(kx\right) \label{eq:structure_psi}
 \end{eqnarray}
 \end{subequations}
 This ansatz for $\omega_y$ and $\psi$ allows to rewrite the Poisson equation for $\psi$ as:
 \begin{equation}
-\frac{\partial^2 \Psi}{\partial y^2} - k^2 \Psi = - \Omega
+\frac{\partial^2 \Psi}{\partial z^2} - k^2 \Psi = - \Omega
 \end{equation}
+We solve this function by means of an appropriate Green's function
+$G(z|z')$ satisfying:
+\begin{equation}
+\frac{\partial^2}{\partial z'^2}G(z|z') - k^2 G(z|z') = \delta(z-z')
+\end{equation}
+We are at liberty to choose appropriate boundary conditions for
+$G(z|z')$ so let's choose them wisely. Standard manipulations of the
+integral $\int_{-h}^0\Delta \Psi G \, \mathrm dz'$ yields:
+\begin{equation}
+\Psi(z,t)=-\int_{-h}^0\Omega(z',t)G(z|z')\,\mathrm dz' + \left[\Psi(z')\frac{\partial G}{\partial z'}\right]_{-h}^0 + \left[\frac{\partial \Psi}{\partial z'}G(z|z')\right]_{-h}^0
+\end{equation}
+Impermeability on both boundaries impose $\psi = \text{cst}$ at $y
+=-h, 0$.  The structure of the field eqref:eq:structure_psi then
+impose $\Psi = 0$ at these two boundaries, thereby cancelling the
+first bracket. The second bracket would require the knowledge of $u_v$
+at the boundaries, and then in turn of $\frac{\partial \phi}{\partial
+x}$ to satisfy adherence. But this can be circumvented by imposing $G=0$ at the boundaries, so that finally
+\begin{equation}
+\Psi(z,t)=-\int_{-h}^0\Omega(z',t)G(z|z')\,\mathrm dz' 
+\end{equation}
+and $G(z|z')$ satisfies
+\begin{equation}
+\begin{split}
+&\frac{\partial^2}{\partial z'^2}G(z|z') - k^2 G(z|z')=\delta(z-z')\\[1em]
+&G(z|-h)=G(z|0)=0\\[1em]
+&G(z|z') \quad \text{continuous at}\, z=z'
+\end{split}
+\end{equation}
+We note
+\begin{equation}
+G(z|z') = \left\{\begin{array}{c}
+G^>(z|z') \quad \text{if}\quad z' > z\\
+G^<(z|z') \quad \text{if}\quad z' < z
+\end{array}\right.
+\end{equation}
+and find
+\begin{subequations}
+\begin{eqnarray}
+G^<(z|z') &=& \frac{1}{k}\sinh\left(k\left(z'+h\right)\right) \frac{\sinh(kz)}{\sinh(kh)}\\[1em]
+G^>(z|z') &=& \frac{1}{k}\sinh\left(kz'\right) \frac{\sinh\left(k\left(z+h\right)\right)}{\sinh(kh)}
+\end{eqnarray}
+\end{subequations}
+So that $\Psi$ can be expressed with $\Omega$:
+\begin{equation}
+\begin{split}
+\Psi(z,t) &= -\int_{-h}^z \frac{1}{k}\sinh\left(k\left(z'+h\right)\right)\frac{\sinh\left(kz\right)}{\sinh(kh)}\Omega(z',t)\,\mathrm dz'\\
+ & - \int_{z}^0 \frac{1}{k}\sinh\left(kz'\right)\frac{\sinh\left(k\left(z+h\right)\right)}{\sinh(kh)}\Omega(z',t)\,\mathrm dz'
+\end{split}
+\end{equation}
+/In the limit of large depths/, this expression can be approximated by
+\begin{equation}
+\begin{split}
+-2k\Psi(z,t) &\simeq e^{kz}\left(\int_{-\infty}^0 e^{kz'}\Omega\,\mathrm dz'+ \int_{0}^z e^{-kz'}\Omega\,\mathrm dz'\right)\\
+ &e^{-kz} \int_{-\infty}^z e^{kz'} \Omega \,\mathrm dz'
+\end{split}
+\end{equation}
+which is eq (15) of Prosperetti's paper (the minus sign coming from
+the change in coordinates from $y$ to $z$).
+
+[[toc][Back to table of contents]]
 
 bibliographystyle:abbrvnat
 bibliography:suppl_note.bib
