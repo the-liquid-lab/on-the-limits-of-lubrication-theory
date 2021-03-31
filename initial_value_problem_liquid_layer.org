@@ -4,7 +4,7 @@
 #+STARTUP: indent latexpreview
 #+LATEX_HEADER: \usepackage[text={18cm,26cm},centering]{geometry}
 #+LATEX_HEADER: \usepackage{mathtools} \usepackage[round]{natbib} \usepackage{bm}  \setlength{\parindent}{0pt}
-#+OPTIONS: toc:2 H:4
+#+OPTIONS: toc:nil H:4
 # --------------------------------------------------------------------
 
 #+BEGIN_EXPORT html
@@ -64,6 +64,7 @@ contribution. We restrict the analysis to a 2D setting, and note that
 all the obtained results can be directly transposed to 3D, see
 citet:Cortelezzi1981.
 
+#+TOC: headlines 2
 
 * Vorticity production at the free surface
 
