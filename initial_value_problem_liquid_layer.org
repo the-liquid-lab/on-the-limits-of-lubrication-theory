@@ -112,7 +112,7 @@ variation with the help of the linearised kinematic condition $w =
 surface position. This relation reveals that vorticity production at
 the free surface is equal to the time variation of the local slope:
 \begin{equation}
-\omega_y = - 2 \frac{\partial^2 \eta}{\partial x \partial t}
+\omega_y = - 2 \frac{\partial^2 \eta}{\partial x \partial t} \label{eq:vorticity_production_interface}
 \end{equation}
 
 * Problem splitting: the potential and the viscous
@@ -181,6 +181,7 @@ dynamical fields into a /potential/ and a /viscous/ part:
 :END:
 $(\boldsymbol u_p,p_p)$ is solution to the following problem
 
+\begin{subequations}
 \begin{align}
 &\boldsymbol u_p = \nabla \phi,\\[1em]
 &\nabla^2 \phi = 0,\\[1em]
@@ -188,6 +189,7 @@ $(\boldsymbol u_p,p_p)$ is solution to the following problem
 &\frac{\partial F}{\partial t} + w_p \frac{\partial F}{\partial z} = 0 \quad \text{on} \quad z = 0, \label{eq:kinematic_potential} \\[1em]
 &\frac{\partial \phi}{\partial z} = 0  \quad \text{on} \quad z = -h.
 \end{align}
+\end{subequations}
 
 Note that eqref:eq:kinematic_potential reads
 \begin{equation}
@@ -200,12 +202,16 @@ w_p = \frac{\partial \eta}{\partial t} \label{eq:kinematic_potential_simplified}
 $(\boldsymbol u_v,p_v)$ are then governed by the following equations:
 \begin{subequations}
 \begin{eqnarray}
-\nabla \cdot \boldsymbol u_v = 0,\\[1em]
-\frac{\partial \boldsymbol u_v}{\partial t} = -\frac{1}{\rho} \nabla p_v + \nu \nabla^2 \boldsymbol u_v,\\[1em]
-w_v \frac{\partial F}{\partial z} = 0 \quad \text{on} \quad z = 0,\\[1em]
-w_v = u_p + u_v = 0  \quad \text{on} \quad z = -h.
+&&\nabla \cdot \boldsymbol u_v = 0,\label{eq:viscous_system_a}\\[1em]
+&&\frac{\partial \boldsymbol u_v}{\partial t} = -\frac{1}{\rho} \nabla p_v + \nu \nabla^2 \boldsymbol u_v,\label{eq:momentum_viscous}\\[1em]
+&&w_v \frac{\partial F}{\partial z} = 0 \quad \text{on} \quad z = 0,\label{eq:kinematic_viscous}\\[1em]
+&&w_v = u_p + u_v = 0  \quad \text{on} \quad z = -h.\label{eq:viscous_system_d}
 \end{eqnarray}
 \end{subequations}
+and now the kinematical condition for the viscous problem eqref:eq:kinematic_viscous reads
+\begin{equation}
+w_v = 0  \quad \text{on} \quad z = 0
+\end{equation}
 
 ** The potential solution
 
@@ -234,6 +240,39 @@ in the deep layer limit. In the classic potential problem, $a(t)$ is
 determined by the dynamical boundary condition on the free surface,
 but as in the present problem both the viscous and the potential parts
 are intertwined, this determination is postponed.
+
+** The viscous solution
+
+Let's turn now to the system of equations describing the viscous part
+eqref:eq:viscous_system_a - eqref:eq:viscous_system_d. To enforce
+incompressibility eqref:eq:viscous_system_a we introduce the
+streamfunction $\psi$:
+\begin{equation}
+u_v = -\frac{\partial \psi}{\partial z} \quad ; \quad w_v = \frac{\partial \psi}{\partial x} \qquad \left(\boldsymbol u = \nabla \times \left( \psi \boldsymbol e_y\right)\right)
+\end{equation}
+
+The curl of eqref:eq:momentum_viscous allows to get rid of pressure to
+obtain a diffusion equation for the vorticity:
+\begin{equation}
+\frac{\partial \omega_y}{\partial t} = \nu \Delta \omega_y
+\end{equation}
+and vorticity and streamfunction are related through:
+\begin{equation}
+\Delta \psi = -\omega_y
+\end{equation}
+Here again we make use of variable separation. The forcing term
+eqref:eq:vorticity_production_interface suggests the following form
+for the vorticity and streamfunction fields:
+\begin{subequations}
+\begin{eqnarray}
+&&\omega_y(x,z,t)=\Omega(z,t)\sin\left(kx\right)\\[1em]
+&&\psi(x,z,t)=\Psi(z,t)\sin\left(kx\right)
+\end{eqnarray}
+\end{subequations}
+This ansatz for $\omega_y$ and $\psi$ allows to rewrite the Poisson equation for $\psi$ as:
+\begin{equation}
+\frac{\partial^2 \Psi}{\partial y^2} - k^2 \Psi = - \Omega
+\end{equation}
 
 bibliographystyle:abbrvnat
 bibliography:suppl_note.bib

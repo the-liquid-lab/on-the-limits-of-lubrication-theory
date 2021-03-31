@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2021-03-30 Tue 23:16 -->
+<!-- 2021-03-31 Wed 08:45 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Initial value problem for a viscous liquid layer</title>
@@ -299,13 +299,13 @@ all the obtained results can be directly transposed to 3D, see
 </p>
 
 
-<div id="outline-container-orgb5d1ac6" class="outline-2">
-<h2 id="orgb5d1ac6"><span class="section-number-2">1</span> Vorticity production at the free surface</h2>
+<div id="outline-container-orga7b523f" class="outline-2">
+<h2 id="orga7b523f"><span class="section-number-2">1</span> Vorticity production at the free surface</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 The vorticity is directed along \(\boldsymbol e_y\):
 </p>
-<div class="LATEX" id="orgceb4f5c">
+<div class="LATEX" id="org64c8b5f">
 \begin{equation}
 \boldsymbol \omega = \left(
 \begin{array}{c}
@@ -354,13 +354,13 @@ surface position. This relation reveals that vorticity production at
 the free surface is equal to the time variation of the local slope:
 </p>
 \begin{equation}
-\omega_y = - 2 \frac{\partial^2 \eta}{\partial x \partial t}
+\omega_y = - 2 \frac{\partial^2 \eta}{\partial x \partial t} \label{eq:vorticity_production_interface}
 \end{equation}
 </div>
 </div>
 
-<div id="outline-container-org1b380bd" class="outline-2">
-<h2 id="org1b380bd"><span class="section-number-2">2</span> Problem splitting: the potential and the viscous</h2>
+<div id="outline-container-orge8ec323" class="outline-2">
+<h2 id="orge8ec323"><span class="section-number-2">2</span> Problem splitting: the potential and the viscous</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 The equations governing the problem are associated with mass
@@ -377,8 +377,8 @@ and momentum conservation:
 \end{equation}
 </div>
 
-<div id="outline-container-org8413501" class="outline-3">
-<h3 id="org8413501"><span class="section-number-3">2.1</span> Kinematical description of the interface</h3>
+<div id="outline-container-orgfbd2d14" class="outline-3">
+<h3 id="orgfbd2d14"><span class="section-number-3">2.1</span> Kinematical description of the interface</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 The interface is tracked at all times with the help of the color
@@ -402,12 +402,12 @@ condition at \(z=0\):
 </div>
 </div>
 
-<div id="outline-container-org2d7c123" class="outline-3">
-<h3 id="org2d7c123"><span class="section-number-3">2.2</span> Dynamical boundary conditions</h3>
+<div id="outline-container-org1fda17a" class="outline-3">
+<h3 id="org1fda17a"><span class="section-number-3">2.2</span> Dynamical boundary conditions</h3>
 <div class="outline-text-3" id="text-2-2">
 </div>
-<div id="outline-container-org76b9f4f" class="outline-4">
-<h4 id="org76b9f4f"><span class="section-number-4">2.2.1</span> At the free surface</h4>
+<div id="outline-container-org6147957" class="outline-4">
+<h4 id="org6147957"><span class="section-number-4">2.2.1</span> At the free surface</h4>
 <div class="outline-text-4" id="text-2-2-1">
 <p>
 At the free surface, the normal stress jump is balanced by surface
@@ -426,8 +426,8 @@ and the shear stress is required to vanish (<i>free surface</i> assumption):
 </div>
 </div>
 
-<div id="outline-container-orgbd65f5f" class="outline-4">
-<h4 id="orgbd65f5f"><span class="section-number-4">2.2.2</span> At the bottom</h4>
+<div id="outline-container-org0481c99" class="outline-4">
+<h4 id="org0481c99"><span class="section-number-4">2.2.2</span> At the bottom</h4>
 <div class="outline-text-4" id="text-2-2-2">
 <p>
 Impermeability and adherence impose:
@@ -439,8 +439,8 @@ u(y=-h) = w(y=-h) = 0
 </div>
 </div>
 
-<div id="outline-container-org951d923" class="outline-3">
-<h3 id="org951d923"><span class="section-number-3">2.3</span> Potential and viscous parts</h3>
+<div id="outline-container-orgeb488c4" class="outline-3">
+<h3 id="orgeb488c4"><span class="section-number-3">2.3</span> Potential and viscous parts</h3>
 <div class="outline-text-3" id="text-2-3">
 <p>
 As demonstrated in <a class='org-ref-reference' href="#Prosperetti1976">Prosperetti1976</a> it is convenient to split the
@@ -451,13 +451,14 @@ dynamical fields into a <i>potential</i> and a <i>viscous</i> part:
 \end{equation}
 </div>
 
-<div id="outline-container-org3d24609" class="outline-5">
-<h5 id="org3d24609">\(\rhd\) The potential problem.</h5>
-<div class="outline-text-5" id="text-org3d24609">
+<div id="outline-container-org29a6ec0" class="outline-5">
+<h5 id="org29a6ec0">\(\rhd\) The potential problem.</h5>
+<div class="outline-text-5" id="text-org29a6ec0">
 <p>
 \((\boldsymbol u_p,p_p)\) is solution to the following problem
 </p>
 
+\begin{subequations}
 \begin{align}
 &\boldsymbol u_p = \nabla \phi,\\[1em]
 &\nabla^2 \phi = 0,\\[1em]
@@ -465,6 +466,7 @@ dynamical fields into a <i>potential</i> and a <i>viscous</i> part:
 &\frac{\partial F}{\partial t} + w_p \frac{\partial F}{\partial z} = 0 \quad \text{on} \quad z = 0, \label{eq:kinematic_potential} \\[1em]
 &\frac{\partial \phi}{\partial z} = 0  \quad \text{on} \quad z = -h.
 \end{align}
+\end{subequations}
 
 <p>
 Note that \eqref{eq:kinematic_potential} reads
@@ -474,26 +476,32 @@ w_p = \frac{\partial \eta}{\partial t} \label{eq:kinematic_potential_simplified}
 \end{equation}
 </div>
 </div>
-<div id="outline-container-org34206ad" class="outline-5">
-<h5 id="org34206ad">\(\rhd\) The viscous correction.</h5>
-<div class="outline-text-5" id="text-org34206ad">
+<div id="outline-container-orgca3de4d" class="outline-5">
+<h5 id="orgca3de4d">\(\rhd\) The viscous correction.</h5>
+<div class="outline-text-5" id="text-orgca3de4d">
 <p>
 \((\boldsymbol u_v,p_v)\) are then governed by the following equations:
 </p>
 \begin{subequations}
 \begin{eqnarray}
-\nabla \cdot \boldsymbol u_v = 0,\\[1em]
-\frac{\partial \boldsymbol u_v}{\partial t} = -\frac{1}{\rho} \nabla p_v + \nu \nabla^2 \boldsymbol u_v,\\[1em]
-w_v \frac{\partial F}{\partial z} = 0 \quad \text{on} \quad z = 0,\\[1em]
-w_v = u_p + u_v = 0  \quad \text{on} \quad z = -h.
+&&\nabla \cdot \boldsymbol u_v = 0,\label{eq:viscous_system_a}\\[1em]
+&&\frac{\partial \boldsymbol u_v}{\partial t} = -\frac{1}{\rho} \nabla p_v + \nu \nabla^2 \boldsymbol u_v,\label{eq:momentum_viscous}\\[1em]
+&&w_v \frac{\partial F}{\partial z} = 0 \quad \text{on} \quad z = 0,\label{eq:kinematic_viscous}\\[1em]
+&&w_v = u_p + u_v = 0  \quad \text{on} \quad z = -h.\label{eq:viscous_system_d}
 \end{eqnarray}
 \end{subequations}
+<p>
+and now the kinematical condition for the viscous problem \eqref{eq:kinematic_viscous} reads
+</p>
+\begin{equation}
+w_v = 0  \quad \text{on} \quad z = 0
+\end{equation}
 </div>
 </div>
 </div>
 
-<div id="outline-container-orga23197b" class="outline-3">
-<h3 id="orga23197b"><span class="section-number-3">2.4</span> The potential solution</h3>
+<div id="outline-container-org486d961" class="outline-3">
+<h3 id="org486d961"><span class="section-number-3">2.4</span> The potential solution</h3>
 <div class="outline-text-3" id="text-2-4">
 <p>
 As we look for a standing wave-like solution, we search for a general
@@ -528,6 +536,52 @@ determined by the dynamical boundary condition on the free surface,
 but as in the present problem both the viscous and the potential parts
 are intertwined, this determination is postponed.
 </p>
+</div>
+</div>
+
+<div id="outline-container-orgb9d7cae" class="outline-3">
+<h3 id="orgb9d7cae"><span class="section-number-3">2.5</span> The viscous solution</h3>
+<div class="outline-text-3" id="text-2-5">
+<p>
+Let's turn now to the system of equations describing the viscous part
+\eqref{eq:viscous_system_a} - \eqref{eq:viscous_system_d}. To enforce
+incompressibility \eqref{eq:viscous_system_a} we introduce the
+streamfunction \(\psi\):
+</p>
+\begin{equation}
+u_v = -\frac{\partial \psi}{\partial z} \quad ; \quad w_v = \frac{\partial \psi}{\partial x} \qquad \left(\boldsymbol u = \nabla \times \left( \psi \boldsymbol e_y\right)\right)
+\end{equation}
+
+<p>
+The curl of \eqref{eq:momentum_viscous} allows to get rid of pressure to
+obtain a diffusion equation for the vorticity:
+</p>
+\begin{equation}
+\frac{\partial \omega_y}{\partial t} = \nu \Delta \omega_y
+\end{equation}
+<p>
+and vorticity and streamfunction are related through:
+</p>
+\begin{equation}
+\Delta \psi = -\omega_y
+\end{equation}
+<p>
+Here again we make use of variable separation. The forcing term
+\eqref{eq:vorticity_production_interface} suggests the following form
+for the vorticity and streamfunction fields:
+</p>
+\begin{subequations}
+\begin{eqnarray}
+&&\omega_y(x,z,t)=\Omega(z,t)\sin\left(kx\right)\\[1em]
+&&\psi(x,z,t)=\Psi(z,t)\sin\left(kx\right)
+\end{eqnarray}
+\end{subequations}
+<p>
+This ansatz for \(\omega_y\) and \(\psi\) allows to rewrite the Poisson equation for \(\psi\) as:
+</p>
+\begin{equation}
+\frac{\partial^2 \Psi}{\partial y^2} - k^2 \Psi = - \Omega
+\end{equation}
 
 <p>
 
@@ -542,7 +596,7 @@ are intertwined, this determination is postponed.
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Clément &amp; Arnaud</p>
-<p class="date">Created: 2021-03-30 Tue 23:16</p>
+<p class="date">Created: 2021-03-31 Wed 08:45</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
