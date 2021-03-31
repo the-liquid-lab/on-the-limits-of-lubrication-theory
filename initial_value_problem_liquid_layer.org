@@ -4,7 +4,7 @@
 #+STARTUP: indent latexpreview
 #+LATEX_HEADER: \usepackage[text={18cm,26cm},centering]{geometry}
 #+LATEX_HEADER: \usepackage{mathtools} \usepackage[round]{natbib} \usepackage{bm}  \setlength{\parindent}{0pt}
-#+OPTIONS: toc:nil H:4
+#+OPTIONS: toc:2 H:4
 # --------------------------------------------------------------------
 
 #+BEGIN_EXPORT html
