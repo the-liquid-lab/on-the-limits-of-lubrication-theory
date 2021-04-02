@@ -286,7 +286,7 @@ integral $\int_{-h}^0\Delta \Psi G \, \mathrm dz'$ yields:
 \begin{equation}
 \Psi(z,t)=-\int_{-h}^0\Omega(z',t)G(z|z')\,\mathrm dz' + \left[\Psi(z')\frac{\partial G}{\partial z'}\right]_{-h}^0 + \left[\frac{\partial \Psi}{\partial z'}G(z|z')\right]_{-h}^0
 \end{equation}
-Impermeability on both boundaries impose $\psi = \text{cst}$ at $y
+Impermeability on both boundaries impose $\psi = \text{cst}$ at $z
 =-h, 0$.  The structure of the field eqref:eq:structure_psi then
 impose $\Psi = 0$ at these two boundaries, thereby cancelling the
 first bracket. The second bracket would require the knowledge of $u_v$
