@@ -328,7 +328,7 @@ So that $\Psi$ can be expressed with $\Omega$:
 \begin{equation}
 \begin{split}
 -2k\Psi(z,t) &\simeq e^{kz}\left(\int_{-\infty}^0 e^{kz'}\Omega\,\mathrm dz'+ \int_{0}^z e^{-kz'}\Omega\,\mathrm dz'\right)\\
- &e^{-kz} \int_{-\infty}^z e^{kz'} \Omega \,\mathrm dz'
+ &\simeq e^{-kz} \int_{-\infty}^z e^{kz'} \Omega \,\mathrm dz'
 \end{split}
 \end{equation}
 which is eq (15) of Prosperetti's paper (the minus sign coming from
