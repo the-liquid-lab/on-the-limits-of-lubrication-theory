@@ -166,7 +166,7 @@ and the shear stress is required to vanish (/free surface/ assumption):
 
 Impermeability and adherence impose:
 \begin{equation}
-u(y=-h) = w(y=-h) = 0
+u(z=-h) = w(z=-h) = 0
 \end{equation}
 
 ** Potential and viscous parts
