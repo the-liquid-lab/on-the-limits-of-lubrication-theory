@@ -1,3 +1,20 @@
+.DS_Store
+MWE_caglar.html
+MWE_caglar.html~
+MWE_caglar.org
+MWE_caglar.org~
+correctmd.sh
+correctmd.sh~
+initial_value_problem_liquid_layer.bib
+initial_value_problem_liquid_layer.html~
+initial_value_problem_liquid_layer.org~
+initial_value_problem_liquid_layer.pdf
+initial_value_problem_liquid_layer.tex
+initial_value_problem_liquid_layer.tex~
+ltximg/
+subeqn.js
+suppl_note.bib~
+
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
