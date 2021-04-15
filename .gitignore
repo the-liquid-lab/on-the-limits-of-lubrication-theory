@@ -1,4 +1,5 @@
 .DS_Store
+#*#
 MWE_caglar.html
 MWE_caglar.html~
 MWE_caglar.org
@@ -10,6 +11,7 @@ initial_value_problem_liquid_layer.html~
 initial_value_problem_liquid_layer.org~
 initial_value_problem_liquid_layer.pdf
 initial_value_problem_liquid_layer.tex
+initial_value_problem_liquid_layer.md
 initial_value_problem_liquid_layer.tex~
 ltximg/
 subeqn.js
