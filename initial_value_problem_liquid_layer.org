@@ -9,6 +9,15 @@
 
 #+BEGIN_EXPORT html
 <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: {extensions: ["cancel.js"]},
+        tex2jax: {
+          inlineMath: [ ['$','$'], ['\\(','\\)'] ],
+          processEscapes: true
+        }
+      });
+</script>
+<script type="text/x-mathjax-config">
 MathJax.Extension['TeX/subequations'] = {
   version: "1.0.0",
   subEq: false,
@@ -387,7 +396,7 @@ Let's denote the Laplace transform of $\Omega$ as
 \end{equation}
 and take an /initial vorticity-free/ condition $\Omega(z,0) = 0$:
 \begin{equation}
-\mathcal L \left[\frac{\partial\Omega}{\partial t}\right] = s \mathcal L \left[\Omega\right] - \cancel{\Omega(z,0) }
+\mathcal L \left[\frac{\partial\Omega}{\partial t}\right] = s \mathcal L \left[\Omega\right] - \cancel{\Omega(z,0)}
 \end{equation}
 It follows that in Laplace' space the diffusion equation
 eqref:eq:vorticity_diffusion is rewritten:
