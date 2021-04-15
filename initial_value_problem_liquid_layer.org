@@ -3,7 +3,7 @@
 #+AUTHOR: Clément & Arnaud
 #+STARTUP: indent latexpreview
 #+LATEX_HEADER: \usepackage[text={18cm,26cm},centering]{geometry}
-#+LATEX_HEADER: \usepackage{mathtools} \usepackage[round]{natbib} \usepackage{bm}  \setlength{\parindent}{0pt}
+#+LATEX_HEADER: \usepackage{mathtools} \usepackage[round]{natbib} \usepackage{bm}  \usepackage{cancel} \setlength{\parindent}{0pt}
 #+OPTIONS: toc:nil H:4
 # --------------------------------------------------------------------
 
@@ -340,7 +340,7 @@ the change in coordinates from $y$ to $z$).
 
 [[toc][Back to table of contents]]
 
-* A strategy for finding the solution
+* Designing a strategy to derive the solution
 
 The strategy for finding the solution is a slight modification of
 citeauthor:Prosperetti1976 's one, which can be outlined as:
@@ -366,9 +366,56 @@ citeauthor:Prosperetti1976 's one, which can be outlined as:
    of the stress jump condition as a single equation for the only
    unknown $a(t)$ follows.
 
+   [[toc][Back to table of contents]]
+
 * Formal solution for the viscous vorticity, streamfunction and pressure
 
 ** Formal resolution of the diffusion equation for the vorticity
+
+We start by solving, at least /formally/, the diffusion equation for the
+vorticity $\Omega$:
+\begin{equation}
+\frac{\partial \Omega}{\partial t} = \nu \left( \frac{\partial^2 \Omega}{\partial z^2} - k^2 \Omega\right)
+\label{eq:vorticity_diffusion}
+\end{equation}
+This partial diffferential equation can be turned into a (solvable)
+ODE in Laplace' space.
+
+Let's denote the Laplace transform of $\Omega$ as
+\begin{equation}
+\tilde \Omega(z,s) \equiv \mathcal L \left[\Omega\right] = \int_0^\infty \Omega(z,t) e^{-st} \, \mathrm dt
+\end{equation}
+and take an /initial vorticity-free/ condition $\Omega(z,0) = 0$:
+\begin{equation}
+\mathcal L \left[\frac{\partial\Omega}{\partial t}\right] = s \mathcal L \left[\Omega\right] - \cancel{\Omega(z,0) }
+\end{equation}
+It follows that in Laplace' space the diffusion equation
+eqref:eq:vorticity_diffusion is rewritten:
+\begin{equation}
+\frac{\partial^2 \tilde\Omega}{\partial z^2} - \left(k^2 + \frac{s}{\nu}\right) \tilde \Omega = 0
+\end{equation}
+
+We saw earlier how the stress-free boundary condition forged the
+vorticity production term at the free surface:
+\begin{equation}
+\tilde \Omega(0,s) = 2k\mathcal L\left[ \frac{\mathrm da}{\mathrm dt}\right]
+\end{equation}
+The bottom vorticity will ultimately be seen to arise from the no-slip
+condition, but for now let's simply posit:
+\begin{equation}
+\Omega(-h,t) = \Omega_h(t).
+\end{equation}
+With these two boundary conditions, $\tilde\Omega$ is readily obtained:
+\begin{equation}
+\tilde \Omega(z,s) = 2 k \frac{\sinh\left(\lambda\left(z+h\right)\right)}{\sinh(\lambda h)}\mathcal L\left[\frac{\mathrm da}{\mathrm dt}\right] - \frac{\sinh(\lambda z)}{\sinh(\lambda h)} \tilde \Omega_h
+\end{equation}
+In the /large depth limit/, we recover Prosperetti's result:
+\begin{equation}
+\tilde \Omega(z,s) \underset{h\to\infty}{\to} \,2 k \mathcal L\left[\frac{\mathrm da}{\mathrm dt}\right] e^{\lambda z}
+\end{equation}
+
+[[toc][Back to table of contents]]
+
 
 bibliographystyle:abbrvnat
 bibliography:suppl_note.bib
