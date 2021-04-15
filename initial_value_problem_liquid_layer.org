@@ -110,9 +110,10 @@ At the free surface, the tangential shear stress vanishes so
 $\omega_y = - 2 \frac{\partial w}{\partial x}$ there.
 This can be further reexpressed in terms of local free surface slope
 variation with the help of the linearised kinematic condition $w =
-\frac{\partial \eta}{\partial t}$, where $\eta(x,t)$ denotes the free
-surface position. This relation reveals that vorticity production at
-the free surface is equal to the time variation of the local slope:
+\frac{\partial \eta}{\partial t}$,
+where $\eta(x,t)$ denotes the free surface position. This relation
+reveals that vorticity production at the free surface is equal to the
+time variation of the local slope:
 \begin{equation}
 \omega_y = - 2 \frac{\partial^2 \eta}{\partial x \partial t} \label{eq:vorticity_production_interface}
 \end{equation}
@@ -133,8 +134,9 @@ and momentum conservation:
 
 The interface is tracked at all times with the help of the color
 function $F(x,z,t) = z - \eta(x,t)$ which cancels at the free
-surface. We here look for /standing waves/ for which $\eta(x,t) = a(t) \cos(kx)$.  From this definition we can derive the expression of the
-/linearised/ outward normal:
+surface. We here look for /standing waves/ for which $\eta(x,t) = a(t) \cos(kx)$.
+From this definition we can derive the expression of the /linearised/ outward
+normal:
 \begin{equation}
 \boldsymbol n = \frac{\nabla F}{\|\nabla F\|} \simeq \left(k a(t) \sin (kx), 1 \right)
 \end{equation}
@@ -144,7 +146,7 @@ Finally we require the function $F$ to satisfy the /kinematical
 boundary condition/ $DF/Dt=0$. Linearisation yields to flatten this
 condition at $z=0$:
 \begin{equation}
-\frac{\partial F}{\partial t} + w \frac{\partial F}{\partial z} = 0 \quad \text{on z = 0}
+\frac{\partial F}{\partial t} + w \frac{\partial F}{\partial z} = 0 \quad \text{on} \quad z = 0
 \end{equation}
 
 ** Dynamical boundary conditions
@@ -207,7 +209,7 @@ $(\boldsymbol u_v,p_v)$ are then governed by the following equations:
 &&\nabla \cdot \boldsymbol u_v = 0,\label{eq:viscous_system_a}\\[1em]
 &&\frac{\partial \boldsymbol u_v}{\partial t} = -\frac{1}{\rho} \nabla p_v + \nu \nabla^2 \boldsymbol u_v,\label{eq:momentum_viscous}\\[1em]
 &&w_v \frac{\partial F}{\partial z} = 0 \quad \text{on} \quad z = 0,\label{eq:kinematic_viscous}\\[1em]
-&&w_v = u_p + u_v = 0  \quad \text{on} \quad z = -h.\label{eq:viscous_system_d}
+&&u = u_p + u_v = 0  \quad \text{on} \quad z = -h.\label{eq:viscous_system_d}
 \end{eqnarray}
 \end{subequations}
 and now the kinematical condition for the viscous problem eqref:eq:kinematic_viscous reads
@@ -284,14 +286,16 @@ We are at liberty to choose appropriate boundary conditions for
 $G(z|z')$ so let's choose them wisely. Standard manipulations of the
 integral $\int_{-h}^0\Delta \Psi G \, \mathrm dz'$ yields:
 \begin{equation}
-\Psi(z,t)=-\int_{-h}^0\Omega(z',t)G(z|z')\,\mathrm dz' + \left[\Psi(z')\frac{\partial G}{\partial z'}\right]_{-h}^0 + \left[\frac{\partial \Psi}{\partial z'}G(z|z')\right]_{-h}^0
+\Psi(z,t)=-\int_{-h}^0\Omega(z',t)G(z|z')\,\mathrm dz' + \left[\Psi(z')\frac{\partial G}{\partial z'}\right]_{-h}^0 - \left[\frac{\partial \Psi}{\partial z'}G(z|z')\right]_{-h}^0
 \end{equation}
 Impermeability on both boundaries impose $\psi = \text{cst}$ at $z
-=-h, 0$.  The structure of the field eqref:eq:structure_psi then
+=-h, 0$.
+The structure of the field eqref:eq:structure_psi then
 impose $\Psi = 0$ at these two boundaries, thereby cancelling the
 first bracket. The second bracket would require the knowledge of $u_v$
 at the boundaries, and then in turn of $\frac{\partial \phi}{\partial
-x}$ to satisfy adherence. But this can be circumvented by imposing $G=0$ at the boundaries, so that finally
+x}$ to satisfy adherence.
+But this can be circumvented by imposing $G=0$ at the boundaries, so that finally
 \begin{equation}
 \Psi(z,t)=-\int_{-h}^0\Omega(z',t)G(z|z')\,\mathrm dz' 
 \end{equation}
@@ -335,6 +339,36 @@ which is eq (15) of Prosperetti's paper (the minus sign coming from
 the change in coordinates from $y$ to $z$).
 
 [[toc][Back to table of contents]]
+
+* A strategy for finding the solution
+
+The strategy for finding the solution is a slight modification of
+citeauthor:Prosperetti1976 's one, which can be outlined as:
+1. Solve formally the diffusion equation for the vorticity using
+   Laplace's transform and the boundary conditions $\Omega(0,t)$
+   (vorticity production at the free surface) and $\Omega_h(t)$
+   (bottom vorticity, still unknown).
+2. On exploiting the connection between $\psi$ and $\omega$, reexpress
+   the formal solution for the vorticity with the streamfunction.
+3. Deduce the viscous contribution for the pressure $p_v$ with the
+   help of the horizontal component of the momentum equation. $p_v$
+   will therefore be expressed as a function of $\Omega_0$ (and
+   thereby of the free surface amplitude and its time derivatives) and
+   of $\Omega_h$ (still unknown),
+4. The knowledge of the viscous contribution for the pressure and the
+   streamfunction on the one hand, and of the potential velocity and
+   pressure on the other hand, allows to write the normal stress jump
+   condition as a single equation for $a(t)$ and its time derivatives,
+   and $\Omega_h$ (still unknown),
+5. Finally the /adherence condition/ allows to express the viscous
+   tangential velocity at the bottom as a function of $\dot a(t)$. The
+   value of $\Omega_h$ derives from this equation, and a formulation
+   of the stress jump condition as a single equation for the only
+   unknown $a(t)$ follows.
+
+* Formal solution for the viscous vorticity, streamfunction and pressure
+
+** Formal resolution of the diffusion equation for the vorticity
 
 bibliographystyle:abbrvnat
 bibliography:suppl_note.bib

@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2021-03-31 Wed 16:32 -->
+<!-- 2021-04-15 Thu 19:04 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Initial value problem for a viscous liquid layer</title>
@@ -299,33 +299,39 @@ all the obtained results can be directly transposed to 3D, see
 </p>
 
 <p>
-<a id="org454524e"></a>
+<a id="orge2ea6f0"></a>
 </p>
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org0d72b9f">1. Vorticity production at the free surface</a></li>
-<li><a href="#org4ca533a">2. Problem splitting: the potential and the viscous</a>
+<li><a href="#org214cdda">1. Vorticity production at the free surface</a></li>
+<li><a href="#orgcecff30">2. Problem splitting: the potential and the viscous</a>
 <ul>
-<li><a href="#orgde9e338">2.1. Kinematical description of the interface</a></li>
-<li><a href="#org1119f20">2.2. Dynamical boundary conditions</a></li>
-<li><a href="#orgc5ad56a">2.3. Potential and viscous parts</a></li>
-<li><a href="#org1aac03a">2.4. The potential solution</a></li>
-<li><a href="#org7f9a19e">2.5. The viscous solution</a></li>
+<li><a href="#orgd8a12d0">2.1. Kinematical description of the interface</a></li>
+<li><a href="#orgc2dab0d">2.2. Dynamical boundary conditions</a></li>
+<li><a href="#orga350aaf">2.3. Potential and viscous parts</a></li>
+<li><a href="#org4fc9eeb">2.4. The potential solution</a></li>
+<li><a href="#org0fb4286">2.5. The viscous solution</a></li>
+</ul>
+</li>
+<li><a href="#org679b43a">3. A strategy for finding the solution</a></li>
+<li><a href="#org68f8678">4. Formal solution for the viscous vorticity, streamfunction and pressure</a>
+<ul>
+<li><a href="#org2ff40cd">4.1. Formal resolution of the diffusion equation for the vorticity</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org0d72b9f" class="outline-2">
-<h2 id="org0d72b9f"><span class="section-number-2">1</span> Vorticity production at the free surface</h2>
+<div id="outline-container-org214cdda" class="outline-2">
+<h2 id="org214cdda"><span class="section-number-2">1</span> Vorticity production at the free surface</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 The vorticity is directed along \(\boldsymbol e_y\):
 </p>
-<div class="LATEX" id="orgacff568">
+<div class="LATEX" id="org9bd6834">
 \begin{equation}
 \boldsymbol \omega = \left(
 \begin{array}{c}
@@ -369,9 +375,10 @@ At the free surface, the tangential shear stress vanishes so
 \(\omega_y = - 2 \frac{\partial w}{\partial x}\) there.
 This can be further reexpressed in terms of local free surface slope
 variation with the help of the linearised kinematic condition \(w =
-\frac{\partial \eta}{\partial t}\), where \(\eta(x,t)\) denotes the free
-surface position. This relation reveals that vorticity production at
-the free surface is equal to the time variation of the local slope:
+\frac{\partial \eta}{\partial t}\),
+where \(\eta(x,t)\) denotes the free surface position. This relation
+reveals that vorticity production at the free surface is equal to the
+time variation of the local slope:
 </p>
 \begin{equation}
 \omega_y = - 2 \frac{\partial^2 \eta}{\partial x \partial t} \label{eq:vorticity_production_interface}
@@ -379,8 +386,8 @@ the free surface is equal to the time variation of the local slope:
 </div>
 </div>
 
-<div id="outline-container-org4ca533a" class="outline-2">
-<h2 id="org4ca533a"><span class="section-number-2">2</span> Problem splitting: the potential and the viscous</h2>
+<div id="outline-container-orgcecff30" class="outline-2">
+<h2 id="orgcecff30"><span class="section-number-2">2</span> Problem splitting: the potential and the viscous</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 The equations governing the problem are associated with mass
@@ -397,14 +404,15 @@ and momentum conservation:
 \end{equation}
 </div>
 
-<div id="outline-container-orgde9e338" class="outline-3">
-<h3 id="orgde9e338"><span class="section-number-3">2.1</span> Kinematical description of the interface</h3>
+<div id="outline-container-orgd8a12d0" class="outline-3">
+<h3 id="orgd8a12d0"><span class="section-number-3">2.1</span> Kinematical description of the interface</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 The interface is tracked at all times with the help of the color
 function \(F(x,z,t) = z - \eta(x,t)\) which cancels at the free
-surface. We here look for <i>standing waves</i> for which \(\eta(x,t) = a(t) \cos(kx)\).  From this definition we can derive the expression of the
-<i>linearised</i> outward normal:
+surface. We here look for <i>standing waves</i> for which \(\eta(x,t) = a(t) \cos(kx)\).
+From this definition we can derive the expression of the <i>linearised</i> outward
+normal:
 </p>
 \begin{equation}
 \boldsymbol n = \frac{\nabla F}{\|\nabla F\|} \simeq \left(k a(t) \sin (kx), 1 \right)
@@ -417,17 +425,17 @@ boundary condition</i> \(DF/Dt=0\). Linearisation yields to flatten this
 condition at \(z=0\):
 </p>
 \begin{equation}
-\frac{\partial F}{\partial t} + w \frac{\partial F}{\partial z} = 0 \quad \text{on z = 0}
+\frac{\partial F}{\partial t} + w \frac{\partial F}{\partial z} = 0 \quad \text{on} \quad z = 0
 \end{equation}
 </div>
 </div>
 
-<div id="outline-container-org1119f20" class="outline-3">
-<h3 id="org1119f20"><span class="section-number-3">2.2</span> Dynamical boundary conditions</h3>
+<div id="outline-container-orgc2dab0d" class="outline-3">
+<h3 id="orgc2dab0d"><span class="section-number-3">2.2</span> Dynamical boundary conditions</h3>
 <div class="outline-text-3" id="text-2-2">
 </div>
-<div id="outline-container-orge44a8a7" class="outline-4">
-<h4 id="orge44a8a7"><span class="section-number-4">2.2.1</span> At the free surface</h4>
+<div id="outline-container-org8d16bab" class="outline-4">
+<h4 id="org8d16bab"><span class="section-number-4">2.2.1</span> At the free surface</h4>
 <div class="outline-text-4" id="text-2-2-1">
 <p>
 At the free surface, the normal stress jump is balanced by surface
@@ -446,21 +454,21 @@ and the shear stress is required to vanish (<i>free surface</i> assumption):
 </div>
 </div>
 
-<div id="outline-container-org7f925b4" class="outline-4">
-<h4 id="org7f925b4"><span class="section-number-4">2.2.2</span> At the bottom</h4>
+<div id="outline-container-org5d4472d" class="outline-4">
+<h4 id="org5d4472d"><span class="section-number-4">2.2.2</span> At the bottom</h4>
 <div class="outline-text-4" id="text-2-2-2">
 <p>
 Impermeability and adherence impose:
 </p>
 \begin{equation}
-u(y=-h) = w(y=-h) = 0
+u(z=-h) = w(z=-h) = 0
 \end{equation}
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgc5ad56a" class="outline-3">
-<h3 id="orgc5ad56a"><span class="section-number-3">2.3</span> Potential and viscous parts</h3>
+<div id="outline-container-orga350aaf" class="outline-3">
+<h3 id="orga350aaf"><span class="section-number-3">2.3</span> Potential and viscous parts</h3>
 <div class="outline-text-3" id="text-2-3">
 <p>
 As demonstrated in <a class='org-ref-reference' href="#Prosperetti1976">Prosperetti1976</a> it is convenient to split the
@@ -471,9 +479,9 @@ dynamical fields into a <i>potential</i> and a <i>viscous</i> part:
 \end{equation}
 </div>
 
-<div id="outline-container-org7683559" class="outline-5">
-<h5 id="org7683559">\(\rhd\) The potential problem.</h5>
-<div class="outline-text-5" id="text-org7683559">
+<div id="outline-container-orgdd29f84" class="outline-5">
+<h5 id="orgdd29f84">\(\rhd\) The potential problem.</h5>
+<div class="outline-text-5" id="text-orgdd29f84">
 <p>
 \((\boldsymbol u_p,p_p)\) is solution to the following problem
 </p>
@@ -496,9 +504,9 @@ w_p = \frac{\partial \eta}{\partial t} \label{eq:kinematic_potential_simplified}
 \end{equation}
 </div>
 </div>
-<div id="outline-container-org8db9916" class="outline-5">
-<h5 id="org8db9916">\(\rhd\) The viscous correction.</h5>
-<div class="outline-text-5" id="text-org8db9916">
+<div id="outline-container-org60b8601" class="outline-5">
+<h5 id="org60b8601">\(\rhd\) The viscous correction.</h5>
+<div class="outline-text-5" id="text-org60b8601">
 <p>
 \((\boldsymbol u_v,p_v)\) are then governed by the following equations:
 </p>
@@ -507,7 +515,7 @@ w_p = \frac{\partial \eta}{\partial t} \label{eq:kinematic_potential_simplified}
 &&\nabla \cdot \boldsymbol u_v = 0,\label{eq:viscous_system_a}\\[1em]
 &&\frac{\partial \boldsymbol u_v}{\partial t} = -\frac{1}{\rho} \nabla p_v + \nu \nabla^2 \boldsymbol u_v,\label{eq:momentum_viscous}\\[1em]
 &&w_v \frac{\partial F}{\partial z} = 0 \quad \text{on} \quad z = 0,\label{eq:kinematic_viscous}\\[1em]
-&&w_v = u_p + u_v = 0  \quad \text{on} \quad z = -h.\label{eq:viscous_system_d}
+&&u = u_p + u_v = 0  \quad \text{on} \quad z = -h.\label{eq:viscous_system_d}
 \end{eqnarray}
 \end{subequations}
 <p>
@@ -520,8 +528,8 @@ w_v = 0  \quad \text{on} \quad z = 0
 </div>
 </div>
 
-<div id="outline-container-org1aac03a" class="outline-3">
-<h3 id="org1aac03a"><span class="section-number-3">2.4</span> The potential solution</h3>
+<div id="outline-container-org4fc9eeb" class="outline-3">
+<h3 id="org4fc9eeb"><span class="section-number-3">2.4</span> The potential solution</h3>
 <div class="outline-text-3" id="text-2-4">
 <p>
 As we look for a standing wave-like solution, we search for a general
@@ -559,8 +567,8 @@ are intertwined, this determination is postponed.
 </div>
 </div>
 
-<div id="outline-container-org7f9a19e" class="outline-3">
-<h3 id="org7f9a19e"><span class="section-number-3">2.5</span> The viscous solution</h3>
+<div id="outline-container-org0fb4286" class="outline-3">
+<h3 id="org0fb4286"><span class="section-number-3">2.5</span> The viscous solution</h3>
 <div class="outline-text-3" id="text-2-5">
 <p>
 Let's turn now to the system of equations describing the viscous part
@@ -615,15 +623,17 @@ We are at liberty to choose appropriate boundary conditions for
 integral \(\int_{-h}^0\Delta \Psi G \, \mathrm dz'\) yields:
 </p>
 \begin{equation}
-\Psi(z,t)=-\int_{-h}^0\Omega(z',t)G(z|z')\,\mathrm dz' + \left[\Psi(z')\frac{\partial G}{\partial z'}\right]_{-h}^0 + \left[\frac{\partial \Psi}{\partial z'}G(z|z')\right]_{-h}^0
+\Psi(z,t)=-\int_{-h}^0\Omega(z',t)G(z|z')\,\mathrm dz' + \left[\Psi(z')\frac{\partial G}{\partial z'}\right]_{-h}^0 - \left[\frac{\partial \Psi}{\partial z'}G(z|z')\right]_{-h}^0
 \end{equation}
 <p>
-Impermeability on both boundaries impose \(\psi = \text{cst}\) at \(y
-=-h, 0\).  The structure of the field \eqref{eq:structure_psi} then
+Impermeability on both boundaries impose \(\psi = \text{cst}\) at \(z
+=-h, 0\).
+The structure of the field \eqref{eq:structure_psi} then
 impose \(\Psi = 0\) at these two boundaries, thereby cancelling the
 first bracket. The second bracket would require the knowledge of \(u_v\)
 at the boundaries, and then in turn of \(\frac{\partial \phi}{\partial
-x}\) to satisfy adherence. But this can be circumvented by imposing \(G=0\) at the boundaries, so that finally
+x}\) to satisfy adherence.
+But this can be circumvented by imposing \(G=0\) at the boundaries, so that finally
 </p>
 \begin{equation}
 \Psi(z,t)=-\int_{-h}^0\Omega(z',t)G(z|z')\,\mathrm dz' 
@@ -671,7 +681,7 @@ So that \(\Psi\) can be expressed with \(\Omega\):
 \begin{equation}
 \begin{split}
 -2k\Psi(z,t) &\simeq e^{kz}\left(\int_{-\infty}^0 e^{kz'}\Omega\,\mathrm dz'+ \int_{0}^z e^{-kz'}\Omega\,\mathrm dz'\right)\\
- &e^{-kz} \int_{-\infty}^z e^{kz'} \Omega \,\mathrm dz'
+ &- e^{-kz} \int_{-\infty}^z e^{kz'} \Omega \,\mathrm dz'
 \end{split}
 \end{equation}
 <p>
@@ -680,9 +690,52 @@ the change in coordinates from \(y\) to \(z\)).
 </p>
 
 <p>
-<a href="#org454524e">Back to table of contents</a>
+<a href="#orge2ea6f0">Back to table of contents</a>
 </p>
+</div>
+</div>
+</div>
 
+<div id="outline-container-org679b43a" class="outline-2">
+<h2 id="org679b43a"><span class="section-number-2">3</span> A strategy for finding the solution</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+The strategy for finding the solution is a slight modification of
+<a class='org-ref-reference' href="#Prosperetti1976">Prosperetti1976</a> 's one, which can be outlined as:
+</p>
+<ol class="org-ol">
+<li>Solve formally the diffusion equation for the vorticity using
+Laplace's transform and the boundary conditions \(\Omega(0,t)\)
+(vorticity production at the free surface) and \(\Omega_h(t)\)
+(bottom vorticity, still unknown).</li>
+<li>On exploiting the connection between \(\psi\) and \(\omega\), reexpress
+the formal solution for the vorticity with the streamfunction.</li>
+<li>Deduce the viscous contribution for the pressure \(p_v\) with the
+help of the horizontal component of the momentum equation. \(p_v\)
+will therefore be expressed as a function of \(\Omega_0\) (and
+thereby of the free surface amplitude and its time derivatives) and
+of \(\Omega_h\) (still unknown),</li>
+<li>The knowledge of the viscous contribution for the pressure and the
+streamfunction on the one hand, and of the potential velocity and
+pressure on the other hand, allows to write the normal stress jump
+condition as a single equation for \(a(t)\) and its time derivatives,
+and \(\Omega_h\) (still unknown),</li>
+<li>Finally the <i>adherence condition</i> allows to express the viscous
+tangential velocity at the bottom as a function of \(\dot a(t)\). The
+value of \(\Omega_h\) derives from this equation, and a formulation
+of the stress jump condition as a single equation for the only
+unknown \(a(t)\) follows.</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org68f8678" class="outline-2">
+<h2 id="org68f8678"><span class="section-number-2">4</span> Formal solution for the viscous vorticity, streamfunction and pressure</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+<div id="outline-container-org2ff40cd" class="outline-3">
+<h3 id="org2ff40cd"><span class="section-number-3">4.1</span> Formal resolution of the diffusion equation for the vorticity</h3>
+<div class="outline-text-3" id="text-4-1">
 <p>
 
 <h1 class='org-ref-bib-h1'>Bibliography</h1>
@@ -696,7 +749,7 @@ the change in coordinates from \(y\) to \(z\)).
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Clément &amp; Arnaud</p>
-<p class="date">Created: 2021-03-31 Wed 16:32</p>
+<p class="date">Created: 2021-04-15 Thu 19:04</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
