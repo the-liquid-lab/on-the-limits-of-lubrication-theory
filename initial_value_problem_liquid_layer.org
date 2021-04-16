@@ -443,7 +443,7 @@ then perform standard integral manipulations to obtain:
 \frac{\partial \Psi}{\partial t} = \nu \frac{\sinh\left(k\left(z+h\right)\right)}{\sinh(kh)}\Omega(0,t) - \nu \frac{\sinh(kz)}{\sinh(kh)}\Omega_h(t) - \nu \Omega(z,t)
 \end{equation}
 This result can be directly used in the horizontal projection of the
-momentum equation ref:eq:momentum_viscous to deduce the expression of
+momentum equation eqref:eq:momentum_viscous to deduce the expression of
 the viscous contribution for the pressure:
 \begin{equation}
 P(z,t) = -\mu \frac{\cosh\left(k\left(z+h\right)\right)}{\sinh(kh)} \Omega(0,t) + \mu \frac{\cosh\left(kz\right)}{\sinh(kh)} \Omega_h(t)
