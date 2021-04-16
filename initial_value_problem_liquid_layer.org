@@ -167,6 +167,7 @@ tension:
 \begin{equation}
 -p + 2 \mu \frac{\partial w}{\partial z} = - \gamma \nabla \cdot
 \boldsymbol n \quad \text{on} \quad F = 0
+\label{eq:normalstressjump}
 \end{equation}
 and the shear stress is required to vanish (/free surface/ assumption):
 \begin{equation}
@@ -449,9 +450,31 @@ the viscous contribution for the pressure:
 P(z,t) = -\mu \frac{\cosh\left(k\left(z+h\right)\right)}{\sinh(kh)} \Omega(0,t) + \mu \frac{\cosh\left(kz\right)}{\sinh(kh)} \Omega_h(t)
 \end{equation}
 
-
 [[toc][Back to table of contents]]
 
+* Normal stress jump condition
+
+The normal stress jump condition eqref:eq:normalstressjump reads:
+\begin{equation}
+-p_p-p_v+ 2 \mu \frac{\partial w_p}{\partial z} + 2 \mu \frac{\partial w_v}{\partial z} = - \gamma \nabla \cdot \boldsymbol n
+\end{equation}
+at the free surface. Here, the linearised expression for the curvature
+of the free surface is $\kappa\equiv\nabla\cdot\boldsymbol n \simeq
+ak^2 \cos(kx)$, and a rapid inspection of the terms involved shows
+that each has a $\cos(kx)$ dependence, which is simplified from now
+on.  Injecting the previous expressions for pressure and velocity
+(both viscous and potential), the surface condition is seen to adopt
+the following damped-oscillator-like evolution equation:
+\begin{equation}
+\frac{\mathrm d^2a}{\mathrm dt^2} + 4 \nu k^2 \frac{\mathrm da}{\mathrm dt} + \omega_0^2 a - \frac{\nu k}{\cosh(kh)}\Omega_h - 2 \nu k^2 \int_{-h}^0\frac{\sinh\left(k\left(z'+h\right)\right)}{\cosh(kh)}\Omega(z',t)\,\mathrm dz' = 0,
+\end{equation}
+where we have introduced the inviscid normal mode pulsation for a
+liquid layer oscillating due to surface tension and gravity:
+\begin{equation}
+\omega_0^2 = gk\tanh(kh)+\frac{\gamma}{\rho}k^3\tanh(kh).
+\end{equation}
+
+[[toc][Back to table of contents]]
 
 bibliographystyle:abbrvnat
 bibliography:suppl_note.bib
