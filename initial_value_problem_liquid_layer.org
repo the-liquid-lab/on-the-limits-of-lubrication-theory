@@ -466,12 +466,49 @@ on.  Injecting the previous expressions for pressure and velocity
 (both viscous and potential), the surface condition is seen to adopt
 the following damped-oscillator-like evolution equation:
 \begin{equation}
-\frac{\mathrm d^2a}{\mathrm dt^2} + 4 \nu k^2 \frac{\mathrm da}{\mathrm dt} + \omega_0^2 a - \frac{\nu k}{\cosh(kh)}\Omega_h - 2 \nu k^2 \int_{-h}^0\frac{\sinh\left(k\left(z'+h\right)\right)}{\cosh(kh)}\Omega(z',t)\,\mathrm dz' = 0,
+\begin{split}
+&\frac{\mathrm d^2a}{\mathrm dt^2} + 4 \nu k^2 \frac{\mathrm da}{\mathrm dt} + \omega_0^2 a - \frac{\nu k}{\cosh(kh)}\Omega_h \\
+&- 2 \nu k^2 \int_{-h}^0\frac{\sinh\left(k\left(z'+h\right)\right)}{\cosh(kh)}\Omega(z',t)\,\mathrm dz' = 0,
+\end{split}
 \end{equation}
 where we have introduced the inviscid normal mode pulsation for a
 liquid layer oscillating due to surface tension and gravity:
 \begin{equation}
 \omega_0^2 = gk\tanh(kh)+\frac{\gamma}{\rho}k^3\tanh(kh).
+\end{equation}
+
+Further progress can be made in Laplace' space, where $\Omega$ is
+determined in closed-form and $\Omega_h$ can be obtained exactly.
+
+[[toc][Back to table of contents]]
+
+* Bottom vorticity and governing equation for the amplitude
+
+The adherence condition links the viscous and potential parts of the
+velocity field at the bottom:
+\begin{equation}
+\left. u_p + u_v \right|_{z = -h} = 0
+\label{eq:adherence_condition}
+\end{equation}
+As the potential structure depends on the surface velocity $\dot
+a(t)$, we foresee that the bottom vorticity is a function of this
+quantity as well. We explore this idea further in the following using
+the Laplace transform.
+
+** Bottom vorticity
+
+The adherence condition eqref:eq:adherence_condition can be rewritten as:
+\begin{equation}
+\left.\frac{\partial \phi}{\partial x} - \frac{\partial \psi}{\partial z} \right|_{z=-h} = 0
+\end{equation}
+Upon using the previously derived expressions for $\phi$ and $\psi$,
+we obtain the following form for adherence;
+\begin{equation}
+\int_{-h}^0\Omega(z',t)\sinh(kz')\,\mathrm dz'= \frac{\mathrm da}{\mathrm dt}
+\end{equation}
+The Laplace transform of this last equation is naturally:
+\begin{equation}
+\int_{-h}^0\tilde\Omega(z',t)\sinh(kz')\,\mathrm dz'= \mathcal L\left[\frac{\mathrm da}{\mathrm dt}\right]
 \end{equation}
 
 [[toc][Back to table of contents]]
