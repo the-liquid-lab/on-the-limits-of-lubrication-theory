@@ -336,6 +336,7 @@ So that $\Psi$ can be expressed with $\Omega$:
 \Psi(z,t) &= -\int_{-h}^z \frac{1}{k}\sinh\left(k\left(z'+h\right)\right)\frac{\sinh\left(kz\right)}{\sinh(kh)}\Omega(z',t)\,\mathrm dz'\\
  & - \int_{z}^0 \frac{1}{k}\sinh\left(kz'\right)\frac{\sinh\left(k\left(z+h\right)\right)}{\sinh(kh)}\Omega(z',t)\,\mathrm dz'
 \end{split}
+\label{eq:greenpsi}
 \end{equation}
 /In the limit of large depths/, this expression can be approximated by
 \begin{equation}
@@ -346,6 +347,9 @@ So that $\Psi$ can be expressed with $\Omega$:
 \end{equation}
 which is eq (15) of Prosperetti's paper (the minus sign coming from
 the change in coordinates from $y$ to $z$).
+
+[[toc][Back to table of contents]]
+
 * Designing a strategy to derive the solution
 
 The strategy for finding the solution is a slight modification of
@@ -422,10 +426,29 @@ In the /large depth limit/, we recover Prosperetti's result:
 \end{equation}
 ** Viscous pressure
 
-Symmetry considerations lead to search for the following form for the viscous pressure:
+Symmetry considerations lead to search for the following form for the
+viscous pressure:
 \begin{equation}
 p_v(x,z,t) = P(z,t) \cos (kx)
 \end{equation}
+To identify $P(z,t)$ we will exploit the horizontal projection for the
+momentum equation. To make progress we first need to clarify the
+expression for $\frac{\partial \Psi}{\partial t}$. Considering the
+relation eqref:eq:greenpsi linking $\Psi$ to $\Omega$, we can formally
+express $\frac{\partial \Psi}{\partial t}$ with a convolution involving $\frac{\partial \Omega}{\partial t}$. Further noting that
+the latter term can be reformulated without time derivative with the
+help of the diffusion equation eqref:eq:vorticity_diffusion, we can
+then perform standard integral manipulations to obtain:
+\begin{equation}
+\frac{\partial \Psi}{\partial t} = \nu \frac{\sinh\left(k\left(z+h\right)\right)}{\sinh(kh)}\Omega(0,t) - \nu \frac{\sinh(kz)}{\sinh(kh)}\Omega_h(t) - \nu \Omega(z,t)
+\end{equation}
+This result can be directly used in the horizontal projection of the
+momentum equation ref:eq:momentum_viscous to deduce the expression of
+the viscous contribution for the pressure:
+\begin{equation}
+P(z,t) = -\mu \frac{\cosh\left(k\left(z+h\right)\right)}{\sinh(kh)} \Omega(0,t) + \mu \frac{\cosh\left(kz\right)}{\sinh(kh)} \Omega_h(t)
+\end{equation}
+
 
 [[toc][Back to table of contents]]
 
