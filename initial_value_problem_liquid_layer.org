@@ -420,6 +420,7 @@ condition, but for now let's simply posit:
 With these two boundary conditions, $\tilde\Omega$ is readily obtained:
 \begin{equation}
 \tilde \Omega(z,s) = 2 k \frac{\sinh\left(\lambda\left(z+h\right)\right)}{\sinh(\lambda h)}\mathcal L\left[\frac{\mathrm da}{\mathrm dt}\right] - \frac{\sinh(\lambda z)}{\sinh(\lambda h)} \tilde \Omega_h
+\label{eq:OmegaLaplace}
 \end{equation}
 In the /large depth limit/, we recover Prosperetti's result:
 \begin{equation}
@@ -509,6 +510,11 @@ we obtain the following form for adherence;
 The Laplace transform of this last equation is naturally:
 \begin{equation}
 \int_{-h}^0\tilde\Omega(z',t)\sinh(kz')\,\mathrm dz'= \mathcal L\left[\frac{\mathrm da}{\mathrm dt}\right]
+\end{equation}
+From the general solution for $\tilde\Omega$ we found earlier
+eqref:eq:OmegaLaplace we deduce the expression for the bottom vorticity:
+\begin{equation}
+\tilde \Omega_h = \frac{2k\lambda\sinh(kh)-\left(\lambda^2+k^2\right) \sinh(\lambda h)}{\lambda\sinh(kh)\cosh(\lambda h) - k \sinh(\lambda h)\cosh(kh)} \mathcal L \left[\frac{\mathrm da}{\mathrm dt}\right].
 \end{equation}
 
 [[toc][Back to table of contents]]
