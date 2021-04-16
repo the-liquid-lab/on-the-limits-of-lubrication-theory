@@ -346,9 +346,6 @@ So that $\Psi$ can be expressed with $\Omega$:
 \end{equation}
 which is eq (15) of Prosperetti's paper (the minus sign coming from
 the change in coordinates from $y$ to $z$).
-
-[[toc][Back to table of contents]]
-
 * Designing a strategy to derive the solution
 
 The strategy for finding the solution is a slight modification of
@@ -377,7 +374,7 @@ citeauthor:Prosperetti1976 's one, which can be outlined as:
 
    [[toc][Back to table of contents]]
 
-* Formal solution for the viscous vorticity, streamfunction and pressure
+* Formal solution for the viscous vorticity and pressure
 
 ** Formal resolution of the diffusion equation for the vorticity
 
@@ -401,8 +398,9 @@ and take an /initial vorticity-free/ condition $\Omega(z,0) = 0$:
 It follows that in Laplace' space the diffusion equation
 eqref:eq:vorticity_diffusion is rewritten:
 \begin{equation}
-\frac{\partial^2 \tilde\Omega}{\partial z^2} - \left(k^2 + \frac{s}{\nu}\right) \tilde \Omega = 0
+\frac{\partial^2 \tilde\Omega}{\partial z^2} - \lambda^2 \tilde \Omega = 0,
 \end{equation}
+where $\lambda=\left(k^2 + \frac{s}{\nu}\right)^{1/2}$.
 
 We saw earlier how the stress-free boundary condition forged the
 vorticity production term at the free surface:
@@ -421,6 +419,12 @@ With these two boundary conditions, $\tilde\Omega$ is readily obtained:
 In the /large depth limit/, we recover Prosperetti's result:
 \begin{equation}
 \tilde \Omega(z,s) \underset{h\to\infty}{\to} \,2 k \mathcal L\left[\frac{\mathrm da}{\mathrm dt}\right] e^{\lambda z}
+\end{equation}
+** Viscous pressure
+
+Symmetry considerations lead to search for the following form for the viscous pressure:
+\begin{equation}
+p_v(x,z,t) = P(z,t) \cos (kx)
 \end{equation}
 
 [[toc][Back to table of contents]]
