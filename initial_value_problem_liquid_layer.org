@@ -541,7 +541,8 @@ citet:Cortelezzi1981 expression:
 \begin{equation}
 \begin{split}
 &\mathcal K(s) = \frac{2\nu k}{s}\left(k-\lambda \tanh(k h)\right) \\
-& - \frac{\nu}{s}\frac{4\lambda k \sinh(kh)\left(ke^{-\lambda h}\left(k \cosh(kh) + \lambda \sinh(kh)\right)-\left(k^2+\lambda^2\right)\right)+\left(k^2+\lambda^2\right)^2\sinh(\lambda h)}{2k\cosh(kh)\left(k\cosh(kh)\sinh(\lambda h)-\lambda\cosh(\lambda h)\sinh(kh)\right)}
+& - \frac{\nu}{s}\frac{4\lambda k \sinh(kh)\left(ke^{-\lambda h}\left(k \cosh(kh) + \lambda \sinh(kh)\right)-\left(k^2+\lambda^2\right)\right)}{2k\cosh(kh)\left(k\cosh(kh)\sinh(\lambda h)-\lambda\cosh(\lambda h)\sinh(kh)\right)}\\
+& - \frac{\nu}{s}\frac{\left(k^2+\lambda^2\right)^2\sinh(\lambda h)}{2k\cosh(kh)\left(k\cosh(kh)\sinh(\lambda h)-\lambda\cosh(\lambda h)\sinh(kh)\right)}
 \end{split}
 \end{equation}
 
