@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2021-04-20 Tue 23:27 -->
+<!-- 2021-04-20 Tue 23:31 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Initial value problem for a viscous liquid layer</title>
@@ -308,47 +308,47 @@ all the obtained results can be directly transposed to 3D, see
 </p>
 
 <p>
-<a id="org0faaf20"></a>
+<a id="orgff7ea3c"></a>
 </p>
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org20f31ce">1. Vorticity production at the free surface</a></li>
-<li><a href="#orgdff938b">2. Problem splitting: the potential and the viscous</a>
+<li><a href="#orgdffce91">1. Vorticity production at the free surface</a></li>
+<li><a href="#org8e9926a">2. Problem splitting: the potential and the viscous</a>
 <ul>
-<li><a href="#orgefb0ff0">2.1. Kinematical description of the interface</a></li>
-<li><a href="#org3414882">2.2. Dynamical boundary conditions</a></li>
-<li><a href="#orgffbd38c">2.3. Potential and viscous parts</a></li>
-<li><a href="#org9a15c6d">2.4. The potential solution</a></li>
-<li><a href="#orgdc330f5">2.5. The viscous solution</a></li>
+<li><a href="#orge0077b7">2.1. Kinematical description of the interface</a></li>
+<li><a href="#org106e2cf">2.2. Dynamical boundary conditions</a></li>
+<li><a href="#org23f800d">2.3. Potential and viscous parts</a></li>
+<li><a href="#org7c0d746">2.4. The potential solution</a></li>
+<li><a href="#orga438e57">2.5. The viscous solution</a></li>
 </ul>
 </li>
-<li><a href="#org520a435">3. Designing a strategy to derive the solution</a></li>
-<li><a href="#orgc765f4a">4. Formal solution for the viscous vorticity and pressure</a>
+<li><a href="#org97bf913">3. Designing a strategy to derive the solution</a></li>
+<li><a href="#org4f5070c">4. Formal solution for the viscous vorticity and pressure</a>
 <ul>
-<li><a href="#org2f130f8">4.1. Formal resolution of the diffusion equation for the vorticity</a></li>
-<li><a href="#org8eb6262">4.2. Viscous pressure</a></li>
+<li><a href="#orgb670e6f">4.1. Formal resolution of the diffusion equation for the vorticity</a></li>
+<li><a href="#orgba0c462">4.2. Viscous pressure</a></li>
 </ul>
 </li>
-<li><a href="#org2b99179">5. Normal stress jump condition</a></li>
-<li><a href="#org6a91941">6. Bottom vorticity and governing equation for the amplitude</a>
+<li><a href="#orgb2942cf">5. Normal stress jump condition</a></li>
+<li><a href="#org4c227a7">6. Bottom vorticity and governing equation for the amplitude</a>
 <ul>
-<li><a href="#orge1fb789">6.1. Bottom vorticity</a></li>
-<li><a href="#org659be77">6.2. Governing equation for the amplitude</a></li>
+<li><a href="#orgbf70077">6.1. Bottom vorticity</a></li>
+<li><a href="#orgbfea9e1">6.2. Governing equation for the amplitude</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org20f31ce" class="outline-2">
-<h2 id="org20f31ce"><span class="section-number-2">1</span> Vorticity production at the free surface</h2>
+<div id="outline-container-orgdffce91" class="outline-2">
+<h2 id="orgdffce91"><span class="section-number-2">1</span> Vorticity production at the free surface</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 The vorticity is directed along \(\boldsymbol e_y\):
 </p>
-<div class="LATEX" id="org50f2fa5">
+<div class="LATEX" id="org0c796a9">
 \begin{equation}
 \boldsymbol \omega = \left(
 \begin{array}{c}
@@ -403,8 +403,8 @@ time variation of the local slope:
 </div>
 </div>
 
-<div id="outline-container-orgdff938b" class="outline-2">
-<h2 id="orgdff938b"><span class="section-number-2">2</span> Problem splitting: the potential and the viscous</h2>
+<div id="outline-container-org8e9926a" class="outline-2">
+<h2 id="org8e9926a"><span class="section-number-2">2</span> Problem splitting: the potential and the viscous</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 The equations governing the problem are associated with mass
@@ -421,8 +421,8 @@ and momentum conservation:
 \end{equation}
 </div>
 
-<div id="outline-container-orgefb0ff0" class="outline-3">
-<h3 id="orgefb0ff0"><span class="section-number-3">2.1</span> Kinematical description of the interface</h3>
+<div id="outline-container-orge0077b7" class="outline-3">
+<h3 id="orge0077b7"><span class="section-number-3">2.1</span> Kinematical description of the interface</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 The interface is tracked at all times with the help of the color
@@ -447,12 +447,12 @@ condition at \(z=0\):
 </div>
 </div>
 
-<div id="outline-container-org3414882" class="outline-3">
-<h3 id="org3414882"><span class="section-number-3">2.2</span> Dynamical boundary conditions</h3>
+<div id="outline-container-org106e2cf" class="outline-3">
+<h3 id="org106e2cf"><span class="section-number-3">2.2</span> Dynamical boundary conditions</h3>
 <div class="outline-text-3" id="text-2-2">
 </div>
-<div id="outline-container-orgdb62bfb" class="outline-4">
-<h4 id="orgdb62bfb"><span class="section-number-4">2.2.1</span> At the free surface</h4>
+<div id="outline-container-orgd2d25e9" class="outline-4">
+<h4 id="orgd2d25e9"><span class="section-number-4">2.2.1</span> At the free surface</h4>
 <div class="outline-text-4" id="text-2-2-1">
 <p>
 At the free surface, the normal stress jump is balanced by surface
@@ -472,8 +472,8 @@ and the shear stress is required to vanish (<i>free surface</i> assumption):
 </div>
 </div>
 
-<div id="outline-container-org57987d9" class="outline-4">
-<h4 id="org57987d9"><span class="section-number-4">2.2.2</span> At the bottom</h4>
+<div id="outline-container-org1d96034" class="outline-4">
+<h4 id="org1d96034"><span class="section-number-4">2.2.2</span> At the bottom</h4>
 <div class="outline-text-4" id="text-2-2-2">
 <p>
 Impermeability and adherence impose:
@@ -485,8 +485,8 @@ u(z=-h) = w(z=-h) = 0
 </div>
 </div>
 
-<div id="outline-container-orgffbd38c" class="outline-3">
-<h3 id="orgffbd38c"><span class="section-number-3">2.3</span> Potential and viscous parts</h3>
+<div id="outline-container-org23f800d" class="outline-3">
+<h3 id="org23f800d"><span class="section-number-3">2.3</span> Potential and viscous parts</h3>
 <div class="outline-text-3" id="text-2-3">
 <p>
 As demonstrated in <a class='org-ref-reference' href="#Prosperetti1976">Prosperetti1976</a> it is convenient to split the
@@ -497,9 +497,9 @@ dynamical fields into a <i>potential</i> and a <i>viscous</i> part:
 \end{equation}
 </div>
 
-<div id="outline-container-orgb149c3b" class="outline-5">
-<h5 id="orgb149c3b">\(\rhd\) The potential problem.</h5>
-<div class="outline-text-5" id="text-orgb149c3b">
+<div id="outline-container-org443ac73" class="outline-5">
+<h5 id="org443ac73">\(\rhd\) The potential problem.</h5>
+<div class="outline-text-5" id="text-org443ac73">
 <p>
 \((\boldsymbol u_p,p_p)\) is solution to the following problem
 </p>
@@ -522,9 +522,9 @@ w_p = \frac{\partial \eta}{\partial t} \label{eq:kinematic_potential_simplified}
 \end{equation}
 </div>
 </div>
-<div id="outline-container-orgbf05872" class="outline-5">
-<h5 id="orgbf05872">\(\rhd\) The viscous correction.</h5>
-<div class="outline-text-5" id="text-orgbf05872">
+<div id="outline-container-org8c737a2" class="outline-5">
+<h5 id="org8c737a2">\(\rhd\) The viscous correction.</h5>
+<div class="outline-text-5" id="text-org8c737a2">
 <p>
 \((\boldsymbol u_v,p_v)\) are then governed by the following equations:
 </p>
@@ -546,8 +546,8 @@ w_v = 0  \quad \text{on} \quad z = 0
 </div>
 </div>
 
-<div id="outline-container-org9a15c6d" class="outline-3">
-<h3 id="org9a15c6d"><span class="section-number-3">2.4</span> The potential solution</h3>
+<div id="outline-container-org7c0d746" class="outline-3">
+<h3 id="org7c0d746"><span class="section-number-3">2.4</span> The potential solution</h3>
 <div class="outline-text-3" id="text-2-4">
 <p>
 As we look for a standing wave-like solution, we search for a general
@@ -585,8 +585,8 @@ are intertwined, this determination is postponed.
 </div>
 </div>
 
-<div id="outline-container-orgdc330f5" class="outline-3">
-<h3 id="orgdc330f5"><span class="section-number-3">2.5</span> The viscous solution</h3>
+<div id="outline-container-orga438e57" class="outline-3">
+<h3 id="orga438e57"><span class="section-number-3">2.5</span> The viscous solution</h3>
 <div class="outline-text-3" id="text-2-5">
 <p>
 Let's turn now to the system of equations describing the viscous part
@@ -709,14 +709,14 @@ the change in coordinates from \(y\) to \(z\)).
 </p>
 
 <p>
-<a href="#org0faaf20">Back to table of contents</a>
+<a href="#orgff7ea3c">Back to table of contents</a>
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org520a435" class="outline-2">
-<h2 id="org520a435"><span class="section-number-2">3</span> Designing a strategy to derive the solution</h2>
+<div id="outline-container-org97bf913" class="outline-2">
+<h2 id="org97bf913"><span class="section-number-2">3</span> Designing a strategy to derive the solution</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 The strategy for finding the solution is a slight modification of
@@ -748,18 +748,18 @@ unknown \(a(t)\) follows.
 </p>
 
 <p>
-<a href="#org0faaf20">Back to table of contents</a>
+<a href="#orgff7ea3c">Back to table of contents</a>
 </p></li>
 </ol>
 </div>
 </div>
 
-<div id="outline-container-orgc765f4a" class="outline-2">
-<h2 id="orgc765f4a"><span class="section-number-2">4</span> Formal solution for the viscous vorticity and pressure</h2>
+<div id="outline-container-org4f5070c" class="outline-2">
+<h2 id="org4f5070c"><span class="section-number-2">4</span> Formal solution for the viscous vorticity and pressure</h2>
 <div class="outline-text-2" id="text-4">
 </div>
-<div id="outline-container-org2f130f8" class="outline-3">
-<h3 id="org2f130f8"><span class="section-number-3">4.1</span> Formal resolution of the diffusion equation for the vorticity</h3>
+<div id="outline-container-orgb670e6f" class="outline-3">
+<h3 id="orgb670e6f"><span class="section-number-3">4.1</span> Formal resolution of the diffusion equation for the vorticity</h3>
 <div class="outline-text-3" id="text-4-1">
 <p>
 We start by solving, at least <i>formally</i>, the diffusion equation for the
@@ -826,8 +826,8 @@ In the <i>large depth limit</i>, we recover Prosperetti's result:
 \end{equation}
 </div>
 </div>
-<div id="outline-container-org8eb6262" class="outline-3">
-<h3 id="org8eb6262"><span class="section-number-3">4.2</span> Viscous pressure</h3>
+<div id="outline-container-orgba0c462" class="outline-3">
+<h3 id="orgba0c462"><span class="section-number-3">4.2</span> Viscous pressure</h3>
 <div class="outline-text-3" id="text-4-2">
 <p>
 Symmetry considerations lead to search for the following form for the
@@ -859,14 +859,14 @@ P(z,t) = -\mu \frac{\cosh\left(k\left(z+h\right)\right)}{\sinh(kh)} \Omega(0,t) 
 \end{equation}
 
 <p>
-<a href="#org0faaf20">Back to table of contents</a>
+<a href="#orgff7ea3c">Back to table of contents</a>
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org2b99179" class="outline-2">
-<h2 id="org2b99179"><span class="section-number-2">5</span> Normal stress jump condition</h2>
+<div id="outline-container-orgb2942cf" class="outline-2">
+<h2 id="orgb2942cf"><span class="section-number-2">5</span> Normal stress jump condition</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 The normal stress jump condition \eqref{eq:normalstressjump} reads:
@@ -904,13 +904,13 @@ determined in closed-form and \(\Omega_h\) can be obtained exactly.
 </p>
 
 <p>
-<a href="#org0faaf20">Back to table of contents</a>
+<a href="#orgff7ea3c">Back to table of contents</a>
 </p>
 </div>
 </div>
 
-<div id="outline-container-org6a91941" class="outline-2">
-<h2 id="org6a91941"><span class="section-number-2">6</span> Bottom vorticity and governing equation for the amplitude</h2>
+<div id="outline-container-org4c227a7" class="outline-2">
+<h2 id="org4c227a7"><span class="section-number-2">6</span> Bottom vorticity and governing equation for the amplitude</h2>
 <div class="outline-text-2" id="text-6">
 <p>
 The adherence condition links the viscous and potential parts of the
@@ -928,8 +928,8 @@ the Laplace transform.
 </p>
 </div>
 
-<div id="outline-container-orge1fb789" class="outline-3">
-<h3 id="orge1fb789"><span class="section-number-3">6.1</span> Bottom vorticity</h3>
+<div id="outline-container-orgbf70077" class="outline-3">
+<h3 id="orgbf70077"><span class="section-number-3">6.1</span> Bottom vorticity</h3>
 <div class="outline-text-3" id="text-6-1">
 <p>
 The adherence condition \eqref{eq:adherence_condition} can be rewritten as:
@@ -960,8 +960,8 @@ From the general solution for \(\tilde\Omega\) we found earlier
 </div>
 </div>
 
-<div id="outline-container-org659be77" class="outline-3">
-<h3 id="org659be77"><span class="section-number-3">6.2</span> Governing equation for the amplitude</h3>
+<div id="outline-container-orgbfea9e1" class="outline-3">
+<h3 id="orgbfea9e1"><span class="section-number-3">6.2</span> Governing equation for the amplitude</h3>
 <div class="outline-text-3" id="text-6-2">
 <p>
 The just determined expression for the bottom vorticity was the final
@@ -989,13 +989,13 @@ Realising that \(k^2-\lambda^2=-s/\nu\), we can further simplify this expression
 </p>
 \begin{equation}
 \begin{split}
-\mathcal K(s) &= \frac{2\nu k}{s}\left(k-\lambda \tanh(k h)\right) \\
+&\mathcal K(s) = \frac{2\nu k}{s}\left(k-\lambda \tanh(k h)\right) \\
 & - \frac{\nu}{s}\frac{4\lambda k \sinh(kh)\left(ke^{-\lambda h}\left(k \cosh(kh) + \lambda \sinh(kh)\right)-\left(k^2+\lambda^2\right)\right)+\left(k^2+\lambda^2\right)^2\sinh(\lambda h)}{2k\cosh(kh)\left(k\cosh(kh)\sinh(\lambda h)-\lambda\cosh(\lambda h)\sinh(kh)\right)}
 \end{split}
 \end{equation}
 
 <p>
-<a href="#org0faaf20">Back to table of contents</a>
+<a href="#orgff7ea3c">Back to table of contents</a>
 </p>
 
 <p>
@@ -1011,7 +1011,7 @@ Realising that \(k^2-\lambda^2=-s/\nu\), we can further simplify this expression
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Clément &amp; Arnaud</p>
-<p class="date">Created: 2021-04-20 Tue 23:27</p>
+<p class="date">Created: 2021-04-20 Tue 23:31</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
