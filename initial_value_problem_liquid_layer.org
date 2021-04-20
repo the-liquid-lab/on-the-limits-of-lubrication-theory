@@ -471,6 +471,7 @@ the following damped-oscillator-like evolution equation:
 &\frac{\mathrm d^2a}{\mathrm dt^2} + 4 \nu k^2 \frac{\mathrm da}{\mathrm dt} + \omega_0^2 a - \frac{\nu k}{\cosh(kh)}\Omega_h \\
 &- 2 \nu k^2 \int_{-h}^0\frac{\sinh\left(k\left(z'+h\right)\right)}{\cosh(kh)}\Omega(z',t)\,\mathrm dz' = 0,
 \end{split}
+\label{eq:governing_equation_not_closed_form}
 \end{equation}
 where we have introduced the inviscid normal mode pulsation for a
 liquid layer oscillating due to surface tension and gravity:
@@ -515,6 +516,33 @@ From the general solution for $\tilde\Omega$ we found earlier
 eqref:eq:OmegaLaplace we deduce the expression for the bottom vorticity:
 \begin{equation}
 \tilde \Omega_h = \frac{2k\lambda\sinh(kh)-\left(\lambda^2+k^2\right) \sinh(\lambda h)}{\lambda\sinh(kh)\cosh(\lambda h) - k \sinh(\lambda h)\cosh(kh)} \mathcal L \left[\frac{\mathrm da}{\mathrm dt}\right].
+\end{equation}
+
+** Governing equation for the amplitude
+
+The just determined expression for the bottom vorticity was the final
+piece of the puzzle necesary to get a closed-form governing equation
+for the amplitude of the free surface. Inserting this expression into
+the Laplace-transformed equation
+eqref:eq:governing_equation_not_closed_form we obtain:
+\begin{equation}
+\mathcal L\left[\frac{\mathrm d^2 a}{\mathrm dt^2}\right] + 4 \nu k^2 \mathcal L\left[\frac{\mathrm d a}{\mathrm dt}\right] + \omega_0^2 \tilde a + 2 \nu k^2 \mathcal K(s) \mathcal L\left[\frac{\mathrm d a}{\mathrm dt}\right] = 0
+\end{equation}
+where the kernel $\mathcal K(s)$ is:
+\begin{equation}
+\begin{split}
+\mathcal K(s) &= \frac{-4k\lambda(k^2+\lambda^2)\sinh(kh)+4k^3\lambda\cosh(\lambda h)\sinh(2kh)}{2k(k^2-\lambda^2)\cosh(kh)\left(k\cosh(kh)\sinh(\lambda h)-\lambda\cosh(\lambda h)\sinh(kh)\right)}\\
+&+ \frac{\left(-k^4+4k^2\lambda^2+\lambda^4-2k^2\left(k^2+\lambda^2\right)\cosh(2kh)\right)\sinh(\lambda h)}{2k(k^2-\lambda^2)\cosh(kh)\left(k\cosh(kh)\sinh(\lambda h)-\lambda\cosh(\lambda h)\sinh(kh)\right)}
+\end{split}
+\end{equation}
+
+Realising that $k^2-\lambda^2=-s/\nu$, we can further simplify this expression and obtain
+citet:Cortelezzi1981 expression:
+\begin{equation}
+\begin{split}
+\mathcal K(s) &= \frac{2\nu k}{s}\left(k-\lambda \tanh(k h)\right) \\
+& - \frac{\nu}{s}\frac{4\lambda k \sinh(kh)\left(ke^{-\lambda h}\left(k \cosh(kh) + \lambda \sinh(kh)\right)-\left(k^2+\lambda^2\right)\right)+\left(k^2+\lambda^2\right)^2\sinh(\lambda h)}{2k\cosh(kh)\left(k\cosh(kh)\sinh(\lambda h)-\lambda\cosh(\lambda h)\sinh(kh)\right)}
+\end{split}
 \end{equation}
 
 [[toc][Back to table of contents]]

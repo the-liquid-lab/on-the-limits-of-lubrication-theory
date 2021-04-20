@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2021-04-16 Fri 22:20 -->
+<!-- 2021-04-20 Tue 23:27 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Initial value problem for a viscous liquid layer</title>
@@ -308,46 +308,47 @@ all the obtained results can be directly transposed to 3D, see
 </p>
 
 <p>
-<a id="orgff63610"></a>
+<a id="org0faaf20"></a>
 </p>
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org1cb76fb">1. Vorticity production at the free surface</a></li>
-<li><a href="#org27a91ad">2. Problem splitting: the potential and the viscous</a>
+<li><a href="#org20f31ce">1. Vorticity production at the free surface</a></li>
+<li><a href="#orgdff938b">2. Problem splitting: the potential and the viscous</a>
 <ul>
-<li><a href="#org327ee67">2.1. Kinematical description of the interface</a></li>
-<li><a href="#orgca26147">2.2. Dynamical boundary conditions</a></li>
-<li><a href="#org5475116">2.3. Potential and viscous parts</a></li>
-<li><a href="#org7e8358c">2.4. The potential solution</a></li>
-<li><a href="#org9de06d4">2.5. The viscous solution</a></li>
+<li><a href="#orgefb0ff0">2.1. Kinematical description of the interface</a></li>
+<li><a href="#org3414882">2.2. Dynamical boundary conditions</a></li>
+<li><a href="#orgffbd38c">2.3. Potential and viscous parts</a></li>
+<li><a href="#org9a15c6d">2.4. The potential solution</a></li>
+<li><a href="#orgdc330f5">2.5. The viscous solution</a></li>
 </ul>
 </li>
-<li><a href="#orgfa5450a">3. Designing a strategy to derive the solution</a></li>
-<li><a href="#org545af2d">4. Formal solution for the viscous vorticity and pressure</a>
+<li><a href="#org520a435">3. Designing a strategy to derive the solution</a></li>
+<li><a href="#orgc765f4a">4. Formal solution for the viscous vorticity and pressure</a>
 <ul>
-<li><a href="#orgb5eb70b">4.1. Formal resolution of the diffusion equation for the vorticity</a></li>
-<li><a href="#org3e7b238">4.2. Viscous pressure</a></li>
+<li><a href="#org2f130f8">4.1. Formal resolution of the diffusion equation for the vorticity</a></li>
+<li><a href="#org8eb6262">4.2. Viscous pressure</a></li>
 </ul>
 </li>
-<li><a href="#orgc90b0bc">5. Normal stress jump condition</a></li>
-<li><a href="#org9e97404">6. Bottom vorticity and governing equation for the amplitude</a>
+<li><a href="#org2b99179">5. Normal stress jump condition</a></li>
+<li><a href="#org6a91941">6. Bottom vorticity and governing equation for the amplitude</a>
 <ul>
-<li><a href="#org6d5235e">6.1. Bottom vorticity</a></li>
+<li><a href="#orge1fb789">6.1. Bottom vorticity</a></li>
+<li><a href="#org659be77">6.2. Governing equation for the amplitude</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org1cb76fb" class="outline-2">
-<h2 id="org1cb76fb"><span class="section-number-2">1</span> Vorticity production at the free surface</h2>
+<div id="outline-container-org20f31ce" class="outline-2">
+<h2 id="org20f31ce"><span class="section-number-2">1</span> Vorticity production at the free surface</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 The vorticity is directed along \(\boldsymbol e_y\):
 </p>
-<div class="LATEX" id="orgefe81c5">
+<div class="LATEX" id="org50f2fa5">
 \begin{equation}
 \boldsymbol \omega = \left(
 \begin{array}{c}
@@ -402,8 +403,8 @@ time variation of the local slope:
 </div>
 </div>
 
-<div id="outline-container-org27a91ad" class="outline-2">
-<h2 id="org27a91ad"><span class="section-number-2">2</span> Problem splitting: the potential and the viscous</h2>
+<div id="outline-container-orgdff938b" class="outline-2">
+<h2 id="orgdff938b"><span class="section-number-2">2</span> Problem splitting: the potential and the viscous</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 The equations governing the problem are associated with mass
@@ -420,8 +421,8 @@ and momentum conservation:
 \end{equation}
 </div>
 
-<div id="outline-container-org327ee67" class="outline-3">
-<h3 id="org327ee67"><span class="section-number-3">2.1</span> Kinematical description of the interface</h3>
+<div id="outline-container-orgefb0ff0" class="outline-3">
+<h3 id="orgefb0ff0"><span class="section-number-3">2.1</span> Kinematical description of the interface</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 The interface is tracked at all times with the help of the color
@@ -446,12 +447,12 @@ condition at \(z=0\):
 </div>
 </div>
 
-<div id="outline-container-orgca26147" class="outline-3">
-<h3 id="orgca26147"><span class="section-number-3">2.2</span> Dynamical boundary conditions</h3>
+<div id="outline-container-org3414882" class="outline-3">
+<h3 id="org3414882"><span class="section-number-3">2.2</span> Dynamical boundary conditions</h3>
 <div class="outline-text-3" id="text-2-2">
 </div>
-<div id="outline-container-org0b56462" class="outline-4">
-<h4 id="org0b56462"><span class="section-number-4">2.2.1</span> At the free surface</h4>
+<div id="outline-container-orgdb62bfb" class="outline-4">
+<h4 id="orgdb62bfb"><span class="section-number-4">2.2.1</span> At the free surface</h4>
 <div class="outline-text-4" id="text-2-2-1">
 <p>
 At the free surface, the normal stress jump is balanced by surface
@@ -471,8 +472,8 @@ and the shear stress is required to vanish (<i>free surface</i> assumption):
 </div>
 </div>
 
-<div id="outline-container-org6e217cf" class="outline-4">
-<h4 id="org6e217cf"><span class="section-number-4">2.2.2</span> At the bottom</h4>
+<div id="outline-container-org57987d9" class="outline-4">
+<h4 id="org57987d9"><span class="section-number-4">2.2.2</span> At the bottom</h4>
 <div class="outline-text-4" id="text-2-2-2">
 <p>
 Impermeability and adherence impose:
@@ -484,8 +485,8 @@ u(z=-h) = w(z=-h) = 0
 </div>
 </div>
 
-<div id="outline-container-org5475116" class="outline-3">
-<h3 id="org5475116"><span class="section-number-3">2.3</span> Potential and viscous parts</h3>
+<div id="outline-container-orgffbd38c" class="outline-3">
+<h3 id="orgffbd38c"><span class="section-number-3">2.3</span> Potential and viscous parts</h3>
 <div class="outline-text-3" id="text-2-3">
 <p>
 As demonstrated in <a class='org-ref-reference' href="#Prosperetti1976">Prosperetti1976</a> it is convenient to split the
@@ -496,9 +497,9 @@ dynamical fields into a <i>potential</i> and a <i>viscous</i> part:
 \end{equation}
 </div>
 
-<div id="outline-container-org234c7eb" class="outline-5">
-<h5 id="org234c7eb">\(\rhd\) The potential problem.</h5>
-<div class="outline-text-5" id="text-org234c7eb">
+<div id="outline-container-orgb149c3b" class="outline-5">
+<h5 id="orgb149c3b">\(\rhd\) The potential problem.</h5>
+<div class="outline-text-5" id="text-orgb149c3b">
 <p>
 \((\boldsymbol u_p,p_p)\) is solution to the following problem
 </p>
@@ -521,9 +522,9 @@ w_p = \frac{\partial \eta}{\partial t} \label{eq:kinematic_potential_simplified}
 \end{equation}
 </div>
 </div>
-<div id="outline-container-org02bc899" class="outline-5">
-<h5 id="org02bc899">\(\rhd\) The viscous correction.</h5>
-<div class="outline-text-5" id="text-org02bc899">
+<div id="outline-container-orgbf05872" class="outline-5">
+<h5 id="orgbf05872">\(\rhd\) The viscous correction.</h5>
+<div class="outline-text-5" id="text-orgbf05872">
 <p>
 \((\boldsymbol u_v,p_v)\) are then governed by the following equations:
 </p>
@@ -545,8 +546,8 @@ w_v = 0  \quad \text{on} \quad z = 0
 </div>
 </div>
 
-<div id="outline-container-org7e8358c" class="outline-3">
-<h3 id="org7e8358c"><span class="section-number-3">2.4</span> The potential solution</h3>
+<div id="outline-container-org9a15c6d" class="outline-3">
+<h3 id="org9a15c6d"><span class="section-number-3">2.4</span> The potential solution</h3>
 <div class="outline-text-3" id="text-2-4">
 <p>
 As we look for a standing wave-like solution, we search for a general
@@ -584,8 +585,8 @@ are intertwined, this determination is postponed.
 </div>
 </div>
 
-<div id="outline-container-org9de06d4" class="outline-3">
-<h3 id="org9de06d4"><span class="section-number-3">2.5</span> The viscous solution</h3>
+<div id="outline-container-orgdc330f5" class="outline-3">
+<h3 id="orgdc330f5"><span class="section-number-3">2.5</span> The viscous solution</h3>
 <div class="outline-text-3" id="text-2-5">
 <p>
 Let's turn now to the system of equations describing the viscous part
@@ -708,14 +709,14 @@ the change in coordinates from \(y\) to \(z\)).
 </p>
 
 <p>
-<a href="#orgff63610">Back to table of contents</a>
+<a href="#org0faaf20">Back to table of contents</a>
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgfa5450a" class="outline-2">
-<h2 id="orgfa5450a"><span class="section-number-2">3</span> Designing a strategy to derive the solution</h2>
+<div id="outline-container-org520a435" class="outline-2">
+<h2 id="org520a435"><span class="section-number-2">3</span> Designing a strategy to derive the solution</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 The strategy for finding the solution is a slight modification of
@@ -747,18 +748,18 @@ unknown \(a(t)\) follows.
 </p>
 
 <p>
-<a href="#orgff63610">Back to table of contents</a>
+<a href="#org0faaf20">Back to table of contents</a>
 </p></li>
 </ol>
 </div>
 </div>
 
-<div id="outline-container-org545af2d" class="outline-2">
-<h2 id="org545af2d"><span class="section-number-2">4</span> Formal solution for the viscous vorticity and pressure</h2>
+<div id="outline-container-orgc765f4a" class="outline-2">
+<h2 id="orgc765f4a"><span class="section-number-2">4</span> Formal solution for the viscous vorticity and pressure</h2>
 <div class="outline-text-2" id="text-4">
 </div>
-<div id="outline-container-orgb5eb70b" class="outline-3">
-<h3 id="orgb5eb70b"><span class="section-number-3">4.1</span> Formal resolution of the diffusion equation for the vorticity</h3>
+<div id="outline-container-org2f130f8" class="outline-3">
+<h3 id="org2f130f8"><span class="section-number-3">4.1</span> Formal resolution of the diffusion equation for the vorticity</h3>
 <div class="outline-text-3" id="text-4-1">
 <p>
 We start by solving, at least <i>formally</i>, the diffusion equation for the
@@ -825,8 +826,8 @@ In the <i>large depth limit</i>, we recover Prosperetti's result:
 \end{equation}
 </div>
 </div>
-<div id="outline-container-org3e7b238" class="outline-3">
-<h3 id="org3e7b238"><span class="section-number-3">4.2</span> Viscous pressure</h3>
+<div id="outline-container-org8eb6262" class="outline-3">
+<h3 id="org8eb6262"><span class="section-number-3">4.2</span> Viscous pressure</h3>
 <div class="outline-text-3" id="text-4-2">
 <p>
 Symmetry considerations lead to search for the following form for the
@@ -858,14 +859,14 @@ P(z,t) = -\mu \frac{\cosh\left(k\left(z+h\right)\right)}{\sinh(kh)} \Omega(0,t) 
 \end{equation}
 
 <p>
-<a href="#orgff63610">Back to table of contents</a>
+<a href="#org0faaf20">Back to table of contents</a>
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgc90b0bc" class="outline-2">
-<h2 id="orgc90b0bc"><span class="section-number-2">5</span> Normal stress jump condition</h2>
+<div id="outline-container-org2b99179" class="outline-2">
+<h2 id="org2b99179"><span class="section-number-2">5</span> Normal stress jump condition</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 The normal stress jump condition \eqref{eq:normalstressjump} reads:
@@ -887,6 +888,7 @@ the following damped-oscillator-like evolution equation:
 &\frac{\mathrm d^2a}{\mathrm dt^2} + 4 \nu k^2 \frac{\mathrm da}{\mathrm dt} + \omega_0^2 a - \frac{\nu k}{\cosh(kh)}\Omega_h \\
 &- 2 \nu k^2 \int_{-h}^0\frac{\sinh\left(k\left(z'+h\right)\right)}{\cosh(kh)}\Omega(z',t)\,\mathrm dz' = 0,
 \end{split}
+\label{eq:governing_equation_not_closed_form}
 \end{equation}
 <p>
 where we have introduced the inviscid normal mode pulsation for a
@@ -902,13 +904,13 @@ determined in closed-form and \(\Omega_h\) can be obtained exactly.
 </p>
 
 <p>
-<a href="#orgff63610">Back to table of contents</a>
+<a href="#org0faaf20">Back to table of contents</a>
 </p>
 </div>
 </div>
 
-<div id="outline-container-org9e97404" class="outline-2">
-<h2 id="org9e97404"><span class="section-number-2">6</span> Bottom vorticity and governing equation for the amplitude</h2>
+<div id="outline-container-org6a91941" class="outline-2">
+<h2 id="org6a91941"><span class="section-number-2">6</span> Bottom vorticity and governing equation for the amplitude</h2>
 <div class="outline-text-2" id="text-6">
 <p>
 The adherence condition links the viscous and potential parts of the
@@ -926,8 +928,8 @@ the Laplace transform.
 </p>
 </div>
 
-<div id="outline-container-org6d5235e" class="outline-3">
-<h3 id="org6d5235e"><span class="section-number-3">6.1</span> Bottom vorticity</h3>
+<div id="outline-container-orge1fb789" class="outline-3">
+<h3 id="orge1fb789"><span class="section-number-3">6.1</span> Bottom vorticity</h3>
 <div class="outline-text-3" id="text-6-1">
 <p>
 The adherence condition \eqref{eq:adherence_condition} can be rewritten as:
@@ -955,9 +957,45 @@ From the general solution for \(\tilde\Omega\) we found earlier
 \begin{equation}
 \tilde \Omega_h = \frac{2k\lambda\sinh(kh)-\left(\lambda^2+k^2\right) \sinh(\lambda h)}{\lambda\sinh(kh)\cosh(\lambda h) - k \sinh(\lambda h)\cosh(kh)} \mathcal L \left[\frac{\mathrm da}{\mathrm dt}\right].
 \end{equation}
+</div>
+</div>
+
+<div id="outline-container-org659be77" class="outline-3">
+<h3 id="org659be77"><span class="section-number-3">6.2</span> Governing equation for the amplitude</h3>
+<div class="outline-text-3" id="text-6-2">
+<p>
+The just determined expression for the bottom vorticity was the final
+piece of the puzzle necesary to get a closed-form governing equation
+for the amplitude of the free surface. Inserting this expression into
+the Laplace-transformed equation
+\eqref{eq:governing_equation_not_closed_form} we obtain:
+</p>
+\begin{equation}
+\mathcal L\left[\frac{\mathrm d^2 a}{\mathrm dt^2}\right] + 4 \nu k^2 \mathcal L\left[\frac{\mathrm d a}{\mathrm dt}\right] + \omega_0^2 \tilde a + 2 \nu k^2 \mathcal K(s) \mathcal L\left[\frac{\mathrm d a}{\mathrm dt}\right] = 0
+\end{equation}
+<p>
+where the kernel \(\mathcal K(s)\) is:
+</p>
+\begin{equation}
+\begin{split}
+\mathcal K(s) &= \frac{-4k\lambda(k^2+\lambda^2)\sinh(kh)+4k^3\lambda\cosh(\lambda h)\sinh(2kh)}{2k(k^2-\lambda^2)\cosh(kh)\left(k\cosh(kh)\sinh(\lambda h)-\lambda\cosh(\lambda h)\sinh(kh)\right)}\\
+&+ \frac{\left(-k^4+4k^2\lambda^2+\lambda^4-2k^2\left(k^2+\lambda^2\right)\cosh(2kh)\right)\sinh(\lambda h)}{2k(k^2-\lambda^2)\cosh(kh)\left(k\cosh(kh)\sinh(\lambda h)-\lambda\cosh(\lambda h)\sinh(kh)\right)}
+\end{split}
+\end{equation}
 
 <p>
-<a href="#orgff63610">Back to table of contents</a>
+Realising that \(k^2-\lambda^2=-s/\nu\), we can further simplify this expression and obtain
+<a class='org-ref-reference' href="#Cortelezzi1981">Cortelezzi1981</a> expression:
+</p>
+\begin{equation}
+\begin{split}
+\mathcal K(s) &= \frac{2\nu k}{s}\left(k-\lambda \tanh(k h)\right) \\
+& - \frac{\nu}{s}\frac{4\lambda k \sinh(kh)\left(ke^{-\lambda h}\left(k \cosh(kh) + \lambda \sinh(kh)\right)-\left(k^2+\lambda^2\right)\right)+\left(k^2+\lambda^2\right)^2\sinh(\lambda h)}{2k\cosh(kh)\left(k\cosh(kh)\sinh(\lambda h)-\lambda\cosh(\lambda h)\sinh(kh)\right)}
+\end{split}
+\end{equation}
+
+<p>
+<a href="#org0faaf20">Back to table of contents</a>
 </p>
 
 <p>
@@ -973,7 +1011,7 @@ From the general solution for \(\tilde\Omega\) we found earlier
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Clément &amp; Arnaud</p>
-<p class="date">Created: 2021-04-16 Fri 22:20</p>
+<p class="date">Created: 2021-04-20 Tue 23:27</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
