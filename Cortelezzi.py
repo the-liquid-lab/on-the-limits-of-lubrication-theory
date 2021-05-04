@@ -147,9 +147,9 @@ plotHeight(10, 0.001, 0.1, ax[0])
 plotHeight(0.01, 0.001, 0.5, ax[1])
 
 lines, labels = ax[-1].get_legend_handles_labels()
-fig.legend(lines, labels, loc = 'lower center', borderaxespad=-1., ncol=3)
+fig.legend(lines, labels, loc = 'lower center', borderaxespad=0.1, ncol=3)
 ax[0].set_ylabel('Relative amplitude')
-plt.tight_layout(pad=5.)
+plt.tight_layout(pad=2.)
 
 #%%
 ##Figure 2
