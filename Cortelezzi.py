@@ -1,11 +1,9 @@
-#!/usr/bin/env python
-# coding: utf-8
+# -*- coding: utf-8 -*-
+"""
+@author: Clément & Arnaud
+"""
 
-# ## Import
-
-# In[]:
-
-
+## Import
 import numpy as np
 
 from mpmath import mp
@@ -17,10 +15,7 @@ M_value = 32
 import matplotlib.pyplot as plt
 
 
-# ## Function and expression declarations
-
-# In[]:
-
+## Function and expression declarations
 
 #Declare the expressions of the kernel, A and eta
 def ker_sy (s, Oh, Bo, k, lbda):
@@ -54,29 +49,9 @@ def freeSurface(t, Oh, Bo, k):
 
 def vorti(t, z, Oh, Bo, k):
     return gwr(lambda s: vortiLaplace(s, z, Oh, Bo, k), t, M_value)
-    
-
-#Parameters figures
-plt.rcParams['text.usetex'] = True
-plt.rcParams['text.latex.preamble'] = r'\usepackage[squaren,Gray]{SIunits} \usepackage{nicefrac}'
-
-plt.rcParams['font.family'] = 'serif'
-plt.rcParams['font.serif'] = 'cm'
-#font size
-plt.rc('font', size=10)  # general font size
-plt.rc('axes', labelsize=10, titlesize=10)
-plt.rc('lines', markersize=8, markeredgewidth=0., linewidth=0.4)
-plt.rc('legend', frameon=False, fancybox=False, numpoints=1, markerscale=1, 
-       fontsize=10, handlelength=0.6, handletextpad=0.6, labelspacing=0.3)
-plt.rc('xtick',  labelsize=8, direction='in', bottom='true', top='true')
-plt.rc('ytick',  labelsize=8, direction='in', left='true', right='true')
-plt.rc('savefig', bbox='tight', transparent=True, dpi=300)    
 
 
-# ## Main function
-
-# In[]:
-
+## Main functions
 
 def solveEta(Ohnumb, Bonumb, knumb, nbOfrelax):
     Oh = mp.mpmathify(Ohnumb)
@@ -125,10 +100,47 @@ def solveOmega(Ohnumb, Bonumb, knumb, nbOfrelax, toI, z_all):
     return sampled_omega, sampled_omega_lub
 
 
-# # Relaxation time
+## Parameters figures
+plt.rcParams['text.usetex'] = True
+plt.rcParams['text.latex.preamble'] = r'\usepackage[squaren,Gray]{SIunits} \usepackage{nicefrac}'
 
-# In[]:
+plt.rcParams['font.family'] = 'serif'
+plt.rcParams['font.serif'] = 'cm'
+#font size
+plt.rc('font', size=10)  # general font size
+plt.rc('axes', labelsize=10, titlesize=10)
+plt.rc('lines', markersize=8, markeredgewidth=0., linewidth=0.4)
+plt.rc('legend', frameon=False, fancybox=False, numpoints=1, markerscale=1, 
+       fontsize=10, handlelength=0.6, handletextpad=0.6, labelspacing=0.3)
+plt.rc('xtick',  labelsize=8, direction='in', bottom='true', top='true')
+plt.rc('ytick',  labelsize=8, direction='in', left='true', right='true')
+plt.rc('savefig', bbox='tight', transparent=True, dpi=300) 
 
+#%%
+##Figure 1
+
+
+#%%
+##Figure 2
+
+
+#%%
+##Figure 3
+
+
+
+
+
+
+
+
+
+
+
+
+#%%
+
+## Relaxation time
 
 from scipy.optimize import curve_fit
 def decaying_sinusoid(t, om, k):
