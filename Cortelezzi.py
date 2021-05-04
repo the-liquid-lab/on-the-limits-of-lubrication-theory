@@ -118,9 +118,6 @@ plt.rc('savefig', bbox='tight', transparent=True, dpi=300)
 
 #%%
 ##Figure 1
-
-## Relaxation time
-
 from scipy.optimize import curve_fit
 def decaying_sinusoid(t, om, k, phi):
     return np.exp(- om * t)*np.cos(k * t + phi)
