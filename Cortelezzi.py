@@ -86,14 +86,15 @@ def plotHeight(Ohnumb, Bonumb, knumb, ax):
     om_lub = float((knumb**2*Bonumb+knumb**4)/(3*Ohnumb))
     om_0 = np.sqrt(abs((Bonumb+knumb**2)*knumb*np.tanh(knumb)))
     try:
-        root_denom = findroot(lambda s: denom (s, Ohnumb, Bonumb, knumb), om_lub)
+        root_denom = findroot(lambda s: denom (s, Ohnumb, Bonumb, knumb), om_lub, tol=1e-12, verbose=True)
     except ValueError:
-        root_denom = findroot(lambda s: denom (s, Ohnumb, Bonumb, knumb), j*om_0)
+        root_denom = findroot(lambda s: denom (s, Ohnumb, Bonumb, knumb), j*om_0, tol=1e-12, verbose=True)
     
     ax.set_title("Oh = " + str(Ohnumb) + ", k = " + str(knumb))
     ax.plot(sampled_t[::8],np.abs(sampled_eta[::8]), '.b', ms = 6., label = r'Numerical resolution')
     ax.plot(sampled_t, np.abs(decaying_sinusoid(sampled_t, float(-mp.re(root_denom/om_lub)), float(mp.im(root_denom/om_lub)))), 'red', label = 'Analytical resolution')
     ax.plot(sampled_t,sampled_eta_lub, 'green', label = 'Lubrication theory')
+    ax.plot(sampled_t, np.abs(np.exp(-2*Ohnumb*knumb**2*sampled_t/om_lub)*np.cos(np.sqrt(om_0**2-4*Ohnumb**2*knumb**4)/om_lub*sampled_t)))
     ax.set_xlabel('Time (in $\tau_{relax}$)')
     
 fig, ax = plt.subplots(ncols = 2, figsize=(8, 4))
