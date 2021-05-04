@@ -64,7 +64,7 @@ def solveEta(Ohnumb, Bonumb, knumb, nbOfrelax):
        
     #Time resolutions
     tau_relax = float(3*(Oh/(k**2*Bo+k**4)))
-    t_all = np.linspace(0.01, 1., 100) * nbOfrelax * abs(tau_relax)
+    t_all = np.linspace(0.0001, 1., 300) * nbOfrelax * abs(tau_relax)
     
     #solve the equation on eta with Cortelezzi model and lubrication
     sampled_t = abs(t_all/tau_relax)
@@ -83,7 +83,7 @@ def solveOmega(Ohnumb, Bonumb, knumb, nbOfrelax, toI, z_all):
        
     #Spatial and time resolutions
     tau_relax = abs(float(3*(Oh/(k**2*Bo+k**4))))
-    t_all = np.linspace(0.01, 1., 200) * nbOfrelax * tau_relax
+    t_all = np.linspace(0.0001, 1., 300) * nbOfrelax * tau_relax
     timesOfInterest = np.array(toI)*tau_relax
 
     #determine the maximal value of vorticity
@@ -118,7 +118,35 @@ plt.rc('savefig', bbox='tight', transparent=True, dpi=300)
 
 #%%
 ##Figure 1
+from scipy.optimize import curve_fit
+def decaying_sinusoid(t, om, k, phi):
+    return np.exp(- om * t)*np.cos(k * t + phi)
 
+def plotHeight(Ohnumb, Bonumb, knumb, ax):
+    sampled_t, sampled_eta, sampled_eta_lub = solveEta(Ohnumb, Bonumb, knumb, 4.*max(1.,knumb**2/Ohnumb))
+    try:
+        popt, pcov = curve_fit(decaying_sinusoid, sampled_t,sampled_eta, p0=(min(Ohnumb/knumb**2, 0.1), 0., 0.), bounds=(0,[1,np.inf, 2*np.pi]))
+        om_cort, k, phi = popt
+    except RuntimeError :
+        om_cort = -1
+        
+    
+    ax.set_title("Oh = " + str(Ohnumb) + ", k = " + str(knumb))
+    ax.plot(sampled_t[::8],np.abs(sampled_eta[::8]), '.b', ms = 6., label = r'Numerical resolution')
+    # decaying = np.exp(- om_cort * sampled_t)
+    # ax.plot(sampled_t,decaying, 'grey', label = 'Enveloppe')
+    ax.plot(sampled_t, np.abs(decaying_sinusoid(sampled_t, om_cort, k, phi)), 'red', label = 'Analytical resolution')
+    ax.plot(sampled_t,sampled_eta_lub, 'green', label = 'Lubrication theory')
+    ax.set_xlabel('Time (in $\tau_{relax}$)')
+    
+fig, ax = plt.subplots(ncols = 2, figsize=(8, 4))
+plotHeight(10, 0.001, 0.1, ax[0])
+plotHeight(0.01, 0.001, 0.5, ax[1])
+
+lines, labels = ax[-1].get_legend_handles_labels()
+fig.legend(lines, labels, loc = 'lower center', borderaxespad=0.1, ncol=3)
+ax[0].set_ylabel('Relative amplitude')
+plt.tight_layout(pad=2.)
 
 #%%
 ##Figure 2
