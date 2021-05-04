@@ -6,18 +6,19 @@
 ## Import
 import numpy as np
 
-from mpmath import mp
+from mpmath import mp, findroot, j
 from mpmath import cosh, sinh, tanh, exp, sqrt
 
 from gwr_inversion import gwr #The package must be installed through "conda install gwr_inversion"
 M_value = 32
 
 import matplotlib.pyplot as plt
-
-
 ## Function and expression declarations
 
-#Declare the expressions of the kernel, A and eta
+def decaying_sinusoid(t, om_dec, om_osc):
+    return np.exp(- om_dec * t)*np.cos(om_osc * t)
+
+#Declare the expressions of the kernel and eta
 def ker_sy (s, Oh, Bo, k, lbda):
     return 2*Oh/s*k*(k-lbda*tanh(k)) - Oh/s*(4*lbda*k*sinh(k)*(k*exp(-lbda)
             *(k*cosh(k)+lbda*sinh(k))-(k**2+lbda**2))+(k**2+lbda**2)**2
@@ -25,10 +26,6 @@ def ker_sy (s, Oh, Bo, k, lbda):
             
 def eta_sy (s, Oh, k, omega2, Kern):
     return 1/s*(1-omega2/(s**2+4*Oh*k**2*s+omega2+2*Oh*k**2*s*Kern))
-def ALaplace_sy (s, Oh, k, lbda, omega2, z, Kern):
-    return 1/sinh(lbda)*(-(-2*k*lbda*sinh(k)+(k**2+lbda**2)*sinh(lbda))
-             *sinh(lbda*z)/(k*(-lbda*cosh(lbda)*sinh(k)+k*cosh(k)*sinh(lbda)))
-             +2*sinh(lbda*(1+z)))*(-omega2/(s**2+4*Oh*k**2*s+omega2+2*Oh*k**2*s*Kern))
 
 #Reduce the expressions as functions of s and of the parameters Oh, Bo and k
 def freeSurfaceLaplace(s, Oh, Bo, k):
@@ -37,30 +34,21 @@ def freeSurfaceLaplace(s, Oh, Bo, k):
     ker = ker_sy (s, Oh, Bo, k, lbda)
     return eta_sy(s, Oh, k, omega2, ker)
 
-def vortiLaplace(s, z, Oh, Bo, k):
+def denom (s, Oh, Bo, k):
     lbda = sqrt(k**2 + s/Oh)
     omega2 = (Bo+k**2)*k*tanh(k)
     ker = ker_sy (s, Oh, Bo, k, lbda)
-    return k*ALaplace_sy (s, Oh, k, lbda, omega2, z, ker)
+    return (s**2+4*Oh*k**2*s+omega2+2*Oh*k**2*s*ker)
 
 #Inverse the Laplace transfrom and return functions of t and of the parameters Oh, Bo and k
 def freeSurface(t, Oh, Bo, k):
     return gwr(lambda s: freeSurfaceLaplace(s, Oh, Bo, k), t, M_value)
 
-def vorti(t, z, Oh, Bo, k):
-    return gwr(lambda s: vortiLaplace(s, z, Oh, Bo, k), t, M_value)
-
-
 ## Main functions
-
 def solveEta(Ohnumb, Bonumb, knumb, nbOfrelax):
     Oh = mp.mpmathify(Ohnumb)
     Bo = mp.mpmathify(Bonumb)
     k = mp.mpmathify(knumb) 
-    
-    #Resolution functions with numerical Laplace Transform GWR. Oh_, Bo_ and k_ must have been defined before
-    def eta(t):
-        return float(freeSurface(t, Oh, Bo, k))
        
     #Time resolutions
     tau_relax = float(3*(Oh/(k**2*Bo+k**4)))
@@ -68,36 +56,10 @@ def solveEta(Ohnumb, Bonumb, knumb, nbOfrelax):
     
     #solve the equation on eta with Cortelezzi model and lubrication
     sampled_t = abs(t_all/tau_relax)
-    sampled_eta = [eta(t) for t in t_all]
+    sampled_eta = [float(freeSurface(t, Oh, Bo, k)) for t in t_all]
     sampled_eta_lub = [np.exp(-t/tau_relax) for t in t_all]
     
     return sampled_t, sampled_eta, sampled_eta_lub
-
-def solveOmega(Ohnumb, Bonumb, knumb, nbOfrelax, toI, z_all):
-    Oh = mp.mpmathify(Ohnumb)
-    Bo = mp.mpmathify(Bonumb)
-    k = mp.mpmathify(knumb) 
-    
-    def omega(t, z_):    
-        return float(vorti(t, z_, Oh, Bo, k))
-       
-    #Spatial and time resolutions
-    tau_relax = abs(float(3*(Oh/(k**2*Bo+k**4))))
-    t_all = np.linspace(0.0001, 1., 300) * nbOfrelax * tau_relax
-    timesOfInterest = np.array(toI)*tau_relax
-
-    #determine the maximal value of vorticity
-    vortmax = [abs(omega(t, mp.mpmathify(z_all[0]))) for t in t_all]
-    maxv = max(np.array(vortmax))
-    
-    #solve the equation on omega with Cortelezzi model and lubrication
-    sampled_omega = np.array([[2*i+omega(timesOfInterest[i], mp.mpmathify(z))/maxv
-        for i in range(len(timesOfInterest))] for z in z_all])
-    sampled_omega_lub = np.array([[2*i+float(k**3/Oh+k*Bo/Oh)*(-z)
-        *np.exp(-timesOfInterest[i]/tau_relax)/maxv
-        for i in range(len(timesOfInterest))] for z in z_all])
-    
-    return sampled_omega, sampled_omega_lub
 
 
 ## Parameters figures
@@ -118,24 +80,19 @@ plt.rc('savefig', bbox='tight', transparent=True, dpi=300)
 
 #%%
 ##Figure 1
-from scipy.optimize import curve_fit
-def decaying_sinusoid(t, om, k, phi):
-    return np.exp(- om * t)*np.cos(k * t + phi)
-
 def plotHeight(Ohnumb, Bonumb, knumb, ax):
     sampled_t, sampled_eta, sampled_eta_lub = solveEta(Ohnumb, Bonumb, knumb, 4.*max(1.,knumb**2/Ohnumb))
+
+    om_lub = float((knumb**2*Bonumb+knumb**4)/(3*Ohnumb))
+    om_0 = np.sqrt(abs((Bonumb+knumb**2)*knumb*np.tanh(knumb)))
     try:
-        popt, pcov = curve_fit(decaying_sinusoid, sampled_t,sampled_eta, p0=(min(Ohnumb/knumb**2, 0.1), 0., 0.), bounds=(0,[1,np.inf, 2*np.pi]))
-        om_cort, k, phi = popt
-    except RuntimeError :
-        om_cort = -1
-        
+        root_denom = findroot(lambda s: denom (s, Ohnumb, Bonumb, knumb), om_lub)
+    except ValueError:
+        root_denom = findroot(lambda s: denom (s, Ohnumb, Bonumb, knumb), j*om_0)
     
     ax.set_title("Oh = " + str(Ohnumb) + ", k = " + str(knumb))
     ax.plot(sampled_t[::8],np.abs(sampled_eta[::8]), '.b', ms = 6., label = r'Numerical resolution')
-    # decaying = np.exp(- om_cort * sampled_t)
-    # ax.plot(sampled_t,decaying, 'grey', label = 'Enveloppe')
-    ax.plot(sampled_t, np.abs(decaying_sinusoid(sampled_t, om_cort, k, phi)), 'red', label = 'Analytical resolution')
+    ax.plot(sampled_t, np.abs(decaying_sinusoid(sampled_t, float(-mp.re(root_denom/om_lub)), float(mp.im(root_denom/om_lub)))), 'red', label = 'Analytical resolution')
     ax.plot(sampled_t,sampled_eta_lub, 'green', label = 'Lubrication theory')
     ax.set_xlabel('Time (in $\tau_{relax}$)')
     
@@ -168,6 +125,48 @@ plt.tight_layout(pad=2.)
 
 #%%
 
+
+def ALaplace_sy (s, Oh, k, lbda, omega2, z, Kern):
+    return 1/sinh(lbda)*(-(-2*k*lbda*sinh(k)+(k**2+lbda**2)*sinh(lbda))
+             *sinh(lbda*z)/(k*(-lbda*cosh(lbda)*sinh(k)+k*cosh(k)*sinh(lbda)))
+             +2*sinh(lbda*(1+z)))*(-omega2/(s**2+4*Oh*k**2*s+omega2+2*Oh*k**2*s*Kern))
+
+def vortiLaplace(s, z, Oh, Bo, k):
+    lbda = sqrt(k**2 + s/Oh)
+    omega2 = (Bo+k**2)*k*tanh(k)
+    ker = ker_sy (s, Oh, Bo, k, lbda)
+    return k*ALaplace_sy (s, Oh, k, lbda, omega2, z, ker)
+
+
+def vorti(t, z, Oh, Bo, k):
+    return gwr(lambda s: vortiLaplace(s, z, Oh, Bo, k), t, M_value)
+
+def solveOmega(Ohnumb, Bonumb, knumb, nbOfrelax, toI, z_all):
+    Oh = mp.mpmathify(Ohnumb)
+    Bo = mp.mpmathify(Bonumb)
+    k = mp.mpmathify(knumb) 
+    
+    def omega(t, z_):    
+        return float(vorti(t, z_, Oh, Bo, k))
+       
+    #Spatial and time resolutions
+    tau_relax = abs(float(3*(Oh/(k**2*Bo+k**4))))
+    t_all = np.linspace(0.0001, 1., 300) * nbOfrelax * tau_relax
+    timesOfInterest = np.array(toI)*tau_relax
+
+    #determine the maximal value of vorticity
+    vortmax = [abs(omega(t, mp.mpmathify(z_all[0]))) for t in t_all]
+    maxv = max(np.array(vortmax))
+    
+    #solve the equation on omega with Cortelezzi model and lubrication
+    sampled_omega = np.array([[2*i+omega(timesOfInterest[i], mp.mpmathify(z))/maxv
+        for i in range(len(timesOfInterest))] for z in z_all])
+    sampled_omega_lub = np.array([[2*i+float(k**3/Oh+k*Bo/Oh)*(-z)
+        *np.exp(-timesOfInterest[i]/tau_relax)/maxv
+        for i in range(len(timesOfInterest))] for z in z_all])
+    
+    return sampled_omega, sampled_omega_lub
+
 ## Relaxation time
 
 from scipy.optimize import curve_fit
@@ -187,7 +186,7 @@ def plotHeight(Ohnumb, Bonumb, knumb, ax):
     dacaying = np.exp(-om_cort * sampled_t)
     enveloppe = np.abs(hilbert(sampled_eta))
     
-    om_lub = float((knumb**2*Bonumb+knumb**4)/3*Ohnumb)
+    om_lub = float((knumb**2*Bonumb+knumb**4)/(3*Ohnumb))
     om_0 = np.sqrt(abs((Bonumb+knumb**2)*knumb*np.tanh(knumb)))
     om_diff = knumb**2/Ohnumb
     
