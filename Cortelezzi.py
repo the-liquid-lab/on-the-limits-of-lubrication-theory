@@ -41,27 +41,18 @@ def denom (s, Oh, Bo, k):
     return (s**2+4*Oh*k**2*s+omega2+2*Oh*k**2*s*ker)
 
 #Inverse the Laplace transfrom and return functions of t and of the parameters Oh, Bo and k
-def freeSurface(t, Oh, Bo, k):
-    return gwr(lambda s: freeSurfaceLaplace(s, Oh, Bo, k), t, M_value)
-
-## Main functions
-def solveEta(Ohnumb, Bonumb, knumb, nbOfrelax):
+def freeSurface(t, Ohnumb, Bonumb, knumb):
     Oh = mp.mpmathify(Ohnumb)
     Bo = mp.mpmathify(Bonumb)
     k = mp.mpmathify(knumb) 
-       
-    #Time resolutions
-    tau_relax = float(3*(Oh/(k**2*Bo+k**4)))
-    t_all = np.linspace(0.0001, 1., 300) * nbOfrelax * abs(tau_relax)
-    
-    #solve the equation on eta with Cortelezzi model and lubrication
-    sampled_t = abs(t_all/tau_relax)
-    sampled_eta = [float(freeSurface(t, Oh, Bo, k)) for t in t_all]
-    sampled_eta_lub = [np.exp(-t/tau_relax) for t in t_all]
-    
-    return sampled_t, sampled_eta, sampled_eta_lub
+    return gwr(lambda s: freeSurfaceLaplace(s, Oh, Bo, k), t, M_value)
 
+def om_lub(Oh, Bo, k):
+    return float((k**2*Bo+k**4)/(3*Oh))
 
+def pulsation(Bo, k):
+    return np.sqrt(np.abs(Bo + k**2)*k*np.tanh(k))
+    
 ## Parameters figures
 plt.rcParams['text.usetex'] = True
 plt.rcParams['text.latex.preamble'] = r'\usepackage[squaren,Gray]{SIunits} \usepackage{nicefrac}'
@@ -80,24 +71,30 @@ plt.rc('savefig', bbox='tight', transparent=True, dpi=300)
 
 #%%
 ##Figure 1
-def plotHeight(Ohnumb, Bonumb, knumb, ax):
-    sampled_t, sampled_eta, sampled_eta_lub = solveEta(Ohnumb, Bonumb, knumb, 4.*max(1.,knumb**2/Ohnumb))
-
-    om_lub = float((knumb**2*Bonumb+knumb**4)/(3*Ohnumb))
-    om_0 = np.sqrt(abs((Bonumb+knumb**2)*knumb*np.tanh(knumb)))
-    try:
-        root_denom = findroot(lambda s: denom (s, Ohnumb, Bonumb, knumb), om_lub)
-    except ValueError:
-        root_denom = findroot(lambda s: denom (s, Ohnumb, Bonumb, knumb), j*om_0)
+def plotHeight(Oh, Bo, k, ax):
     
-    ax.set_title("Oh = " + str(Ohnumb) + ", k = " + str(knumb))
+    nbOfrelax = 4.*max(1.,k**2/Oh)
+    om_relax = om_lub(Oh, Bo, k)
+    om_0 = pulsation(Bo, k)
+    
+    t_all = np.linspace(0.0001, 1., 300) * nbOfrelax * abs(1./om_relax)
+    sampled_t = abs(t_all*om_relax)
+    sampled_eta = [float(freeSurface(t, Oh, Bo, k)) for t in t_all]
+    sampled_eta_lub = [np.exp(-t*om_relax) for t in t_all]
+    
+    try:
+        root_denom = findroot(lambda s: denom (s, Oh, Bo, k), om_relax)
+    except ValueError:
+        root_denom = findroot(lambda s: denom (s, Oh, Bo, k), j*om_0)
+    
+    ax.set_title("Oh = " + str(Oh) + ", k = " + str(k))
     ax.plot(sampled_t[::8],np.abs(sampled_eta[::8]), '.b', ms = 6., label = r'Numerical resolution')
-    ax.plot(sampled_t, np.abs(decaying_sinusoid(sampled_t, float(-mp.re(root_denom/om_lub)), float(mp.im(root_denom/om_lub)))), 'red', label = 'Analytical resolution')
+    ax.plot(sampled_t, np.abs(decaying_sinusoid(sampled_t, float(-mp.re(root_denom/om_relax)), float(mp.im(root_denom/om_relax)))), 'red', label = 'Analytical resolution')
     ax.plot(sampled_t,sampled_eta_lub, 'green', label = 'Lubrication theory')
     ax.set_xlabel('Time (in $\tau_{relax}$)')
     
 fig, ax = plt.subplots(ncols = 2, figsize=(8, 4))
-plotHeight(10, 0.001, 0.1, ax[0])
+plotHeight(10., 0.001, 0.1, ax[0])
 plotHeight(0.01, 0.001, 0.5, ax[1])
 
 lines, labels = ax[-1].get_legend_handles_labels()
@@ -111,6 +108,56 @@ plt.tight_layout(pad=2.)
 
 #%%
 ##Figure 3
+
+#%%
+##Figure 4
+from scipy import stats
+
+def growth_rate(Oh, Bo, k):
+    t_all = np.linspace(0.001, 25., 50)/k
+    sampled_eta = [float(freeSurface(t, Oh, Bo, k)) for t in t_all]
+    
+    reg = stats.linregress(t_all[20:], np.log(sampled_eta[20:]))
+    if (reg[2]<0.999):
+        print(Oh, k, reg[2])
+        plt.figure()
+        plt.xlabel(r'Time (in $\tau_{relax}$ units)')
+        plt.ylabel("Relative wave amplitude") 
+        plt.semilogy(t_all*abs(om_lub(Oh, Bo, k)), sampled_eta, 'black', label = r'Cortelezzi \& Prosperetti')
+        plt.semilogy(t_all*abs(om_lub(Oh, Bo, k)), np.exp(reg[1] + t_all*reg[0]), 'gray', label = 'Regression')
+    return reg[0]
+
+Bo = -0.5
+Oh_list = [0.01, 1.]
+k_list = np.linspace(0.005, 0.999, 100) * np.sqrt(-Bo)
+k_list2 = np.linspace(0.005, 1., 100) * np.sqrt(-Bo)
+
+om_gwr_Oh = []
+om_lub_Oh = []
+for Oh in Oh_list:
+    om_gwr_Oh.append([growth_rate(Oh, Bo, k) for k in k_list])
+    om_lub_Oh.append([np.abs(om_lub(Oh, Bo, k)) for k in k_list2])
+om_potential = [pulsation(Bo, k) for k in k_list]
+Colors = ['orange', 'green', 'black']
+
+plt.figure()
+plt.xlabel(r'k')
+plt.ylabel(r'$\omega$')
+plt.loglog(k_list, om_potential, lw=1.0, alpha = 0.4, color = Colors[-1], label = r'Potential')
+for Oh, om_gwr, om_lub, c in zip(Oh_list, om_gwr_Oh, om_lub_Oh, Colors):
+    plt.plot(k_list, np.abs(om_gwr), '--', lw=1.0, color = c, alpha = 0.8, label = r'Cortelezzi resolution, Oh = ' + str(Oh))
+    plt.plot(k_list2, om_lub, '-', lw=1.0, alpha = 0.4, color = c, label = 'Lubrication, Oh = ' + str(Oh))
+plt.legend()
+plt.tight_layout(pad=0.)
+
+
+
+
+
+
+
+
+
 
 
 
@@ -290,36 +337,17 @@ def plotComparison(Ohnumb, Bonumb, knumb, nbOfrelax, toI = [0.05, 0.1]):
 
     plt.savefig('Oh_' + str(Ohnumb) + '_k_' + str(knumb) + '_omg.png')
 
-
-# ### Oh = 10, Bo = 0.001, k = 0.1
-
 # In[]:
-
-
+# ### Oh = 10, Bo = 0.001, k = 0.1
 plotComparison(10, 0.001, 0.1, 1)                   # oilly film 
 
-
 # ### Oh = 0.01, Bo = 0.001, k = 0.1
-
-# In[]:
-
-
 plotComparison(0.01, 0.001, 0.1, 1)                 # waterborne coating
 
-
 # ### Oh = 0.005, Bo = 0.001, k = 0.1
-
-# In[]:
-
-
 plotComparison(0.005, 0.001, 0.1, 6, [0.3, 0.6])    # oscillations
 
-
 # # Feuilletage
-
-# In[]:
-
-
 plotComparison(0.005, 0.001, 2., 2400, [1800, 2400])
 plotComparison(0.005, 0.001, 1.5, 1800, [1200, 1800])
 plotComparison(1e-4, 0.001, 2., 1./6.25e-6, [1./6.25e-6]) #tau = (Oh/k**4)
@@ -350,7 +378,7 @@ k = 100.
 tau = (Oh/k**4)
 Feuilletage(Oh, 0.001, k, 5.e-3/tau, [5.25e-3/tau])
  
-sampled_t, sampled_eta, sampled_eta_lub =     solveEta(0.01, -0.03, 0.05, 3.)
+sampled_t, sampled_eta, sampled_eta_lub = solveEta(0.01, -0.03, 0.05, 3.)
 plt.rc('figure')
 plt.rc('legend', loc='best')
 
@@ -363,76 +391,3 @@ plt.semilogy(sampled_t,sampled_eta, 'black', label = r'Cortelezzi \& Prosperetti
 plt.semilogy(sampled_t,sampled_eta_lub, 'gray', label = 'Lubricaion theory')
 plt.legend()
 plt.tight_layout(pad=0.)
-
-
-# # Rayleigh-Taylor
-
-# In[]:
-
-
-k_list = [0.001, 0.008, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.17, 0.173]
-om_list=[]
-om_lub_list =[]
-om_cort_lub = []
-for k in k_list:
-    Ohnumb, Bonumb, knumb, nbOfrelax, toI = 0.01, -0.03, k, 3., [3.]
-    
-    sampled_t, sampled_eta, sampled_eta_lub =         solveEta(Ohnumb, Bonumb, knumb, nbOfrelax)
-        
-    om, a0 = np.polyfit(sampled_t[20:], np.log(sampled_eta[20:]), 1)
-    
-    tau_relax = abs(float(3*(Ohnumb/(knumb**2*Bonumb+knumb**4))))
-    om_list.append(om/tau_relax)
-    om_lub_list.append(1./tau_relax)
-    om_cort_lub.append(np.sqrt(abs((Bonumb+knumb**2)*knumb*np.tanh(knumb))))
-    ### Figures ###
-    if True:
-        plt.rc('figure', figsize=[6/2.54, 6/2.54])
-        plt.figure()
-        plt.xlabel(r'Time (in $\tau_{relax}$ units)')
-        plt.ylabel("Relative wave amplitude")
-         #   plt.xlim([0,nbOfrelax])
-         #   plt.ylim([1,10.])
-        plt.rc('legend', loc='best')
-        
-        plt.semilogy(sampled_t,sampled_eta, 'black', label = r'Cortelezzi \& Prosperetti')
-#        plt.semilogy(sampled_t,sampled_eta_lub, 'gray', label = 'Lubricaion theory')
-        plt.semilogy(sampled_t,np.exp(a0 + sampled_t*om), 'gray', label = 'Lubricaion theory')
-        plt.legend()
-        plt.savefig('Oh_' + str(Ohnumb) + '_k_' + str(knumb) + '_eta.png')
-        plt.tight_layout(pad=0.)
-        
-        plt.savefig('Oh_' + str(Ohnumb) + '_k_' + str(knumb) + '_omg.png')
-
-
-  
-plt.figure()
-plt.xlabel(r'k')
-plt.ylabel(r'$\omega$')
-plt.plot(k_list, om_cort_lub, label = r'Potential')
-plt.plot(k_list, om_lub_list, label = r'Lubrication')
-plt.plot(k_list, om_list, label = r'Cortelezzi resolution')
-plt.legend()
-plt.tight_layout(pad=0.)
-
-
-# ## Rayleigh-Taylor : different periods
-
-# In[]:
-
-
-knumb = 10**np.linspace(-3,0,1000)
-Ohnumb, Bonumb, nbOfrelax, toI = 0.01, -0.03, 3., [3.]
-
-tau_relax = np.abs(3*(Ohnumb/(knumb**2*Bonumb+knumb**4)))
-om_lub_list = (1./tau_relax)
-om_cort_lub = (np.sqrt(np.abs((Bonumb+knumb**2)*knumb*np.tanh(knumb))))
-
-plt.figure()
-plt.xlabel(r'k')
-plt.ylabel(r'$\omega$')
-plt.loglog(knumb, om_cort_lub, label = r'Potential')
-plt.loglog(knumb, om_lub_list, label = r'Lubrication')
-plt.plot(k_list, om_list, label = r'Cortelezzi resolution')
-plt.legend()
-
