@@ -5,14 +5,16 @@
 
 ## Import
 import numpy as np
+import matplotlib.pyplot as plt
 
 from mpmath import mp, findroot, j
 from mpmath import cosh, sinh, tanh, exp, sqrt
+from scipy.optimize import curve_fit
 
 from gwr_inversion import gwr #The package must be installed through "conda install gwr_inversion"
 M_value = 32
 
-import matplotlib.pyplot as plt
+
 ## Function and expression declarations
 
 def decaying_sinusoid(t, om_dec, om_osc):
@@ -47,12 +49,38 @@ def freeSurface(t, Ohnumb, Bonumb, knumb):
     k = mp.mpmathify(knumb) 
     return gwr(lambda s: freeSurfaceLaplace(s, Oh, Bo, k), t, M_value)
 
+#Calculation of the different growth rates and pulsations
 def om_lub(Oh, Bo, k):
-    return float((k**2*Bo+k**4)/(3*Oh))
+    return (k**2*Bo+k**4)/(3*Oh)
 
 def pulsation(Bo, k):
     return np.sqrt(np.abs(Bo + k**2)*k*np.tanh(k))
-    
+
+def om_analytic(Oh, Bo, k):
+    try:
+        root_denom = findroot(lambda s: denom (s, Oh, Bo, k), om_lub(Oh, Bo, k))
+    except ValueError:
+        root_denom = findroot(lambda s: denom (s, Oh, Bo, k), j*pulsation(Bo, k))
+    return root_denom
+
+def om_numerical(Oh, Bo, k, full = False):
+    om_relax = om_lub(Oh, Bo, k)
+    om_0 = pulsation(Bo, k)
+        
+    t_all = np.linspace(0.0001, 1., 100) * 5. * max(abs(1./om_relax), 3./om_0)
+    sampled_eta = [float(freeSurface(t, Oh, Bo, k)) for t in t_all] 
+    try:
+        popt, pcov = curve_fit(decaying_sinusoid, t_all, sampled_eta, p0=(min(om_relax,0.5), om_0*(om_relax > 1.)), bounds=(0,np.inf))
+        om_num = popt[0]
+        om_osc = popt[1]
+    except RuntimeError :
+        om_num = om_osc = -1
+        
+    if full:
+        return om_num, om_osc, t_all, sampled_eta
+    else:
+        return [om_num, om_osc]
+
 ## Parameters figures
 plt.rcParams['text.usetex'] = True
 plt.rcParams['text.latex.preamble'] = r'\usepackage[squaren,Gray]{SIunits} \usepackage{nicefrac}'
@@ -71,25 +99,21 @@ plt.rc('savefig', bbox='tight', transparent=True, dpi=300)
 
 #%%
 ##Figure 1
+#Comparison between lubrication, analytical and numerical results for 2 different situations : oscillations and relaxation
 def plotHeight(Oh, Bo, k, ax):
     
-    nbOfrelax = 4.*max(1.,k**2/Oh)
     om_relax = om_lub(Oh, Bo, k)
     om_0 = pulsation(Bo, k)
+    om_ana = om_analytic(Oh, Bo, k)/om_relax
     
-    t_all = np.linspace(0.0001, 1., 300) * nbOfrelax * abs(1./om_relax)
+    t_all = np.linspace(0.0001, 1., 300) * max(abs(5./om_relax), 10./om_0)
     sampled_t = abs(t_all*om_relax)
-    sampled_eta = [float(freeSurface(t, Oh, Bo, k)) for t in t_all]
-    sampled_eta_lub = [np.exp(-t*om_relax) for t in t_all]
-    
-    try:
-        root_denom = findroot(lambda s: denom (s, Oh, Bo, k), om_relax)
-    except ValueError:
-        root_denom = findroot(lambda s: denom (s, Oh, Bo, k), j*om_0)
+    sampled_eta = [float(freeSurface(t, Oh, Bo, k)) for t in t_all[::8]]
+    sampled_eta_lub = np.exp(-t_all*om_relax)
     
     ax.set_title("Oh = " + str(Oh) + ", k = " + str(k))
-    ax.plot(sampled_t[::8],np.abs(sampled_eta[::8]), '.b', ms = 6., label = r'Numerical resolution')
-    ax.plot(sampled_t, np.abs(decaying_sinusoid(sampled_t, float(-mp.re(root_denom/om_relax)), float(mp.im(root_denom/om_relax)))), 'red', label = 'Analytical resolution')
+    ax.plot(sampled_t[::8],np.abs(sampled_eta), '.b', ms = 6., label = r'Numerical resolution')
+    ax.plot(sampled_t, np.abs(decaying_sinusoid(sampled_t, float(-mp.re(om_ana)), float(mp.im(om_ana)))), 'red', label = 'Analytical resolution')
     ax.plot(sampled_t,sampled_eta_lub, 'green', label = 'Lubrication theory')
     ax.set_xlabel('Time (in $\tau_{relax}$)')
     
@@ -105,12 +129,68 @@ plt.tight_layout(pad=2.)
 #%%
 ##Figure 2
 
+#%%
+##Figure 3_visu
+# Not for the article : vue of the curve-fitting and comparison with lubrication for different k, Oh.
+def plotGrowtRate(Oh, Bo, k, ax):    
+    om_corte, pulse, t_all, sampled_eta = om_numerical(Oh, Bo, k, True)
+    om_relax = om_lub(Oh, Bo, k)
+    sampled_t = abs(t_all*om_relax)
+
+    ax.set_title(om_corte)
+    ax.plot(sampled_t, np.abs(sampled_eta), 'black', label = r'Numerical resolution')
+    ax.plot(sampled_t, np.exp(- t_all * om_relax), 'grey', label = 'Lubricaion theory')
+    ax.plot(sampled_t, np.exp(- t_all * om_corte), 'red', label = 'Decaying')
+    ax.set_ylim([0,1])
+
+Oh = np.logspace(-4, -3, 6)
+#Oh = np.logspace(-4, 1, 4)
+#k = np.logspace(2, -2, 4)
+k = np.array([0.174333, 0.126896])
+fig, ax = plt.subplots(ncols = len(Oh), nrows = len(k), figsize=(8, 8))
+[plotGrowtRate(Oh[j], 0.001, k[i], ax[i,j]) for i in range(len(k)) for j in range(len(Oh))]
 
 #%%
 ##Figure 3
+# Relative error of different models compare to the numerical results.
+Oh_list = np.logspace(-4, 1, 30)
+k_list = np.logspace(-2, 2, 30)
+Bo = 0.001
+  
+Oh = np.array([[Oh for Oh in Oh_list] for k in k_list])
+k = np.array([[k for Oh in Oh_list] for k in k_list])
+
+if True:
+    om_num = np.array([[om_numerical(Oh, Bo, k) for Oh in Oh_list] for k in k_list])
+    np.save('fig3_om_num',om_num)
+else:
+    om_num = np.load('fig3_om_num.npy')
+
+om_relax = np.array([[om_lub(Oh, Bo, k) for Oh in Oh_list] for k in k_list])
+om_0 = np.array([[pulsation(Bo, k) for Oh in Oh_list] for k in k_list])
+om_diff = k**2/Oh
+Stokes = 2*Oh*k**2      #Stokes pour grand k petit Oh
+
+model = om_0        # Choose the comparison
+num = om_num[:,:,1] # 0 for relaxation, 1 for oscillation
+
+err_model = np.abs(model/num-1)
+err_model *= (err_model < 0.5)
+
+plt.figure()
+plt.contourf(Oh_list, k_list, np.log10(err_model), cmap='RdGy');
+plt.xscale('log')
+plt.yscale('log')
+plt.plot(Oh_list,np.sqrt(Oh_list), linewidth = 2.)
+cbar = plt.colorbar();
+ctks = [-2, -1, 0]
+cbar.set_ticks(ctks)
+ctkls = ["$10^{%d}$"%(v) for v in ctks]
+cbar.set_ticklabels(ctkls)
 
 #%%
-##Figure 4
+##Figure 4 
+#Rayleigh-Taylor
 from scipy import stats
 
 def growth_rate(Oh, Bo, k):
@@ -161,134 +241,64 @@ plt.tight_layout(pad=0.)
 
 
 
+#%%
 
+# def ALaplace_sy (s, Oh, k, lbda, omega2, z, Kern):
+#     return 1/sinh(lbda)*(-(-2*k*lbda*sinh(k)+(k**2+lbda**2)*sinh(lbda))
+#              *sinh(lbda*z)/(k*(-lbda*cosh(lbda)*sinh(k)+k*cosh(k)*sinh(lbda)))
+#              +2*sinh(lbda*(1+z)))*(-omega2/(s**2+4*Oh*k**2*s+omega2+2*Oh*k**2*s*Kern))
 
+# def vortiLaplace(s, z, Oh, Bo, k):
+#     lbda = sqrt(k**2 + s/Oh)
+#     omega2 = (Bo+k**2)*k*tanh(k)
+#     ker = ker_sy (s, Oh, Bo, k, lbda)
+#     return k*ALaplace_sy (s, Oh, k, lbda, omega2, z, ker)
 
+# def vorti(t, z, Oh, Bo, k):
+#     return gwr(lambda s: vortiLaplace(s, z, Oh, Bo, k), t, M_value)
+# def solveOmega(Ohnumb, Bonumb, knumb, nbOfrelax, toI, z_all):
+#     Oh = mp.mpmathify(Ohnumb)
+#     Bo = mp.mpmathify(Bonumb)
+#     k = mp.mpmathify(knumb) 
+    
+#     def omega(t, z_):    
+#         return float(vorti(t, z_, Oh, Bo, k))
+       
+#     #Spatial and time resolutions
+#     tau_relax = abs(float(3*(Oh/(k**2*Bo+k**4))))
+#     t_all = np.linspace(0.0001, 1., 300) * nbOfrelax * tau_relax
+#     timesOfInterest = np.array(toI)*tau_relax
 
-
-
-
-
+#     #determine the maximal value of vorticity
+#     vortmax = [abs(omega(t, mp.mpmathify(z_all[0]))) for t in t_all]
+#     maxv = max(np.array(vortmax))
+    
+#     #solve the equation on omega with Cortelezzi model and lubrication
+#     sampled_omega = np.array([[2*i+omega(timesOfInterest[i], mp.mpmathify(z))/maxv
+#         for i in range(len(timesOfInterest))] for z in z_all])
+#     sampled_omega_lub = np.array([[2*i+float(k**3/Oh+k*Bo/Oh)*(-z)
+#         *np.exp(-timesOfInterest[i]/tau_relax)/maxv
+#         for i in range(len(timesOfInterest))] for z in z_all])
+    
+#     return sampled_omega, sampled_omega_lub
 
 #%%
 
-
-def ALaplace_sy (s, Oh, k, lbda, omega2, z, Kern):
-    return 1/sinh(lbda)*(-(-2*k*lbda*sinh(k)+(k**2+lbda**2)*sinh(lbda))
-             *sinh(lbda*z)/(k*(-lbda*cosh(lbda)*sinh(k)+k*cosh(k)*sinh(lbda)))
-             +2*sinh(lbda*(1+z)))*(-omega2/(s**2+4*Oh*k**2*s+omega2+2*Oh*k**2*s*Kern))
-
-def vortiLaplace(s, z, Oh, Bo, k):
-    lbda = sqrt(k**2 + s/Oh)
-    omega2 = (Bo+k**2)*k*tanh(k)
-    ker = ker_sy (s, Oh, Bo, k, lbda)
-    return k*ALaplace_sy (s, Oh, k, lbda, omega2, z, ker)
-
-
-def vorti(t, z, Oh, Bo, k):
-    return gwr(lambda s: vortiLaplace(s, z, Oh, Bo, k), t, M_value)
-
-def solveOmega(Ohnumb, Bonumb, knumb, nbOfrelax, toI, z_all):
+def solveEta(Ohnumb, Bonumb, knumb, nbOfrelax):
     Oh = mp.mpmathify(Ohnumb)
     Bo = mp.mpmathify(Bonumb)
     k = mp.mpmathify(knumb) 
-    
-    def omega(t, z_):    
-        return float(vorti(t, z_, Oh, Bo, k))
-       
-    #Spatial and time resolutions
-    tau_relax = abs(float(3*(Oh/(k**2*Bo+k**4))))
-    t_all = np.linspace(0.0001, 1., 300) * nbOfrelax * tau_relax
-    timesOfInterest = np.array(toI)*tau_relax
 
-    #determine the maximal value of vorticity
-    vortmax = [abs(omega(t, mp.mpmathify(z_all[0]))) for t in t_all]
-    maxv = max(np.array(vortmax))
-    
-    #solve the equation on omega with Cortelezzi model and lubrication
-    sampled_omega = np.array([[2*i+omega(timesOfInterest[i], mp.mpmathify(z))/maxv
-        for i in range(len(timesOfInterest))] for z in z_all])
-    sampled_omega_lub = np.array([[2*i+float(k**3/Oh+k*Bo/Oh)*(-z)
-        *np.exp(-timesOfInterest[i]/tau_relax)/maxv
-        for i in range(len(timesOfInterest))] for z in z_all])
-    
-    return sampled_omega, sampled_omega_lub
+    #Time resolutions
+    tau_relax = float(3*(Oh/(k**2*Bo+k**4)))
+    t_all = np.linspace(0.0001, 1., 300) * nbOfrelax * abs(tau_relax)
 
-## Relaxation time
+    #solve the equation on eta with Cortelezzi model and lubrication
+    sampled_t = abs(t_all/tau_relax)
+    sampled_eta = [float(freeSurface(t, Oh, Bo, k)) for t in t_all]
+    sampled_eta_lub = [np.exp(-t/tau_relax) for t in t_all]
 
-from scipy.optimize import curve_fit
-def decaying_sinusoid(t, om, k):
-    return np.exp(-om * t)* np.cos(k * t)
-
-from scipy.signal import hilbert
-
-def plotHeight(Ohnumb, Bonumb, knumb, ax):
-    sampled_t, sampled_eta, sampled_eta_lub = solveEta(Ohnumb, Bonumb, knumb, 5.*max(1.,knumb**2/Ohnumb))
-    try:
-        popt, pcov = curve_fit(decaying_sinusoid, sampled_t,sampled_eta, p0=(min(Ohnumb/knumb**2, 0.1), 0.), bounds=(0,[1,np.inf]))
-        om_cort = popt[0]
-    except RuntimeError :
-        om_cort = -1
-        
-    dacaying = np.exp(-om_cort * sampled_t)
-    enveloppe = np.abs(hilbert(sampled_eta))
-    
-    om_lub = float((knumb**2*Bonumb+knumb**4)/(3*Ohnumb))
-    om_0 = np.sqrt(abs((Bonumb+knumb**2)*knumb*np.tanh(knumb)))
-    om_diff = knumb**2/Ohnumb
-    
-    ax.set_title(om_cort)
-    ax.plot(sampled_t,np.abs(sampled_eta), 'black', label = r'Cortelezzi \& Prosperetti')
-    ax.plot(sampled_t,sampled_eta_lub, 'grey', label = 'Lubricaion theory')
-    ax.plot(sampled_t,enveloppe, 'green', label = 'Enveloppe')
-    ax.plot(sampled_t,dacaying, 'red', label = 'Decaying')
-    ax.set_ylim([0,1])
-    
-Oh_list = np.logspace(-2, 1, 3)
-k_list = np.logspace(0, -2, 3)
-
-fig, ax = plt.subplots(ncols = 3, nrows = 3, figsize=(8, 8))
-j = 0
-for Oh in Oh_list:
-    i = 0
-    for k in k_list:
-        plotHeight(Oh, 0.001, k, ax[i,j])
-        i+=1
-    j+=1
-
-
-# In[]:
-
-
-Bonumb = 0.001
-def om_cort(knumb, Ohnumb):
-    sampled_t, sampled_eta, sampled_eta_lub = solveEta(Ohnumb, Bonumb, knumb, 5.*max(1.,knumb**2/Ohnumb))
-    try:
-        popt, pcov = curve_fit(decaying_sinusoid, sampled_t,sampled_eta, p0=(min(Ohnumb/knumb**2, 0.1), 0.), bounds=(0,[1,np.inf]))
-        return popt[0]
-    except RuntimeError :
-        return -1
-
-Oh_list = np.logspace(-3, 1, 20)
-k_list = np.logspace(-2, 0, 20)
-om = np.array([[om_cort(k, Oh) for Oh in Oh_list] for k in k_list])
-
-print(om)
-
-
-# In[]:
-
-
-plt.contourf(Oh_list, k_list, np.log10(1-om), cmap='RdGy');
-plt.xscale('log')
-plt.yscale('log')
-plt.plot(Oh_list,np.sqrt(Oh_list), linewidth = 2.)
-cbar = plt.colorbar();
-ctks = [-2, -1, 0]
-cbar.set_ticks(ctks)
-ctkls = ["$10^{%d}$"%(v) for v in ctks]
-cbar.set_ticklabels(ctkls)
-
+    return sampled_t, sampled_eta, sampled_eta_lub
 
 # # With Vorticity
 
