@@ -16,7 +16,6 @@ M_value = 32
 
 
 ## Function and expression declarations
-
 def decaying_sinusoid(t, om_dec, om_osc):
     return np.exp(- om_dec * t)*np.cos(om_osc * t)
 
@@ -42,12 +41,13 @@ def denom (s, Oh, Bo, k):
     ker = ker_sy (s, Oh, Bo, k, lbda)
     return (s**2+4*Oh*k**2*s+omega2+2*Oh*k**2*s*ker)
 
-#Inverse the Laplace transfrom and return functions of t and of the parameters Oh, Bo and k
-def freeSurface(t, Ohnumb, Bonumb, knumb):
+#Inverse the Laplace transfrom and return the values of eta as a function of a range of tt and the parameters Oh, Bo and k
+def freeSurface(t_all, Ohnumb, Bonumb, knumb):
     Oh = mp.mpmathify(Ohnumb)
     Bo = mp.mpmathify(Bonumb)
     k = mp.mpmathify(knumb) 
-    return gwr(lambda s: freeSurfaceLaplace(s, Oh, Bo, k), t, M_value)
+    f = lambda s: freeSurfaceLaplace(s, Oh, Bo, k)
+    return [float(gwr(f, t, M_value)) for t in t_all]
 
 #Calculation of the different growth rates and pulsations
 def om_lub(Oh, Bo, k):
@@ -67,10 +67,10 @@ def om_numerical(Oh, Bo, k, full = False):
     om_relax = om_lub(Oh, Bo, k)
     om_0 = pulsation(Bo, k)
         
-    t_all = np.linspace(0.0001, 1., 100) * 5. * max(abs(1./om_relax), 3./om_0)
-    sampled_eta = [float(freeSurface(t, Oh, Bo, k)) for t in t_all] 
+    t_all = np.linspace(0.0001, 1., 50) * 5. * max(abs(1./om_relax), 2./om_0)
+    sampled_eta = freeSurface(t_all, Oh, Bo, k)
     try:
-        popt, pcov = curve_fit(decaying_sinusoid, t_all, sampled_eta, p0=(min(om_relax,0.5), om_0*(om_relax > 1.)), bounds=(0,np.inf))
+        popt, pcov = curve_fit(decaying_sinusoid, t_all, sampled_eta, p0=(min(om_relax,0.2), om_0*(om_relax > 0.8)), bounds=(0,[np.inf, 3*om_0]))
         om_num = popt[0]
         om_osc = popt[1]
     except RuntimeError :
@@ -101,14 +101,13 @@ plt.rc('savefig', bbox='tight', transparent=True, dpi=300)
 ##Figure 1
 #Comparison between lubrication, analytical and numerical results for 2 different situations : oscillations and relaxation
 def plotHeight(Oh, Bo, k, ax):
-    
     om_relax = om_lub(Oh, Bo, k)
     om_0 = pulsation(Bo, k)
     om_ana = om_analytic(Oh, Bo, k)/om_relax
     
     t_all = np.linspace(0.0001, 1., 300) * max(abs(5./om_relax), 10./om_0)
     sampled_t = abs(t_all*om_relax)
-    sampled_eta = [float(freeSurface(t, Oh, Bo, k)) for t in t_all[::8]]
+    sampled_eta = freeSurface(t_all[::8], Oh, Bo, k)
     sampled_eta_lub = np.exp(-t_all*om_relax)
     
     ax.set_title("Oh = " + str(Oh) + ", k = " + str(k))
@@ -141,52 +140,64 @@ def plotGrowtRate(Oh, Bo, k, ax):
     ax.plot(sampled_t, np.abs(sampled_eta), 'black', label = r'Numerical resolution')
     ax.plot(sampled_t, np.exp(- t_all * om_relax), 'grey', label = 'Lubricaion theory')
     ax.plot(sampled_t, np.exp(- t_all * om_corte), 'red', label = 'Decaying')
+    ax.plot(sampled_t, np.abs(np.exp(- om_corte * t_all)*np.cos(pulse * t_all)), 'red', label = 'Decaying')
     ax.set_ylim([0,1])
 
-Oh = np.logspace(-4, -3, 6)
-#Oh = np.logspace(-4, 1, 4)
-#k = np.logspace(2, -2, 4)
-k = np.array([0.174333, 0.126896])
+Oh = np.logspace(-4, 1, 4)
+k = np.logspace(2, -2, 4)
 fig, ax = plt.subplots(ncols = len(Oh), nrows = len(k), figsize=(8, 8))
 [plotGrowtRate(Oh[j], 0.001, k[i], ax[i,j]) for i in range(len(k)) for j in range(len(Oh))]
 
 #%%
 ##Figure 3
 # Relative error of different models compare to the numerical results.
-Oh_list = np.logspace(-4, 1, 30)
-k_list = np.logspace(-2, 2, 30)
+Oh_list = np.logspace(-4, 1, 40)
+k_list = np.logspace(-2, 2, 40)
 Bo = 0.001
-  
-Oh = np.array([[Oh for Oh in Oh_list] for k in k_list])
-k = np.array([[k for Oh in Oh_list] for k in k_list])
 
-if True:
-    om_num = np.array([[om_numerical(Oh, Bo, k) for Oh in Oh_list] for k in k_list])
-    np.save('fig3_om_num',om_num)
-else:
+#The data can be easily recompute but it takes about 1h.
+#For time efficiency, numerical values are by default taken in the txt file.
+if False:
     om_num = np.load('fig3_om_num.npy')
+else:
+    om_num = np.array([[om_numerical(Oh, Bo, k) for Oh in Oh_list] for k in k_list])
+    np.save('fig3_om_num',om_num)    
 
+#Numerical decaying rate and pulsation
+relax_num = om_num[:,:,0] # 0 for decaying
+puls_num = om_num[:,:,1] # 1 for oscillation
+
+#Analytical decaying rate and pulsation
 om_relax = np.array([[om_lub(Oh, Bo, k) for Oh in Oh_list] for k in k_list])
 om_0 = np.array([[pulsation(Bo, k) for Oh in Oh_list] for k in k_list])
-om_diff = k**2/Oh
-Stokes = 2*Oh*k**2      #Stokes pour grand k petit Oh
+om_diff = np.array([[k**2/Oh for Oh in Oh_list] for k in k_list])
+Stokes = np.array([[2*Oh*k**2 for Oh in Oh_list] for k in k_list])     #Stokes pour grand k petit Oh
 
-model = om_0        # Choose the comparison
-num = om_num[:,:,1] # 0 for relaxation, 1 for oscillation
+#Error on the omegas
+err_puls = np.abs(om_0/puls_num-1)
+err_relax = np.abs(om_relax/relax_num-1)
+err_Stokes = np.abs(Stokes/relax_num-1)
 
-err_model = np.abs(model/num-1)
-err_model *= (err_model < 0.5)
-
+#Figure parameter and contour's labels
 plt.figure()
-plt.contourf(Oh_list, k_list, np.log10(err_model), cmap='RdGy');
 plt.xscale('log')
 plt.yscale('log')
-plt.plot(Oh_list,np.sqrt(Oh_list), linewidth = 2.)
-cbar = plt.colorbar();
-ctks = [-2, -1, 0]
-cbar.set_ticks(ctks)
-ctkls = ["$10^{%d}$"%(v) for v in ctks]
-cbar.set_ticklabels(ctkls)
+plt.xlabel('Oh')
+plt.ylabel('k')
+
+fmt = {}
+for l, s in zip([0.001, 0.01, 0.1, 0.5], ['0.1 \%', '1 \%', '10 \%', '50 \%']):
+    fmt[l] = s
+    
+#Plot contour lines and fillings
+plt.contourf(Oh_list, k_list, err_puls, levels = [0, 0.5], colors = 'blue', alpha = 0.2);
+cs1 = plt.contour(Oh_list, k_list, err_puls, levels = [0.001, 0.01, 0.1, 0.5], colors = 'blue');
+plt.clabel(cs1, fmt=fmt, fontsize=10)
+plt.contourf(Oh_list, k_list, err_relax, levels = [0, 0.5], colors = 'red', alpha = 0.2);
+cs2 = plt.contour(Oh_list, k_list, err_relax, levels = [0.001, 0.01, 0.1, 0.5], colors = 'red');
+plt.clabel(cs2, fmt=fmt, fontsize=10)
+#plt.contourf(Oh_list, k_list, err_Stokes, levels = [0, 0.5], colors = 'green', alpha = 0.2);
+plt.plot(Oh_list,np.sqrt(Oh_list), linewidth = 1.5)
 
 #%%
 ##Figure 4 
@@ -195,7 +206,7 @@ from scipy import stats
 
 def growth_rate(Oh, Bo, k):
     t_all = np.linspace(0.001, 25., 50)/k
-    sampled_eta = [float(freeSurface(t, Oh, Bo, k)) for t in t_all]
+    sampled_eta = freeSurface(t_all, Oh, Bo, k)
     
     reg = stats.linregress(t_all[20:], np.log(sampled_eta[20:]))
     if (reg[2]<0.999):
@@ -229,6 +240,22 @@ for Oh, om_gwr, om_lub, c in zip(Oh_list, om_gwr_Oh, om_lub_Oh, Colors):
     plt.plot(k_list2, om_lub, '-', lw=1.0, alpha = 0.4, color = c, label = 'Lubrication, Oh = ' + str(Oh))
 plt.legend()
 plt.tight_layout(pad=0.)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -295,7 +322,7 @@ def solveEta(Ohnumb, Bonumb, knumb, nbOfrelax):
 
     #solve the equation on eta with Cortelezzi model and lubrication
     sampled_t = abs(t_all/tau_relax)
-    sampled_eta = [float(freeSurface(t, Oh, Bo, k)) for t in t_all]
+    sampled_eta = freeSurface(t_all, Oh, Bo, k)
     sampled_eta_lub = [np.exp(-t/tau_relax) for t in t_all]
 
     return sampled_t, sampled_eta, sampled_eta_lub
