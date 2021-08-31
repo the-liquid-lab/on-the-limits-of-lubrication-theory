@@ -157,7 +157,7 @@ Bo = 0.001
 
 #The data can be easily recompute but it takes about 1h.
 #For time efficiency, numerical values are by default taken in the txt file.
-if False:
+if True:
     om_num = np.load('fig3_om_num.npy')
 else:
     om_num = np.array([[om_numerical(Oh, Bo, k) for Oh in Oh_list] for k in k_list])
