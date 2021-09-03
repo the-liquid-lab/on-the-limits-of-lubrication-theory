@@ -3,19 +3,20 @@
 @author: Clément & Arnaud
 """
 
-## Import
+#%% Import
 import numpy as np
 import matplotlib.pyplot as plt
 
-from mpmath import mp, findroot, j
+from mpmath import mp, findroot, j 
 from mpmath import cosh, sinh, tanh, exp, sqrt
 from scipy.optimize import curve_fit
 
-from gwr_inversion import gwr #The package must be installed through "conda install gwr_inversion"
+#The package must be installed through "conda install gwr_inversion"
+from gwr_inversion import gwr 
 M_value = 32
 
 
-## Function and expression declarations
+## Functions and expressions declarations
 def decaying_sinusoid(t, om_dec, om_osc):
     return np.exp(- om_dec * t)*np.cos(om_osc * t)
 
@@ -41,7 +42,8 @@ def denom (s, Oh, Bo, k):
     ker = ker_sy (s, Oh, Bo, k, lbda)
     return (s**2+4*Oh*k**2*s+omega2+2*Oh*k**2*s*ker)
 
-#Inverse the Laplace transfrom and return the values of eta as a function of a range of tt and the parameters Oh, Bo and k
+#Inverse the Laplace transfrom and return the values of eta as a function 
+#of a range of t and the parameters Oh, Bo and k
 def freeSurface(t_all, Ohnumb, Bonumb, knumb):
     Oh = mp.mpmathify(Ohnumb)
     Bo = mp.mpmathify(Bonumb)
@@ -67,10 +69,14 @@ def om_numerical(Oh, Bo, k, full = False):
     om_relax = om_lub(Oh, Bo, k)
     om_0 = pulsation(Bo, k)
         
-    t_all = np.linspace(0.0001, 1., 50) * 5. * max(abs(1./om_relax), 2./om_0)
+    t_all = np.linspace(0.0001, 1., 80) * 5. * max(abs(1./om_relax), 2./om_0)
     sampled_eta = freeSurface(t_all, Oh, Bo, k)
+    if (k < 1 and Oh < pulsation(Bo, k)/2.) or (k >= 1 and Oh < pulsation(Bo, k)/(k**2*2)):
+        p = (0.1, om_0)
+    else: 
+        p = (min(om_relax, 0.2), 0)
     try:
-        popt, pcov = curve_fit(decaying_sinusoid, t_all, sampled_eta, p0=(min(om_relax,0.2), om_0*(om_relax > 0.8)), bounds=(0,[np.inf, 3*om_0]))
+        popt, pcov = curve_fit(decaying_sinusoid, t_all, sampled_eta, p0=p, bounds=(0,[np.inf, 2.*om_0]))
         om_num = popt[0]
         om_osc = popt[1]
     except RuntimeError :
@@ -97,8 +103,7 @@ plt.rc('xtick',  labelsize=8, direction='in', bottom='true', top='true')
 plt.rc('ytick',  labelsize=8, direction='in', left='true', right='true')
 plt.rc('savefig', bbox='tight', transparent=True, dpi=300) 
 
-#%%
-##Figure 1
+#%% Figure 1
 #Comparison between lubrication, analytical and numerical results for 2 different situations : oscillations and relaxation
 def plotHeight(Oh, Bo, k, ax):
     om_relax = om_lub(Oh, Bo, k)
@@ -125,11 +130,18 @@ fig.legend(lines, labels, loc = 'lower center', borderaxespad=0.1, ncol=3)
 ax[0].set_ylabel('Relative amplitude')
 plt.tight_layout(pad=2.)
 
-#%%
-##Figure 2
+#%% Figure 2
+Bo = 0.001
+k = 0.5
+Oh_list = np.logspace(-3, 0, 500)
 
-#%%
-##Figure 3_visu
+om_ana = [om_analytic(Oh, Bo, k) for Oh in Oh_list]
+om_ana_2d = np.array([[float(mp.re(om)), float(mp.im(om))] for om in om_ana])
+
+plt.figure()
+plt.plot(om_ana_2d[:,0], om_ana_2d[:,1], '.')
+
+#%% Visu_Figure 3
 # Not for the article : vue of the curve-fitting and comparison with lubrication for different k, Oh.
 def plotGrowtRate(Oh, Bo, k, ax):    
     om_corte, pulse, t_all, sampled_eta = om_numerical(Oh, Bo, k, True)
@@ -148,59 +160,89 @@ k = np.logspace(2, -2, 4)
 fig, ax = plt.subplots(ncols = len(Oh), nrows = len(k), figsize=(8, 8))
 [plotGrowtRate(Oh[j], 0.001, k[i], ax[i,j]) for i in range(len(k)) for j in range(len(Oh))]
 
-#%%
-##Figure 3
+#%% Figure 3
 # Relative error of different models compare to the numerical results.
+
+def plotErrorOm (Oh_list, k_list, Bo, load = True):
+    #The data can be easily recompute but it takes about 1h.
+    #For time efficiency, numerical values are by default taken in the txt file.
+    if Bo > 1:
+        file_name = 'fig3_om_num_Bo.npy'
+        x = Oh_list/sqrt(Bo)
+        x_label = r'$\frac{Oh}{\sqrt{Bo}}$'
+    else:
+        file_name = 'fig3_om_num.npy'
+        x = Oh_list
+        x_label = 'Oh'
+        
+    if load:
+        om_num = np.load(file_name)
+    else:
+        om_num = np.array([[om_numerical(Oh, Bo, k) for Oh in Oh_list] for k in k_list])
+        np.save(file_name,om_num)    
+    
+    #Numerical decaying rate and pulsation
+    relax_num = om_num[:,:,0] # 0 for decaying
+    puls_num = om_num[:,:,1] # 1 for oscillation
+    
+    #Analytical decaying rate and pulsation
+    om_relax = np.array([[om_lub(Oh, Bo, k) for Oh in Oh_list] for k in k_list])
+    om_0 = np.array([[np.sqrt(pulsation(Bo, k)**2) for Oh in Oh_list] for k in k_list])
+    Stokes = np.array([[2*Oh*k**2 for Oh in Oh_list] for k in k_list])     #Stokes pour grand k petit Oh
+    Lamb = np.array([[Bo/(2*k*Oh) for Oh in Oh_list] for k in k_list])
+    Biesel = np.array([[(1/np.sinh(2*k)*np.sqrt(np.sqrt(k*Bo*np.tanh(k)) * k**2*Oh/2) + 2*k**2*Oh * (np.cosh(4*k)+np.cosh(2*k)-1) / (np.cosh(4*k) -1)) for Oh in Oh_list] for k in k_list]) 
+    
+    #Error on the omegas
+    err_puls = np.abs(om_0/puls_num-1)
+    err_relax = np.abs(om_relax/relax_num-1)
+    err_Stokes = np.abs(Stokes/relax_num-1)
+    err_Biesel = np.abs(Biesel/relax_num-1)
+    err_Lamb = np.abs(Lamb/relax_num-1)
+    
+    #Figure parameter and contour's labels
+    plt.figure()
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.xlabel(x_label)
+    plt.ylabel('k')
+    
+    fmt = {}
+    for l, s in zip([0.001, 0.01, 0.1, 0.5], ['0.1 \%', '1 \%', '10 \%', '50 \%']):
+        fmt[l] = s
+        
+    #Plot contour lines and fillings
+    plt.contourf(x, k_list, err_puls, levels = [0, 0.5], colors = 'blue', alpha = 0.2);
+    cs1 = plt.contour(x, k_list, err_puls, levels = [0.001, 0.01, 0.1, 0.5], colors = 'blue');
+    plt.clabel(cs1, fmt=fmt, fontsize=10)
+    plt.contourf(x, k_list, err_relax, levels = [0, 0.5], colors = 'red', alpha = 0.2);
+    cs2 = plt.contour(x, k_list, err_relax, levels = [0.001, 0.01, 0.1, 0.5], colors = 'red');
+    plt.clabel(cs2, fmt=fmt, fontsize=10)
+    if Bo>1:   
+        plt.contourf(x, k_list, err_Biesel, levels = [0, 0.5], colors = 'green', alpha = 0.2);
+        cs3 = plt.contour(x, k_list, err_Biesel, levels = [0.001, 0.01, 0.1, 0.5], colors = 'green');
+        plt.clabel(cs3, fmt=fmt, fontsize=10)
+        plt.contourf(x, k_list, err_Lamb, levels = [0, 0.5], colors = 'grey', alpha = 0.2);
+        cs4 = plt.contour(x, k_list, err_Lamb, levels = [0.001, 0.01, 0.1, 0.5], colors = 'grey');
+        plt.clabel(cs4, fmt=fmt, fontsize=10)
+        x1 = [pulsation(Bo, k)/(2)/np.sqrt(float(Bo)) for k in k_list if k < 1]
+        x2 = [pulsation(Bo, k)/(k**2*2)/np.sqrt(float(Bo)) for k in k_list if k >= 1]
+    else:
+        x1 = [pulsation(Bo, k)/(2) for k in k_list if k < 1]
+        x2 = [pulsation(Bo, k)/(k**2*2) for k in k_list if k >= 1]
+    y = k_list
+    plt.plot(x1 + x2, y, linewidth = 1.5)
+    
 Oh_list = np.logspace(-4, 1, 40)
 k_list = np.logspace(-2, 2, 40)
 Bo = 0.001
+plotErrorOm (Oh_list, k_list, Bo, load = True)
 
-#The data can be easily recompute but it takes about 1h.
-#For time efficiency, numerical values are by default taken in the txt file.
-if True:
-    om_num = np.load('fig3_om_num.npy')
-else:
-    om_num = np.array([[om_numerical(Oh, Bo, k) for Oh in Oh_list] for k in k_list])
-    np.save('fig3_om_num',om_num)    
+Oh_list = np.logspace(0, 5, 40)
+k_list = np.logspace(-2, 2, 40)
+Bo = 1e8
+plotErrorOm (Oh_list, k_list, Bo, load = True)
 
-#Numerical decaying rate and pulsation
-relax_num = om_num[:,:,0] # 0 for decaying
-puls_num = om_num[:,:,1] # 1 for oscillation
-
-#Analytical decaying rate and pulsation
-om_relax = np.array([[om_lub(Oh, Bo, k) for Oh in Oh_list] for k in k_list])
-om_0 = np.array([[pulsation(Bo, k) for Oh in Oh_list] for k in k_list])
-om_diff = np.array([[k**2/Oh for Oh in Oh_list] for k in k_list])
-Stokes = np.array([[2*Oh*k**2 for Oh in Oh_list] for k in k_list])     #Stokes pour grand k petit Oh
-
-#Error on the omegas
-err_puls = np.abs(om_0/puls_num-1)
-err_relax = np.abs(om_relax/relax_num-1)
-err_Stokes = np.abs(Stokes/relax_num-1)
-
-#Figure parameter and contour's labels
-plt.figure()
-plt.xscale('log')
-plt.yscale('log')
-plt.xlabel('Oh')
-plt.ylabel('k')
-
-fmt = {}
-for l, s in zip([0.001, 0.01, 0.1, 0.5], ['0.1 \%', '1 \%', '10 \%', '50 \%']):
-    fmt[l] = s
-    
-#Plot contour lines and fillings
-plt.contourf(Oh_list, k_list, err_puls, levels = [0, 0.5], colors = 'blue', alpha = 0.2);
-cs1 = plt.contour(Oh_list, k_list, err_puls, levels = [0.001, 0.01, 0.1, 0.5], colors = 'blue');
-plt.clabel(cs1, fmt=fmt, fontsize=10)
-plt.contourf(Oh_list, k_list, err_relax, levels = [0, 0.5], colors = 'red', alpha = 0.2);
-cs2 = plt.contour(Oh_list, k_list, err_relax, levels = [0.001, 0.01, 0.1, 0.5], colors = 'red');
-plt.clabel(cs2, fmt=fmt, fontsize=10)
-#plt.contourf(Oh_list, k_list, err_Stokes, levels = [0, 0.5], colors = 'green', alpha = 0.2);
-plt.plot(Oh_list,np.sqrt(Oh_list), linewidth = 1.5)
-
-#%%
-##Figure 4 
+#%% Figure 4 
 #Rayleigh-Taylor
 from scipy import stats
 
@@ -241,34 +283,47 @@ for Oh, om_gwr, om_lub, c in zip(Oh_list, om_gwr_Oh, om_lub_Oh, Colors):
 plt.legend()
 plt.tight_layout(pad=0.)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #%%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # def ALaplace_sy (s, Oh, k, lbda, omega2, z, Kern):
 #     return 1/sinh(lbda)*(-(-2*k*lbda*sinh(k)+(k**2+lbda**2)*sinh(lbda))
