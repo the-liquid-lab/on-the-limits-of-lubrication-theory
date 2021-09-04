@@ -68,10 +68,15 @@ def om_analytic(Oh, Bo, k):
 def om_numerical(Oh, Bo, k, full = False):
     om_relax = om_lub(Oh, Bo, k)
     om_0 = pulsation(Bo, k)
-        
-    t_all = np.linspace(0.0001, 1., 80) * 5. * max(abs(1./om_relax), 2./om_0)
+    
+    if (Bo>1 and k>1):
+        t0 = max(2*k*Oh/Bo, 3./om_0)
+    else:
+        t0 = max(abs(1./om_relax), 3./om_0)
+    t_all = np.linspace(0.0001, 1., 50) * 5. * t0
+    
     sampled_eta = freeSurface(t_all, Oh, Bo, k)
-    if (k < 1 and Oh < pulsation(Bo, k)/2.) or (k >= 1 and Oh < pulsation(Bo, k)/(k**2*2)):
+    if (k < 1 and Oh < om_0/2.) or (k >= 1 and Oh < om_0/(k**2*2)):
         p = (0.1, om_0)
     else: 
         p = (min(om_relax, 0.2), 0)
@@ -148,7 +153,7 @@ def plotGrowtRate(Oh, Bo, k, ax):
     om_relax = om_lub(Oh, Bo, k)
     sampled_t = abs(t_all*om_relax)
 
-    ax.set_title(om_corte)
+    ax.set_title(om_relax/om_corte-1)
     ax.plot(sampled_t, np.abs(sampled_eta), 'black', label = r'Numerical resolution')
     ax.plot(sampled_t, np.exp(- t_all * om_relax), 'grey', label = 'Lubricaion theory')
     ax.plot(sampled_t, np.exp(- t_all * om_corte), 'red', label = 'Decaying')
@@ -157,8 +162,16 @@ def plotGrowtRate(Oh, Bo, k, ax):
 
 Oh = np.logspace(-4, 1, 4)
 k = np.logspace(2, -2, 4)
+Bo = 0.001
+
+Oh = np.logspace(0, 5, 4)
+k = np.logspace(-2, 2, 4)
+Bo = 1e8
+Oh=[888.624, 1193.78,2153.43]
+k = [0.01, 0.0126638,0.0203092]
+
 fig, ax = plt.subplots(ncols = len(Oh), nrows = len(k), figsize=(8, 8))
-[plotGrowtRate(Oh[j], 0.001, k[i], ax[i,j]) for i in range(len(k)) for j in range(len(Oh))]
+[plotGrowtRate(Oh[j], Bo, k[i], ax[i,j]) for i in range(len(k)) for j in range(len(Oh))]
 
 #%% Figure 3
 # Relative error of different models compare to the numerical results.
@@ -187,8 +200,8 @@ def plotErrorOm (Oh_list, k_list, Bo, load = True):
     
     #Analytical decaying rate and pulsation
     om_relax = np.array([[om_lub(Oh, Bo, k) for Oh in Oh_list] for k in k_list])
-    om_0 = np.array([[np.sqrt(pulsation(Bo, k)**2) for Oh in Oh_list] for k in k_list])
-    Stokes = np.array([[2*Oh*k**2 for Oh in Oh_list] for k in k_list])     #Stokes pour grand k petit Oh
+    om_0 = np.array([[pulsation(Bo, k) for Oh in Oh_list] for k in k_list])
+    Stokes = np.array([[2*Oh*k**2 for Oh in Oh_list] for k in k_list])     #Stokes pour grand k petit Oh ### 2*Oh*k**2 - Oh*k ???
     Lamb = np.array([[Bo/(2*k*Oh) for Oh in Oh_list] for k in k_list])
     Biesel = np.array([[(1/np.sinh(2*k)*np.sqrt(np.sqrt(k*Bo*np.tanh(k)) * k**2*Oh/2) + 2*k**2*Oh * (np.cosh(4*k)+np.cosh(2*k)-1) / (np.cosh(4*k) -1)) for Oh in Oh_list] for k in k_list]) 
     
@@ -207,22 +220,22 @@ def plotErrorOm (Oh_list, k_list, Bo, load = True):
     plt.ylabel('k')
     
     fmt = {}
-    for l, s in zip([0.001, 0.01, 0.1, 0.5], ['0.1 \%', '1 \%', '10 \%', '50 \%']):
+    for l, s in zip([0.005, 0.05, 0.5], ['0.5 \%', '5 \%', '50 \%']):
         fmt[l] = s
         
     #Plot contour lines and fillings
     plt.contourf(x, k_list, err_puls, levels = [0, 0.5], colors = 'blue', alpha = 0.2);
-    cs1 = plt.contour(x, k_list, err_puls, levels = [0.001, 0.01, 0.1, 0.5], colors = 'blue');
+    cs1 = plt.contour(x, k_list, err_puls, levels = [0.005, 0.05, 0.5], colors = 'blue');
     plt.clabel(cs1, fmt=fmt, fontsize=10)
     plt.contourf(x, k_list, err_relax, levels = [0, 0.5], colors = 'red', alpha = 0.2);
-    cs2 = plt.contour(x, k_list, err_relax, levels = [0.001, 0.01, 0.1, 0.5], colors = 'red');
+    cs2 = plt.contour(x, k_list, err_relax, levels = [0.005, 0.05, 0.5], colors = 'red');
     plt.clabel(cs2, fmt=fmt, fontsize=10)
     if Bo>1:   
         plt.contourf(x, k_list, err_Biesel, levels = [0, 0.5], colors = 'green', alpha = 0.2);
-        cs3 = plt.contour(x, k_list, err_Biesel, levels = [0.001, 0.01, 0.1, 0.5], colors = 'green');
+        cs3 = plt.contour(x, k_list, err_Biesel, levels = [0.005, 0.05, 0.5], colors = 'green');
         plt.clabel(cs3, fmt=fmt, fontsize=10)
         plt.contourf(x, k_list, err_Lamb, levels = [0, 0.5], colors = 'grey', alpha = 0.2);
-        cs4 = plt.contour(x, k_list, err_Lamb, levels = [0.001, 0.01, 0.1, 0.5], colors = 'grey');
+        cs4 = plt.contour(x, k_list, err_Lamb, levels = [0.005, 0.05, 0.5], colors = 'grey');
         plt.clabel(cs4, fmt=fmt, fontsize=10)
         x1 = [pulsation(Bo, k)/(2)/np.sqrt(float(Bo)) for k in k_list if k < 1]
         x2 = [pulsation(Bo, k)/(k**2*2)/np.sqrt(float(Bo)) for k in k_list if k >= 1]
