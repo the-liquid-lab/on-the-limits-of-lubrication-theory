@@ -54,7 +54,7 @@ def denom (s, Oh, Bo, k):
 
 #Inverse the Laplace transfrom and return the values of eta as a function 
 #of a range of t and the parameters Oh, Bo and k
-def freeSurface(t_all, Ohnumb, Bonumb, knumb, M_value = 64):
+def freeSurface(t_all, Ohnumb, Bonumb, knumb, M_value = 32):
     store = time.time()
     Oh = mp.mpmathify(Ohnumb)
     Bo = mp.mpmathify(Bonumb)
@@ -106,12 +106,11 @@ def plotHeight(Oh, Bo, k, ax, labelinset):
     om_0 = pulsation(Bo, k)
     om_ana = om_analytic(Oh, Bo, k)/om_lub_relax
     
-    t_all = np.linspace(0.0001, 1., 300) * max(abs(5./om_lub_relax), 10./om_0)
+    t_all = np.linspace(0.0001, 1., 300) * max(abs(5./om_lub_relax), 13./om_0)
     sampled_t = abs(t_all*om_lub_relax)
     sampled_eta = freeSurface(t_all, Oh, Bo, k)
     sampled_eta_lub = np.exp(-t_all*om_lub_relax)
     
-   # ax.set_title("Oh = " + str(Ohnumb) + ", k = " + str(knumb))
     ax.plot(sampled_t, np.abs(decaying_sinusoid(sampled_t, 
                                                 float(-mp.re(om_ana)), 
                                                 float(mp.im(om_ana)))), 
@@ -129,17 +128,16 @@ def plotHeight(Oh, Bo, k, ax, labelinset):
     axinset = inset_axes(ax, width="40%", height="40%", borderpad=0.5)
     axinset.linewidth=0.5
 
-#    axinset.tick_params(axis=u'both', which=u'both',length=0)
-    axinset.tick_params(axis=u'both', which=u'both',width=0.4)
+    axinset.tick_params(axis=u'both', which=u'both',width=0.2)
     props = dict(facecolor='white', alpha=0.8, edgecolor="None")
     plt.setp(axinset.get_xticklabels(), bbox=props,
              family = "Roboto", size=6, weight="light")
     plt.setp(axinset.get_yticklabels(), bbox=props,
              family = "Roboto", size=6, weight="light")
-    ax.text(0.09, 0.92, textOh, size="x-large", 
+    ax.text(0.09, 0.92, textOh, size="large", 
             ha="left", va="center", family = "Source Sans Pro", weight="ultralight",
             transform=ax.transAxes)
-    ax.text(0.15, 0.85, textk, size="x-large", 
+    ax.text(0.13, 0.85, textk, size="large", 
             ha="left", va="center", family = "Source Sans Pro", weight="ultralight",
             transform=ax.transAxes)
     error_lub=np.subtract(sampled_eta,sampled_eta_lub)
@@ -167,8 +165,8 @@ def plotHeight(Oh, Bo, k, ax, labelinset):
     else:
         textxinset = r'Time'
         textyinset = r'Abs. error'
-    axinset.set_xlabel(text, family = "Roboto", weight="ultralight", fontsize=7)
-    axinset.set_ylabel(text, family = "Roboto", weight="ultralight", fontsize=7)
+    axinset.set_xlabel(text, family = "Roboto", weight="ultralight", fontsize=6)
+    axinset.set_ylabel(text, family = "Roboto", weight="ultralight", fontsize=6)
     for i in axinset.xaxis.get_ticklines():
         # reach in and poke the guts 
         # USE AT YOUR OWN RISK
@@ -212,13 +210,13 @@ plotHeight(0.01, 0.001, 0.5, ax[1], False)
 #lines, labels = ax[-1].get_legend_handles_labels()
 #fig.legend(lines, labels, loc = 'lower center', borderaxespad=0.1, ncol=3)
 ax[0].set_ylabel('Relative amplitude', family = "Roboto", weight="ultralight")
-fig.savefig("basic-plot.pdf")
 plt.tight_layout(pad=2.)
+fig.savefig("figure1.pdf")
 
 #%% Figure 2
 Bo = 0.001
 k = 0.5
-Oh_list = np.logspace(-4, 1, 1000)
+Oh_list = np.logspace(-3.5, 0.5, 700)
 om_ana = []
 root_denom = j*pulsation(Bo, k)
 
@@ -228,7 +226,11 @@ for Oh in Oh_list:
 om_ana = np.array(om_ana)
 
 plt.figure()
-plt.plot(om_ana[:,0], om_ana[:,1], '.')
+plt.scatter(om_ana[:,0], om_ana[:,1], s = 20, c = Oh_list, cmap='hsv', norm=matplotlib.colors.LogNorm())
+plt.xlabel('real part', family = "Roboto", weight="ultralight")      
+plt.ylabel('imaginary part', family = "Roboto", weight="ultralight")
+cbar = plt.colorbar()
+cbar.ax.invert_yaxis()
 
 #%% Figure 3
 # Relative error of different models compare to the numerical results.
@@ -267,6 +269,7 @@ def om_numerical(Oh, Bo, k):
         popt = [curve_fit(my_exp, t_all, sampled_eta, p0=(om_relax))[0][0], 0]
     return popt, t_all, sampled_eta
 
+from scipy import ndimage
 #Compare the different models for a range of Oh and k.
 def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
     #The data can be easily recompute but it takes about 1h.
@@ -289,7 +292,9 @@ def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
     inert_domain = 1e6*np.array([[(Oh > pulsation(Bo, k)/(k**2/0.7+1/0.8)) for Oh in Oh_list] for k in k_list])
     err_in = (np.array([[om_normal_mode_inertial(Oh, Bo, k) for Oh in Oh_list] for k in k_list])/relax_num-1) + inert_domain
     err_visc = np.abs(np.array([[om_normal_mode_viscous(Oh, Bo, k) for Oh in Oh_list] for k in k_list])/relax_num-1)
+    err_visc = np.exp(ndimage.gaussian_filter(np.log(err_visc), sigma = 0.6))
 
+    
     #Figure parameter and contour's labels
     plt.figure()
     plt.xscale('log')
@@ -298,13 +303,13 @@ def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
     plt.ylabel('k')
     
     fmt = {}
-    for l, s in zip([0.005, 0.05, 0.3], ['0.5 \%', '5 \%', '30 \%']):
+    for l, s in zip([0.005, 0.05, 0.2], ['0.5 \%', '5 \%', '20 \%']):
         fmt[l] = s
         
     #Plot contour lines and fillings
     for err, c in zip([err_puls, err_visc, err_relax, err_in],['grey', 'green', 'red', 'blue']):
-        plt.contourf(Oh_list, k_list, err, levels = [-0.3, 0.3], colors = c, alpha = 0.2);
-        cs = plt.contour(Oh_list, k_list, err, levels = [0.005, 0.05, 0.3], colors = c);
+        plt.contourf(Oh_list, k_list, err, levels = [-0.2, 0.2], colors = c, alpha = 0.2);
+        cs = plt.contour(Oh_list, k_list, err, levels = [0.005, 0.05, 0.2], colors = c);
         plt.clabel(cs, fmt=fmt, fontsize=10)
     x = [pulsation(Bo, k)/(k**2/1.3115+1/0.732) for k in k_list]
     plt.plot(x, k_list, linewidth = 1.5)
