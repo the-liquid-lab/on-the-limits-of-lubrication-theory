@@ -224,15 +224,17 @@ for Oh in Oh_list:
     root_denom = findroot(lambda s: denom (s, Oh, Bo, k), root_denom)
     om_ana.append([float(mp.re(root_denom)), float(mp.im(root_denom))])
 om_ana = np.array(om_ana)
+om_0 = pulsation(Bo,k)
 
 plt.figure()
-plt.scatter(0, pulsation(Bo,k), marker = 'P', s = 80, c = 'black')
-plt.annotate("Natural pulsation", (-0.08, 0.98*pulsation(Bo,k)), family = "Roboto", weight="ultralight")
+p = plt.scatter(0, om_0, label = 'Natural pulsations', marker = 'P', s = 80, c = 'black')
+plt.scatter(0, -om_0, marker = 'P', s = 80, c = 'black')
 plt.scatter(om_ana[:,0], om_ana[:,1], s = 20, c = Oh_list, cmap='hsv', norm=matplotlib.colors.LogNorm())
+plt.scatter(om_ana[:,0], -om_ana[:,1], s = 20, c = Oh_list, cmap='hsv', norm=matplotlib.colors.LogNorm())
 plt.xlabel('$\omega_{relax} = \Re(\omega)$', family = "Roboto", weight="ultralight")      
 plt.ylabel('$\omega_{osc} = \Im(\omega)$', family = "Roboto", weight="ultralight")
 cbar = plt.colorbar()
-cbar.ax.invert_yaxis()
+plt.legend()
 
 
 #%% Figure 3
