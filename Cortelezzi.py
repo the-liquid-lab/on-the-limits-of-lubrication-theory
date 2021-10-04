@@ -226,11 +226,14 @@ for Oh in Oh_list:
 om_ana = np.array(om_ana)
 
 plt.figure()
+plt.scatter(0, pulsation(Bo,k), marker = 'P', s = 80, c = 'black')
+plt.annotate("Natural pulsation", (-0.08, 0.98*pulsation(Bo,k)), family = "Roboto", weight="ultralight")
 plt.scatter(om_ana[:,0], om_ana[:,1], s = 20, c = Oh_list, cmap='hsv', norm=matplotlib.colors.LogNorm())
-plt.xlabel('real part', family = "Roboto", weight="ultralight")      
-plt.ylabel('imaginary part', family = "Roboto", weight="ultralight")
+plt.xlabel('$\omega_{relax} = \Re(\omega)$', family = "Roboto", weight="ultralight")      
+plt.ylabel('$\omega_{osc} = \Im(\omega)$', family = "Roboto", weight="ultralight")
 cbar = plt.colorbar()
 cbar.ax.invert_yaxis()
+
 
 #%% Figure 3
 # Relative error of different models compare to the numerical results.
