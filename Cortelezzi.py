@@ -6,6 +6,7 @@
 #%% Import
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import matplotlib.ticker
 import vapeplot
@@ -210,15 +211,15 @@ plotHeight(0.01, 0.001, 0.5, ax[1], False)
 #lines, labels = ax[-1].get_legend_handles_labels()
 #fig.legend(lines, labels, loc = 'lower center', borderaxespad=0.1, ncol=3)
 ax[0].set_ylabel('Relative amplitude', family = "Roboto", weight="ultralight")
-plt.tight_layout(pad=2.)
+plt.tight_layout(pad=1.)
 fig.savefig("figure1.pdf")
 
 #%% Figure 2
 Bo = 0.001
 k = 0.5
-Oh_list = np.logspace(-3.5, 0.5, 700)
+Oh_list = np.logspace(-3.5, 0.5, 600)
 om_ana = []
-root_denom = j*pulsation(Bo, k)
+root_denom = j
 
 for Oh in Oh_list:
     root_denom = findroot(lambda s: denom (s, Oh, Bo, k), root_denom)
@@ -226,16 +227,27 @@ for Oh in Oh_list:
 om_ana = np.array(om_ana)
 om_0 = pulsation(Bo,k)
 
-plt.figure()
-p = plt.scatter(0, om_0, label = 'Natural pulsations', marker = 'P', s = 80, c = 'black')
-plt.scatter(0, -om_0, marker = 'P', s = 80, c = 'black')
-plt.scatter(om_ana[:,0], om_ana[:,1], s = 20, c = Oh_list, cmap='hsv', norm=matplotlib.colors.LogNorm())
-plt.scatter(om_ana[:,0], -om_ana[:,1], s = 20, c = Oh_list, cmap='hsv', norm=matplotlib.colors.LogNorm())
+split = int(np.sum(om_ana[:,1]<0.018)/len(om_ana)*256)
+# sample the colormaps that you want to use. Use 128 from each so we get 256
+# colors in total
+colors1 = plt.cm.Blues_r(np.linspace(0., 0.7, 256-split))
+colors2 = plt.cm.Reds(np.linspace(0.3, 1, split))
+
+# combine them and build a new colormap
+colors = np.vstack((colors1, colors2))
+mymap = mcolors.LinearSegmentedColormap.from_list('my_colormap', colors)
+
+plt.figure(figsize=(5, 4))
+p = plt.scatter(0, 1, label = 'Natural pulsations', marker = 'P', s = 80, c = 'black')
+plt.scatter(0, -1, marker = 'P', s = 80, c = 'black')
+plt.scatter(om_ana[:,0]/om_0, om_ana[:,1]/om_0, s = 20, c = Oh_list, cmap=mymap, norm=matplotlib.colors.LogNorm())
+plt.scatter(om_ana[:,0]/om_0, -om_ana[:,1]/om_0, s = 20, c = Oh_list, cmap=mymap, norm=matplotlib.colors.LogNorm())
 plt.xlabel('$\omega_{relax} = \Re(\omega)$', family = "Roboto", weight="ultralight")      
 plt.ylabel('$\omega_{osc} = \Im(\omega)$', family = "Roboto", weight="ultralight")
 cbar = plt.colorbar()
 plt.legend()
-
+plt.tight_layout(pad=1.)
+plt.savefig("figure2.pdf")
 
 #%% Figure 3
 # Relative error of different models compare to the numerical results.
@@ -292,7 +304,7 @@ def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
     puls_num = om_num[1] # 1 for oscillation
     
     #Analytical decaying rate and pulsation
-    err_relax = np.abs(np.array([[om_lub(Oh, Bo, k) for Oh in Oh_list] for k in k_list])/relax_num-1)
+    err_lub = np.abs(np.array([[om_lub(Oh, Bo, k) for Oh in Oh_list] for k in k_list])/relax_num-1)
     err_puls = np.abs(np.array([[puls_normal_mode_inertial(Oh, Bo, k) for Oh in Oh_list] for k in k_list])/puls_num-1)
     inert_domain = 1e6*np.array([[(Oh > pulsation(Bo, k)/(k**2/0.7+1/0.8)) for Oh in Oh_list] for k in k_list])
     err_in = (np.array([[om_normal_mode_inertial(Oh, Bo, k) for Oh in Oh_list] for k in k_list])/relax_num-1) + inert_domain
@@ -301,28 +313,30 @@ def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
 
     
     #Figure parameter and contour's labels
-    plt.figure()
+    plt.figure(figsize=(5, 4))
     plt.xscale('log')
     plt.yscale('log')
-    plt.xlabel('Oh')
-    plt.ylabel('k')
+    plt.xlabel('$Oh$', family = "Roboto", weight="ultralight")      
+    plt.ylabel('$k$', family = "Roboto", weight="ultralight")
     
     fmt = {}
     for l, s in zip([0.005, 0.05, 0.2], ['0.5 \%', '5 \%', '20 \%']):
         fmt[l] = s
         
     #Plot contour lines and fillings
-    for err, c in zip([err_puls, err_visc, err_relax, err_in],['grey', 'green', 'red', 'blue']):
+    for err, c in zip([err_puls, err_visc, err_lub, err_in],['grey', 'red', 'grey', 'blue']):
         plt.contourf(Oh_list, k_list, err, levels = [-0.2, 0.2], colors = c, alpha = 0.2);
         cs = plt.contour(Oh_list, k_list, err, levels = [0.005, 0.05, 0.2], colors = c);
         plt.clabel(cs, fmt=fmt, fontsize=10)
     x = [pulsation(Bo, k)/(k**2/1.3115+1/0.732) for k in k_list]
-    plt.plot(x, k_list, linewidth = 1.5)
+    plt.plot(x, k_list, linewidth = 1.5, c = 'black')
 
 Oh_list = np.logspace(-3, 1, 60)
 k_list = np.logspace(-2, 2, 60)
 Bo = 1
 plotErrorOm (Oh_list, k_list, Bo, 'fig3_om_num.npy', False)
+plt.tight_layout(pad=1.)
+plt.savefig("figure3.pdf")
 
 # #%% Visu_Figure 3
 # # Not for the article : vue of the curve-fitting and comparison with models for different k, Oh.
