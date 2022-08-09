@@ -75,6 +75,21 @@ def om_lub(Oh, Bo, k):
 def pulsation(Bo, k):
     return np.sqrt(np.abs(Bo + k**2)*k*np.tanh(k))
 
+#Asymptotic solutions obtained from the normal mode in Cortelezzi's derivation
+def om_normal_mode_viscous(Oh, Bo, k):
+    return -pulsation(Bo, k)**2/(k**2*Oh*np.tanh(k))*(k-np.cosh(k)*np.sinh(k))/(1+2*k**2+np.cosh(2*k))
+    
+def puls_normal_mode_inertial(Oh, Bo, k):
+    return pulsation(Bo, k) - (1/np.sinh(2*k)*np.sqrt(pulsation(Bo, k) * k**2*Oh/2)
+            - pow(k**2*Oh,3./2.)/np.sqrt(2*pulsation(Bo, k))
+            *(3-8*np.cosh(2*k)-14*np.cosh(4*k)+4*np.cosh(6*k))/(8*np.sinh(2*k)**3)) 
+
+def om_normal_mode_inertial(Oh, Bo, k):
+    return (1/np.sinh(2*k)*np.sqrt(pulsation(Bo, k) * k**2*Oh/2) +
+            2*k**2*Oh * (np.cosh(4*k)+np.cosh(2*k)-1) / (np.cosh(4*k) -1)
+            - pow(k**2*Oh,3./2.)/np.sqrt(2*pulsation(Bo, k))
+            *(3-8*np.cosh(2*k)-14*np.cosh(4*k)+4*np.cosh(6*k))/(8*np.sinh(2*k)**3)) 
+
 ## Parameters figures
 if USETEX:
     plt.rcParams['text.usetex'] = True
@@ -257,22 +272,6 @@ plt.savefig("figure2.pdf")
 
 #%% Figure 3
 # Relative error of different models compare to the numerical results.
-
-#Asymptotic solutions obtained from the normal mode in Cortelezzi's derivation
-def om_normal_mode_viscous(Oh, Bo, k):
-    return -pulsation(Bo, k)**2/(k**2*Oh*np.tanh(k))*(k-np.cosh(k)*np.sinh(k))/(1+2*k**2+np.cosh(2*k))
-    
-def puls_normal_mode_inertial(Oh, Bo, k):
-    return pulsation(Bo, k) - (1/np.sinh(2*k)*np.sqrt(pulsation(Bo, k) * k**2*Oh/2)
-            - pow(k**2*Oh,3./2.)/np.sqrt(2*pulsation(Bo, k))
-            *(3-8*np.cosh(2*k)-14*np.cosh(4*k)+4*np.cosh(6*k))/(8*np.sinh(2*k)**3)) 
-
-def om_normal_mode_inertial(Oh, Bo, k):
-    return (1/np.sinh(2*k)*np.sqrt(pulsation(Bo, k) * k**2*Oh/2) +
-            2*k**2*Oh * (np.cosh(4*k)+np.cosh(2*k)-1) / (np.cosh(4*k) -1)
-            - pow(k**2*Oh,3./2.)/np.sqrt(2*pulsation(Bo, k))
-            *(3-8*np.cosh(2*k)-14*np.cosh(4*k)+4*np.cosh(6*k))/(8*np.sinh(2*k)**3)) 
-
 def err_norm(relax, puls, om_num):
     relax_num = om_num[0] # 0 for decaying
     puls_num = om_num[1] # 1 for oscillation
@@ -352,8 +351,8 @@ def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
     x = [pulsation(Bo, k)/(k**2/1.3115+1/0.732) for k in k_list]
     plt.plot(x, k_list, linewidth = 1.5, c = 'black')
 
-Oh_list = np.logspace(-3, 1, 15)
-k_list = np.logspace(-2, 2, 15)
+Oh_list = np.logspace(-3, 1, 50)
+k_list = np.logspace(-2, 2, 50)
 Bo = 1
 plotErrorOm (Oh_list, k_list, Bo, 'fig3_om_num.npy', True)
 plt.tight_layout(pad=1.)
@@ -415,21 +414,29 @@ if compute:
         om_gwr_Oh.append([growth_rate(Oh, Bo, k) for k in k_list])
     np.save("RayleighTaylor",om_gwr_Oh)
 else:
-    om_gwr_Oh = np.load("RayleighTaylor")
-
-om_lub_Oh = []
-for Oh in Oh_list:
-    om_lub_Oh.append([np.abs(om_normal_mode_viscous(Oh, Bo, k)) for k in k_list2])
+    om_gwr_Oh = np.load("RayleighTaylor.npy")
+   
 om_potential = [pulsation(Bo, k) for k in k_list]
 
-Colors = ['orange', 'green', 'black']
 
-plt.figure()
-plt.xlabel(r'k')
-plt.ylabel(r'$\omega$')
-plt.plot(k_list, om_potential, lw=1.0, alpha = 0.4, color = Colors[-1], label = r'Potential')
-for Oh, om_gwr, om_lub, c in zip(Oh_list, om_gwr_Oh, om_lub_Oh, Colors):
-    plt.plot(k_list, np.abs(om_gwr), '--', lw=1.0, color = c, alpha = 0.8, label = r'Cortelezzi resolution, Oh = ' + str(Oh))
-    plt.plot(k_list2, om_lub, '-', lw=1.0, alpha = 0.4, color = c, label = 'Lubrication, Oh = ' + str(Oh))
-plt.legend()
+fig, ax = plt.subplots(1,2)
+    
+Oh = Oh_list[0]
+om_norm = [np.abs(puls_normal_mode_inertial(Oh, Bo, k)) for k in k_list2]
+ax[1].plot(k_list2, om_norm, '-', lw=1.0, alpha = 0.4, color = 'red', label = 'Normal mode')
+ax[1].plot(k_list, om_potential, lw=1.0, alpha = 0.4, color = 'black', label = r'Potential')
+
+Oh = Oh_list[1]
+ax[0].set_ylabel(r'$\omega$')
+om_lub_list = [np.abs(om_lub(Oh, Bo, k)) for k in k_list2]
+ax[0].plot(k_list2, om_lub_list, '-', lw=1.0, alpha = 0.4, color = 'blue', label = 'Lubrication')
+om_norm = [np.abs(om_normal_mode_viscous(Oh, Bo, k)) for k in k_list2]
+ax[0].plot(k_list2, om_norm, '-', lw=1.0, alpha = 0.4, color = 'red', label = 'Normal mode')
+
+for Oh, axx, om_gwr in zip(Oh_list, [ax[1],ax[0]], om_gwr_Oh):
+    axx.set_xlabel(r'k')
+    axx.set_title('Oh = ' + str(Oh))
+    axx.plot(k_list, np.abs(om_gwr), '--', lw=1.0, color = 'orange', alpha = 0.8, label = r'Cortelezzi resolution')
+    axx.legend()
+
 plt.tight_layout(pad=0.)
