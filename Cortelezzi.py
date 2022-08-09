@@ -387,6 +387,7 @@ plt.savefig("figure3.pdf")
 #%% Figure 4 
 #Rayleigh-Taylor
 from scipy import stats
+compute = False 
 
 def growth_rate(Oh, Bo, k):
     t_all = np.linspace(0.001, 25., 50)/k
@@ -407,18 +408,25 @@ Oh_list = [0.01, 1.]
 k_list = np.linspace(0.005, 0.999, 100) * np.sqrt(-Bo)
 k_list2 = np.linspace(0.005, 1., 100) * np.sqrt(-Bo)
 
-om_gwr_Oh = []
+if compute:
+    om_gwr_Oh = []
+    for Oh in Oh_list:
+        om_gwr_Oh.append([growth_rate(Oh, Bo, k) for k in k_list])
+    np.save("RayleighTaylor",om_gwr_Oh)
+else:
+    om_gwr_Oh = np.load("RayleighTaylor")
+
 om_lub_Oh = []
 for Oh in Oh_list:
-    om_gwr_Oh.append([growth_rate(Oh, Bo, k) for k in k_list])
-    om_lub_Oh.append([np.abs(om_lub(Oh, Bo, k)) for k in k_list2])
+    om_lub_Oh.append([np.abs(om_normal_mode_viscous(Oh, Bo, k)) for k in k_list2])
 om_potential = [pulsation(Bo, k) for k in k_list]
+
 Colors = ['orange', 'green', 'black']
 
 plt.figure()
 plt.xlabel(r'k')
 plt.ylabel(r'$\omega$')
-plt.loglog(k_list, om_potential, lw=1.0, alpha = 0.4, color = Colors[-1], label = r'Potential')
+plt.plot(k_list, om_potential, lw=1.0, alpha = 0.4, color = Colors[-1], label = r'Potential')
 for Oh, om_gwr, om_lub, c in zip(Oh_list, om_gwr_Oh, om_lub_Oh, Colors):
     plt.plot(k_list, np.abs(om_gwr), '--', lw=1.0, color = c, alpha = 0.8, label = r'Cortelezzi resolution, Oh = ' + str(Oh))
     plt.plot(k_list2, om_lub, '-', lw=1.0, alpha = 0.4, color = c, label = 'Lubrication, Oh = ' + str(Oh))
