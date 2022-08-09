@@ -281,29 +281,19 @@ def err_norm(relax, puls, om_num):
                        (np.square(relax_num) + np.square(puls_num)))
 
 #Growth rate and pulsations obtained by fit of the numerical solution.
-#     if (Oh < pulsation(Bo, k)/(k**2/0.7+1/0.6)):
-#         M = 64
-#         om_relax = om_normal_mode_inertial(Oh, Bo, k)
-#         t_all = np.linspace(0.01, 1., 100) * min(50./om_0, abs(5./om_relax)) 
-#     else:
-#         M = 32
-#         om_relax = om_normal_mode_viscous(Oh, Bo, k)
-#         t_all = np.linspace(0.01, 1., 40) * abs(5./om_relax)
-
 def om_numerical(Oh, Bo, k, guess_value):
-    M = 32
+    M = 64
     om_relax = guess_value[0]
     om_0 = guess_value[1]
     logspan = np.array([1e-4,2e-4,5e-4,1e-3,2e-3,5e-3])
     linspan = np.linspace(0.01, 1., 50)
     loglinspan = np.concatenate((logspan,linspan))
-    t_all = loglinspan * min(20./om_0, abs(20./om_relax))
+    t_all = loglinspan * 10./max(om_0, abs(om_relax))
     sampled_eta = freeSurface(t_all, Oh, Bo, k, M)
     guess_value = list(guess_value)
-    guess_value[2] = 1.
     guess_value[3] = 7.*np.pi/4.
     guess_value = tuple(guess_value)
-    popt = curve_fit(better_sinusoid, t_all, sampled_eta, p0=guess_value, bounds=([0.,0.,0.5,0.],[np.inf, 5.*om_0, 2., 2.*np.pi]), sigma=(1.+10.*np.exp(-om_relax*t_all)))[0]
+    popt = curve_fit(better_sinusoid, t_all, sampled_eta, p0=guess_value, bounds=([0.,0.,1.,0.],[np.inf, 5.*om_0, 2., 2.*np.pi]), sigma=(1.+10.*np.exp(-om_relax*t_all)))[0]
     return popt, t_all, sampled_eta
 
 
@@ -315,7 +305,7 @@ def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
         om_num = []
         value_k_Oh = (om_normal_mode_inertial(Oh_list[0], Bo, k_list[0]),
                        puls_normal_mode_inertial(Oh_list[0], Bo, k_list[0]),
-                       1., 3.*np.pi/2.)
+                       1., 0.)
         for k in k_list:
             om_num_k = []
             for Oh in Oh_list:
@@ -362,8 +352,8 @@ def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
     x = [pulsation(Bo, k)/(k**2/1.3115+1/0.732) for k in k_list]
     plt.plot(x, k_list, linewidth = 1.5, c = 'black')
 
-Oh_list = np.logspace(-3, 1, 20)
-k_list = np.logspace(-2, 2, 20)
+Oh_list = np.logspace(-3, 1, 15)
+k_list = np.logspace(-2, 2, 15)
 Bo = 1
 plotErrorOm (Oh_list, k_list, Bo, 'fig3_om_num.npy', True)
 plt.tight_layout(pad=1.)
