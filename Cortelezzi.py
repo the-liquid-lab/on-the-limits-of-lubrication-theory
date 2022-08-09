@@ -28,6 +28,9 @@ from gwr_inversion import gwr
 def decaying_sinusoid(t, om_dec, om_osc):
     return np.exp(- om_dec * t)*np.cos(om_osc * t)
 
+def better_sinusoid(t, om_dec, om_osc, amp, phi):
+    return amp*np.exp(- om_dec * t)*np.cos(om_osc * t + phi)
+
 def my_exp(t, om_dec):
       return np.exp(- om_dec * t)
   
@@ -270,68 +273,76 @@ def om_normal_mode_inertial(Oh, Bo, k):
             - pow(k**2*Oh,3./2.)/np.sqrt(2*pulsation(Bo, k))
             *(3-8*np.cosh(2*k)-14*np.cosh(4*k)+4*np.cosh(6*k))/(8*np.sinh(2*k)**3)) 
 
+def err_norm(relax, puls, om_num):
+    relax_num = om_num[0] # 0 for decaying
+    puls_num = om_num[1] # 1 for oscillation
+    return np.sqrt((np.square(relax-relax_num) + 
+                        np.square(puls-puls_num))/
+                       (np.square(relax_num) + np.square(puls_num)))
+
 #Growth rate and pulsations obtained by fit of the numerical solution.
-def om_numerical(Oh, Bo, k):
-    om_0 = puls_normal_mode_inertial(Oh, Bo, k)
-    if (Oh < pulsation(Bo, k)/(k**2/0.7+1/0.6)):
-        M = 64
-        om_relax = om_normal_mode_inertial(Oh, Bo, k)
-        t_all = np.linspace(0.01, 1., 100) * min(50./om_0, abs(5./om_relax)) 
-    else:
-        M = 32
-        om_relax = om_normal_mode_viscous(Oh, Bo, k)
-        t_all = np.linspace(0.01, 1., 40) * abs(5./om_relax)
-        
+#     if (Oh < pulsation(Bo, k)/(k**2/0.7+1/0.6)):
+#         M = 64
+#         om_relax = om_normal_mode_inertial(Oh, Bo, k)
+#         t_all = np.linspace(0.01, 1., 100) * min(50./om_0, abs(5./om_relax)) 
+#     else:
+#         M = 32
+#         om_relax = om_normal_mode_viscous(Oh, Bo, k)
+#         t_all = np.linspace(0.01, 1., 40) * abs(5./om_relax)
+
+def om_numerical(Oh, Bo, k, guess_value):
+    M = 32
+    om_relax = guess_value[0]
+    om_0 = guess_value[1]
+    logspan = np.array([1e-4,2e-4,5e-4,1e-3,2e-3,5e-3])
+    linspan = np.linspace(0.01, 1., 50)
+    loglinspan = np.concatenate((logspan,linspan))
+    t_all = loglinspan * min(20./om_0, abs(20./om_relax))
     sampled_eta = freeSurface(t_all, Oh, Bo, k, M)
-    if min(sampled_eta) < 0:
-        popt = curve_fit(decaying_sinusoid, t_all, sampled_eta, p0=(om_relax, om_0), bounds=(0,[np.inf, 2*om_0]))[0]
-    else:
-        popt = [curve_fit(my_exp, t_all, sampled_eta, p0=(om_relax))[0][0], 0]
+    guess_value = list(guess_value)
+    guess_value[2] = 1.
+    guess_value[3] = 7.*np.pi/4.
+    guess_value = tuple(guess_value)
+    popt = curve_fit(better_sinusoid, t_all, sampled_eta, p0=guess_value, bounds=([0.,0.,0.5,0.],[np.inf, 5.*om_0, 2., 2.*np.pi]), sigma=(1.+10.*np.exp(-om_relax*t_all)))[0]
     return popt, t_all, sampled_eta
 
-from scipy import ndimage
+
 #Compare the different models for a range of Oh and k.
 def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
     #The data can be easily recompute but it takes about 1h.
     #For time efficiency, numerical values are by default taken in the txt file. 
     if compute:
-        om_num = [[[0, pulsation(Bo, k)] for k in k_list]]
-        for Oh in Oh_list:
-            om_num.append([om_numerical(Oh, Bo, k)[0] for k in k_list])
-        om_num = np.transpose(np.array(om_num[1:]))
+        om_num = []
+        value_k_Oh = (om_normal_mode_inertial(Oh_list[0], Bo, k_list[0]),
+                       puls_normal_mode_inertial(Oh_list[0], Bo, k_list[0]),
+                       1., 3.*np.pi/2.)
+        for k in k_list:
+            om_num_k = []
+            for Oh in Oh_list:
+                value_k_Oh = om_numerical(Oh, Bo, k, value_k_Oh)[0] 
+                om_num_k.append(value_k_Oh)
+            value_k_Oh = om_num_k[0]
+            om_num.append(om_num_k)
+        om_num = np.transpose(om_num,(2,0,1))
         np.save(file_name,om_num)
         
-    #Numerical decaying rate and pulsation
+    #Numerical complex pulsation
     om_num = np.load(file_name)
-    relax_num = om_num[0] # 0 for decaying
-    puls_num = om_num[1] # 1 for oscillation
-    
-    #Analytical decaying rate and pulsation
-    err_lub = np.abs(np.array([[om_lub(Oh, Bo, k) for Oh in Oh_list] for k in k_list])/relax_num-1)
-    err_puls = np.abs(np.array([[puls_normal_mode_inertial(Oh, Bo, k) for Oh in Oh_list] for k in k_list])/puls_num-1)
-    inert_domain = 1e6*np.array([[(Oh > pulsation(Bo, k)/(k**2/0.7+1/0.8)) for Oh in Oh_list] for k in k_list])
-    err_in = (np.array([[om_normal_mode_inertial(Oh, Bo, k) for Oh in Oh_list] for k in k_list])/relax_num-1) + inert_domain
-    err_visc = np.abs(np.array([[om_normal_mode_viscous(Oh, Bo, k) for Oh in Oh_list] for k in k_list])/relax_num-1)
-    err_visc = np.exp(ndimage.gaussian_filter(np.log(err_visc), sigma = 0.6))
 
-    om_list = np.array([[om_lub(Oh, Bo, k) for Oh in Oh_list] for k in k_list])
-    puls_list = np.array([[0 for Oh in Oh_list] for k in k_list])
-    err_lub = np.sqrt((np.square(om_list-relax_num) + 
-                        np.square(puls_list-puls_num))/
-                       (np.square(relax_num) + np.square(puls_num)))
-    
-    om_list = np.array([[om_normal_mode_viscous(Oh, Bo, k) for Oh in Oh_list] for k in k_list])
-    puls_list = np.array([[0 for Oh in Oh_list] for k in k_list])
-    err_visc = np.sqrt((np.square(om_list-relax_num) + 
-                        np.square(puls_list-puls_num))/
-                       (np.square(relax_num) + np.square(puls_num)))
-    
-    om_list = np.array([[om_normal_mode_inertial(Oh, Bo, k) for Oh in Oh_list] for k in k_list])
-    puls_list = np.array([[puls_normal_mode_inertial(Oh, Bo, k) for Oh in Oh_list] for k in k_list])
-    err_in = np.sqrt((np.square(om_list-relax_num) + 
-                        np.square(puls_list-puls_num))/
-                       (np.square(relax_num) + np.square(puls_num)))
-    
+    #Analytical error
+    err_lub = err_norm(
+        np.array([[om_lub(Oh, Bo, k) for Oh in Oh_list] for k in k_list]),
+        np.array([[0 for Oh in Oh_list] for k in k_list]),
+        om_num)
+    err_visc = err_norm(
+        np.array([[om_normal_mode_viscous(Oh, Bo, k) for Oh in Oh_list] for k in k_list]),
+        np.array([[0 for Oh in Oh_list] for k in k_list]),
+        om_num)
+    err_in = err_norm(
+        np.array([[om_normal_mode_inertial(Oh, Bo, k) for Oh in Oh_list] for k in k_list]),
+        np.array([[puls_normal_mode_inertial(Oh, Bo, k) for Oh in Oh_list] for k in k_list]),
+        om_num)
+  
     #Figure parameter and contour's labels
     plt.figure(figsize=(5, 4))
     plt.xscale('log')
@@ -344,17 +355,17 @@ def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
         fmt[l] = s
         
     #Plot contour lines and fillings
-    for err, c in zip([err_puls, err_visc, err_lub, err_in],['grey', 'red', 'grey', 'blue']):
+    for err, c in zip([err_visc, err_lub, err_in],['red', 'grey', 'blue']):
         plt.contourf(Oh_list, k_list, err, levels = [-0.2, 0.2], colors = c, alpha = 0.2);
         cs = plt.contour(Oh_list, k_list, err, levels = [0.005, 0.05, 0.2], colors = c);
         plt.clabel(cs, fmt=fmt, fontsize=10)
     x = [pulsation(Bo, k)/(k**2/1.3115+1/0.732) for k in k_list]
     plt.plot(x, k_list, linewidth = 1.5, c = 'black')
 
-Oh_list = np.logspace(-3, 1, 60)
-k_list = np.logspace(-2, 2, 60)
+Oh_list = np.logspace(-3, 1, 20)
+k_list = np.logspace(-2, 2, 20)
 Bo = 1
-plotErrorOm (Oh_list, k_list, Bo, 'fig3_om_num.npy', False)
+plotErrorOm (Oh_list, k_list, Bo, 'fig3_om_num.npy', True)
 plt.tight_layout(pad=1.)
 plt.savefig("figure3.pdf")
 
