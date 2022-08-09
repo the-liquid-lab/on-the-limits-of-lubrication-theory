@@ -314,6 +314,23 @@ def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
     err_visc = np.abs(np.array([[om_normal_mode_viscous(Oh, Bo, k) for Oh in Oh_list] for k in k_list])/relax_num-1)
     err_visc = np.exp(ndimage.gaussian_filter(np.log(err_visc), sigma = 0.6))
 
+    om_list = np.array([[om_lub(Oh, Bo, k) for Oh in Oh_list] for k in k_list])
+    puls_list = np.array([[0 for Oh in Oh_list] for k in k_list])
+    err_lub = np.sqrt((np.square(om_list-relax_num) + 
+                        np.square(puls_list-puls_num))/
+                       (np.square(relax_num) + np.square(puls_num)))
+    
+    om_list = np.array([[om_normal_mode_viscous(Oh, Bo, k) for Oh in Oh_list] for k in k_list])
+    puls_list = np.array([[0 for Oh in Oh_list] for k in k_list])
+    err_visc = np.sqrt((np.square(om_list-relax_num) + 
+                        np.square(puls_list-puls_num))/
+                       (np.square(relax_num) + np.square(puls_num)))
+    
+    om_list = np.array([[om_normal_mode_inertial(Oh, Bo, k) for Oh in Oh_list] for k in k_list])
+    puls_list = np.array([[puls_normal_mode_inertial(Oh, Bo, k) for Oh in Oh_list] for k in k_list])
+    err_in = np.sqrt((np.square(om_list-relax_num) + 
+                        np.square(puls_list-puls_num))/
+                       (np.square(relax_num) + np.square(puls_num)))
     
     #Figure parameter and contour's labels
     plt.figure(figsize=(5, 4))
