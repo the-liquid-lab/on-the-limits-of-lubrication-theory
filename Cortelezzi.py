@@ -1059,6 +1059,12 @@ def growth_rate(Oh, Bo, k):
         plt.semilogy(t_all*abs(om_lub(Oh, Bo, k)), np.exp(reg[1] + t_all*reg[0]), 'gray', label = 'Regression')
     return reg[0]
 
+def om_normal_mode_inertial_Bo_neg(Oh, Bo, k):
+    return pulsation(Bo, k) - (1/np.sinh(2*k)*np.sqrt(pulsation(Bo, k) * k**2*Oh/2)
+            + 2*k**2*Oh * (np.cosh(4*k)+np.cosh(2*k)-1) / (np.cosh(4*k) -1)
+            + pow(k**2*Oh,3./2.)/np.sqrt(2*pulsation(Bo, k))
+            *(3-8*np.cosh(2*k)-14*np.cosh(4*k)+4*np.cosh(6*k))/(8*np.sinh(2*k)**3))
+
 Bo = -0.5
 Oh_list = [0.01, 1.]
 k_list = np.linspace(0.005, 0.999, 100) * np.sqrt(-Bo)
@@ -1075,10 +1081,10 @@ else:
 om_potential = [pulsation(Bo, k) for k in k_list]
 
 
-fig, ax = plt.subplots(1,2)
+fig, ax = plt.subplots(1,2, figsize=(16,8))
     
 Oh = Oh_list[0]
-om_norm = [np.abs(puls_normal_mode_inertial(Oh, Bo, k)) for k in k_list2]
+om_norm = [np.abs(om_normal_mode_inertial_Bo_neg(Oh, Bo, k)) for k in k_list2]
 ax[1].plot(k_list2, om_norm, '-', lw=1.0, alpha = 0.4, color = 'red', label = 'Normal mode')
 ax[1].plot(k_list, om_potential, lw=1.0, alpha = 0.4, color = 'black', label = r'Potential')
 
@@ -1096,3 +1102,14 @@ for Oh, axx, om_gwr in zip(Oh_list, [ax[1],ax[0]], om_gwr_Oh):
     axx.legend()
 
 plt.tight_layout(pad=0.)
+
+# Oh = 0.01
+# k = 0.5
+# t_all = np.linspace(0.001, 25., 50)/k
+# sampled_eta = freeSurface(t_all, Oh, Bo, k)
+# reg = stats.linregress(t_all[20:], np.log(sampled_eta[20:]))
+# plt.figure()
+# plt.xlabel(r'Time (in $\tau_{relax}$ units)')
+# plt.ylabel("Relative wave amplitude") 
+# plt.plot(t_all*abs(om_lub(Oh, Bo, k)), sampled_eta, 'black', label = r'Cortelezzi \& Prosperetti')
+# plt.plot(t_all*abs(om_lub(Oh, Bo, k)), np.exp(reg[1] + t_all*reg[0]), 'gray', label = 'Regression')
