@@ -2,379 +2,45 @@
 """
 @author: Clément & Arnaud
 """
+#Must install the fonts Roboto and Roboto condensed
+#Must install the packages gwr_inversion and mpmath
 
-#%% Import
+#%% 
+# Import
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-import matplotlib.ticker
-import matplotlib.gridspec as gridspec
-import matplotlib.ticker as ticker
 import matplotlib.patheffects as path_effects
+from matplotlib import gridspec, ticker
 from matplotlib.colors import LogNorm
-from matplotlib import cm
-from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 from matplotlib.textpath import TextPath
 from matplotlib.patches import PathPatch
 from matplotlib.font_manager import FontProperties
-import itertools
+from mpmath import mp, findroot, j 
 
+from scipy.optimize import curve_fit
+from Functions import denom, freeSurface, om_lub, pulsation, decaying_sinusoid, better_sinusoid
+from Functions import om_normal_mode_viscous, puls_normal_mode_inertial, om_normal_mode_inertial
+
+# Working directory
 import os
-# directory of script file
-print(os.path.abspath(os.path.dirname(__file__)))
-# change current working directory
 os.chdir(os.path.abspath(os.path.dirname(__file__)))
 # current working directory
 print(os.getcwd())
 
+#Colors
+import Colors
 import vapeplot
 clrs = vapeplot.palette('vaporwave')
 clrlub=clrs[2]
 clrpole=clrs[6]
 
-# Colors and colormaps definition (Material colors as defined in Rougier's book)
-colors = {
-    "red": {
-        0: "#ffebee",
-        1: "#ffcdd2",
-        2: "#ef9a9a",
-        3: "#e57373",
-        4: "#ef5350",
-        5: "#f44336",
-        6: "#e53935",
-        7: "#d32f2f",
-        8: "#c62828",
-        9: "#b71c1c",
-    },
-    "pink": {
-        0: "#fce4ec",
-        1: "#f8bbd0",
-        2: "#f48fb1",
-        3: "#f06292",
-        4: "#ec407a",
-        5: "#e91e63",
-        6: "#d81b60",
-        7: "#c2185b",
-        8: "#ad1457",
-        9: "#880e4f",
-    },
-    "purple": {
-        0: "#f3e5f5",
-        1: "#e1bee7",
-        2: "#ce93d8",
-        3: "#ba68c8",
-        4: "#ab47bc",
-        5: "#9c27b0",
-        6: "#8e24aa",
-        7: "#7b1fa2",
-        8: "#6a1b9a",
-        9: "#4a148c",
-    },
-    "d.purple": {
-        0: "#ede7f6",
-        1: "#d1c4e9",
-        2: "#b39ddb",
-        3: "#9575cd",
-        4: "#7e57c2",
-        5: "#673ab7",
-        6: "#5e35b1",
-        7: "#512da8",
-        8: "#4527a0",
-        9: "#311b92",
-    },
-    "indigo": {
-        0: "#e8eaf6",
-        1: "#c5cae9",
-        2: "#9fa8da",
-        3: "#7986cb",
-        4: "#5c6bc0",
-        5: "#3f51b5",
-        6: "#3949ab",
-        7: "#303f9f",
-        8: "#283593",
-        9: "#1a237e",
-    },
-    "blue": {
-        0: "#e3f2fd",
-        1: "#bbdefb",
-        2: "#90caf9",
-        3: "#64b5f6",
-        4: "#42a5f5",
-        5: "#2196f3",
-        6: "#1e88e5",
-        7: "#1976d2",
-        8: "#1565c0",
-        9: "#0d47a1",
-    },
-    "l.blue": {
-        0: "#e1f5fe",
-        1: "#b3e5fc",
-        2: "#81d4fa",
-        3: "#4fc3f7",
-        4: "#29b6f6",
-        5: "#03a9f4",
-        6: "#039be5",
-        7: "#0288d1",
-        8: "#0277bd",
-        9: "#01579b",
-    },
-    "cyan": {
-        0: "#e0f7fa",
-        1: "#b2ebf2",
-        2: "#80deea",
-        3: "#4dd0e1",
-        4: "#26c6da",
-        5: "#00bcd4",
-        6: "#00acc1",
-        7: "#0097a7",
-        8: "#00838f",
-        9: "#006064",
-    },
-    "teal": {
-        0: "#e0f2f1",
-        1: "#b2dfdb",
-        2: "#80cbc4",
-        3: "#4db6ac",
-        4: "#26a69a",
-        5: "#009688",
-        6: "#00897b",
-        7: "#00796b",
-        8: "#00695c",
-        9: "#004d40",
-    },
-    "green": {
-        0: "#e8f5e9",
-        1: "#c8e6c9",
-        2: "#a5d6a7",
-        3: "#81c784",
-        4: "#66bb6a",
-        5: "#4caf50",
-        6: "#43a047",
-        7: "#388e3c",
-        8: "#2e7d32",
-        9: "#1b5e20",
-    },
-    "l.green": {
-        0: "#f1f8e9",
-        1: "#dcedc8",
-        2: "#c5e1a5",
-        3: "#aed581",
-        4: "#9ccc65",
-        5: "#8bc34a",
-        6: "#7cb342",
-        7: "#689f38",
-        8: "#558b2f",
-        9: "#33691e",
-    },
-    "lime": {
-        0: "#f9fbe7",
-        1: "#f0f4c3",
-        2: "#e6ee9c",
-        3: "#dce775",
-        4: "#d4e157",
-        5: "#cddc39",
-        6: "#c0ca33",
-        7: "#afb42b",
-        8: "#9e9d24",
-        9: "#827717",
-    },
-    "yellow": {
-        0: "#fffde7",
-        1: "#fff9c4",
-        2: "#fff59d",
-        3: "#fff176",
-        4: "#ffee58",
-        5: "#ffeb3b",
-        6: "#fdd835",
-        7: "#fbc02d",
-        8: "#f9a825",
-        9: "#f57f17",
-    },
-    "amber": {
-        0: "#fff8e1",
-        1: "#ffecb3",
-        2: "#ffe082",
-        3: "#ffd54f",
-        4: "#ffca28",
-        5: "#ffc107",
-        6: "#ffb300",
-        7: "#ffa000",
-        8: "#ff8f00",
-        9: "#ff6f00",
-    },
-    "orange": {
-        0: "#fff3e0",
-        1: "#ffe0b2",
-        2: "#ffcc80",
-        3: "#ffb74d",
-        4: "#ffa726",
-        5: "#ff9800",
-        6: "#fb8c00",
-        7: "#f57c00",
-        8: "#ef6c00",
-        9: "#e65100",
-    },
-    "d.orange": {
-        0: "#fbe9e7",
-        1: "#ffccbc",
-        2: "#ffab91",
-        3: "#ff8a65",
-        4: "#ff7043",
-        5: "#ff5722",
-        6: "#f4511e",
-        7: "#e64a19",
-        8: "#d84315",
-        9: "#bf360c",
-    },
-    "brown": {
-        0: "#efebe9",
-        1: "#d7ccc8",
-        2: "#bcaaa4",
-        3: "#a1887f",
-        4: "#8d6e63",
-        5: "#795548",
-        6: "#6d4c41",
-        7: "#5d4037",
-        8: "#4e342e",
-        9: "#3e2723",
-    },
-    "grey": {
-        0: "#fafafa",
-        1: "#f5f5f5",
-        2: "#eeeeee",
-        3: "#e0e0e0",
-        4: "#bdbdbd",
-        5: "#9e9e9e",
-        6: "#757575",
-        7: "#616161",
-        8: "#424242",
-        9: "#212121",
-    },
-    "blue grey": {
-        0: "#eceff1",
-        1: "#cfd8dc",
-        2: "#b0bec5",
-        3: "#90a4ae",
-        4: "#78909c",
-        5: "#607d8b",
-        6: "#546e7a",
-        7: "#455a64",
-        8: "#37474f",
-        9: "#263238",
-    },
-}
 
-cols_lblue=[colors["l.blue"][count] for count in np.arange(6,-1,-1)]
-cols_lblue.append('#FFFFFF')
-cols_pink=[colors["pink"][count] for count in np.arange(6,-1,-1)]
-cols_pink.append('#FFFFFF')
-cols_amber=[colors["amber"][count] for count in np.arange(6,-1,-1)]
-cols_amber.append('#FFFFFF')
-cols_dpurple=[colors["d.purple"][count] for count in np.arange(6,-1,-1)]
-cols_dpurple.append('#FFFFFF')
-cols_indigo=[colors["indigo"][count] for count in np.arange(6,-1,-1)]
-cols_indigo.append('#FFFFFF')
-
-cmap_lblue = ListedColormap(cols_lblue)
-cmap_pink = ListedColormap(cols_pink)
-cmap_amber = ListedColormap(cols_amber)
-
-def hex_to_rgba(value):
-    """Return [red, green, blue, 1.] for the color given as #rrggbb."""
-    value = value.lstrip('#')
-    lv = len(value)
-    return list(itertools.chain((int(value[i:i + lv // 3], 16)/255 for i in range(0, lv, lv // 3)),[1]))
-
-cols_pink_rgba  = []
-cols_amber_rgba = []
-cols_lblue_rgba = []
-cols_dpurple_rgba = []
-cols_indigo_rgba = []
-for pink_colour, amber_colour, lblue_colour, dpurple_colour, indigo_colour in zip(cols_pink,cols_amber,cols_lblue,cols_dpurple,cols_indigo):
-    cols_pink_rgba.append(hex_to_rgba(pink_colour))
-    cols_amber_rgba.append(hex_to_rgba(amber_colour))
-    cols_lblue_rgba.append(hex_to_rgba(lblue_colour))
-    cols_dpurple_rgba.append(hex_to_rgba(dpurple_colour))
-    cols_indigo_rgba.append(hex_to_rgba(indigo_colour))
-    
-USETEX = True
-
-from mpmath import mp, findroot, j 
-from mpmath import cosh, sinh, tanh, exp, sqrt
-from scipy.optimize import curve_fit
-import time
-
-#The package must be installed through "conda install gwr_inversion"
-from gwr_inversion import gwr 
-
-## Functions and expressions declarations
-def decaying_sinusoid(t, om_dec, om_osc):
-    return np.exp(- om_dec * t)*np.cos(om_osc * t)
-
-def better_sinusoid(t, om_dec, om_osc, amp, phi):
-    return amp*np.exp(- om_dec * t)*np.cos(om_osc * t + phi)
-
-def my_exp(t, om_dec):
-      return np.exp(- om_dec * t)
-  
-#Declare the expressions of the kernel and eta
-def ker_sy (s, Oh, Bo, k, lbda):
-    return 2*Oh/s*k*(k-lbda*tanh(k)) - Oh/s*(4*lbda*k*sinh(k)*(k*exp(-lbda)
-            *(k*cosh(k)+lbda*sinh(k))-(k**2+lbda**2))+(k**2+lbda**2)**2
-            *sinh(lbda))/(2*k*cosh(k)*(k*cosh(k)*sinh(lbda)-lbda*sinh(k)*cosh(lbda)))
-            
-def eta_sy (s, Oh, k, omega2, Kern):
-    return 1/s*(1-omega2/(s**2+4*Oh*k**2*s+omega2+2*Oh*k**2*s*Kern))
-
-#Reduce the expressions as functions of s and of the parameters Oh, Bo and k
-def freeSurfaceLaplace(s, Oh, Bo, k):
-    lbda = sqrt(k**2 + s/Oh)
-    omega2 = (Bo+k**2)*k*tanh(k)
-    ker = ker_sy (s, Oh, Bo, k, lbda)
-    return eta_sy(s, Oh, k, omega2, ker)
-
-def denom (s, Oh, Bo, k):
-    lbda = sqrt(k**2 + s/Oh)
-    omega2 = (Bo+k**2)*k*tanh(k)
-    ker = ker_sy (s, Oh, Bo, k, lbda)
-    return (s**2+4*Oh*k**2*s+omega2+2*Oh*k**2*s*ker)
-
-#Inverse the Laplace transfrom and return the values of eta as a function 
-#of a range of t and the parameters Oh, Bo and k
-def freeSurface(t_all, Ohnumb, Bonumb, knumb, M_value = 32):
-    store = time.time()
-    Oh = mp.mpmathify(Ohnumb)
-    Bo = mp.mpmathify(Bonumb)
-    k = mp.mpmathify(knumb) 
-    f = lambda s: freeSurfaceLaplace(s, Oh, Bo, k)
-    a = [float(gwr(f, t, M_value)) for t in t_all]
-    print (time.time()-store)
-    return a
-
-#Calculation of the different growth rates and pulsations
-def om_lub(Oh, Bo, k):
-    return (k**2*Bo+k**4)/(3*Oh)
-
-def pulsation(Bo, k):
-    return np.sqrt(np.abs(Bo + k**2)*k*np.tanh(k))
-
-#Asymptotic solutions obtained from the normal mode in Cortelezzi's derivation
-def om_normal_mode_viscous(Oh, Bo, k):
-    return -pulsation(Bo, k)**2/(k**2*Oh*np.tanh(k))*(k-np.cosh(k)*np.sinh(k))/(1+2*k**2+np.cosh(2*k))
-    
-def puls_normal_mode_inertial(Oh, Bo, k):
-    return pulsation(Bo, k) - (1/np.sinh(2*k)*np.sqrt(pulsation(Bo, k) * k**2*Oh/2)
-            - pow(k**2*Oh,3./2.)/np.sqrt(2*pulsation(Bo, k))
-            *(3-8*np.cosh(2*k)-14*np.cosh(4*k)+4*np.cosh(6*k))/(8*np.sinh(2*k)**3)) 
-
-def om_normal_mode_inertial(Oh, Bo, k):
-    return (1/np.sinh(2*k)*np.sqrt(pulsation(Bo, k) * k**2*Oh/2) +
-            2*k**2*Oh * (np.cosh(4*k)+np.cosh(2*k)-1) / (np.cosh(4*k) -1)
-            - pow(k**2*Oh,3./2.)/np.sqrt(2*pulsation(Bo, k))
-            *(3-8*np.cosh(2*k)-14*np.cosh(4*k)+4*np.cosh(6*k))/(8*np.sinh(2*k)**3)) 
 
 ## Parameters figures
+USETEX = True
+#The font Roboto and Roboto Condensed must be installed
 if USETEX:
     plt.rcParams['text.usetex'] = True
     plt.rcParams['text.latex.preamble'] = r'\usepackage{amsmath,amssymb} \usepackage[squaren,Gray]{SIunits} \usepackage{nicefrac}'
@@ -448,11 +114,11 @@ def plotHeight(Oh, Bo, k, ax, labelinset):
     axinset.semilogy(sampled_t, np.abs(error_lub), color=clrlub, linewidth=1.5)
     axinset.semilogy(sampled_t, np.abs(error_pole), color=clrpole, linewidth=1.5)
         ## set y ticks
-    y_major = matplotlib.ticker.LogLocator(base = 10.0, numticks = 5)
+    y_major = ticker.LogLocator(base = 10.0, numticks = 5)
     axinset.yaxis.set_major_locator(y_major)
-    y_minor = matplotlib.ticker.LogLocator(base = 10.0, subs = np.arange(1.0, 10.0) * 0.1, numticks = 10)
+    y_minor = ticker.LogLocator(base = 10.0, subs = np.arange(1.0, 10.0) * 0.1, numticks = 10)
     axinset.yaxis.set_minor_locator(y_minor)
-    axinset.yaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+    axinset.yaxis.set_minor_formatter(ticker.NullFormatter())
     axinset.set_xticks(sampled_t[-1]*np.arange(5)/4)
 
  #   axinset.set_xlim(0, 4), axinset.set_xticks(0.5*np.arange(1,8))
@@ -545,8 +211,8 @@ p = [plt.scatter(0, 1, label = 'Natural pulsations', marker = 'P', s = 80, c = '
 plt.arrow(-0.91, 0.05, 0.05, 0.2, head_width = 0.02, color = 'black')
 plt.arrow(-0.91, -0.05, 0.05, -0.2, head_width = 0.02, color = 'black')
 plt.scatter(0, -1, marker = 'P', s = 80, c = 'black')
-plt.scatter(om_ana[:,0]/om_0, om_ana[:,1]/om_0, s = 20, c = Oh_list, cmap=mymap, norm=matplotlib.colors.LogNorm())
-plt.scatter(om_ana[:,0]/om_0, -om_ana[:,1]/om_0, s = 20, c = Oh_list, cmap=mymap, norm=matplotlib.colors.LogNorm())
+plt.scatter(om_ana[:,0]/om_0, om_ana[:,1]/om_0, s = 20, c = Oh_list, cmap=mymap, norm=LogNorm())
+plt.scatter(om_ana[:,0]/om_0, -om_ana[:,1]/om_0, s = 20, c = Oh_list, cmap=mymap, norm=LogNorm())
 plt.xlabel('$\omega_{relax}/\omega_0 = \Re(s/\omega_0)$', family = "Roboto", weight="ultralight")      
 plt.ylabel('$\omega_{osc}/\omega_0 = \Im(s/\omega_0)$', family = "Roboto", weight="ultralight")
 cbar = plt.colorbar(label = 'Oh')
@@ -654,14 +320,14 @@ def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
     ax.set_xlabel("Oh")
     ax.set_yticks(np.logspace(-2, 2, 4 + 1))
     ax.set_ylabel("k")
-    hb_main = plt.hexbin(Oh_full.flatten(), k_full.flatten(), C = err_in.flatten(), gridsize=(21,12), norm=LogNorm(vmax=1.,vmin=0.0001),cmap=cmap_amber,edgecolor='white',linewidths=1,xscale = 'log', yscale = 'log', reduce_C_function=np.mean)
+    hb_main = plt.hexbin(Oh_full.flatten(), k_full.flatten(), C = err_in.flatten(), gridsize=(21,12), norm=LogNorm(vmax=1.,vmin=0.0001),cmap=Colors.cmap_amber,edgecolor='white',linewidths=1,xscale = 'log', yscale = 'log', reduce_C_function=np.mean)
     #trying to use https://stackoverflow.com/questions/15140072/how-to-map-number-to-color-using-matplotlibs-colormap
     ax.figure.canvas.draw()
     cols=hb_main.get_facecolors()
     hb_main_array = hb_main.get_array()
     #print("the shape of hb_main_array is", hb_main_array.shape)
     #print("the shape of cols is", cols.shape)
-    cols_ind = np.clip((2*np.log10(hb_main_array)+8.).astype(int),0, 7)
+    Colors.cols_ind = np.clip((2*np.log10(hb_main_array)+8.).astype(int),0, 7)
     x = [pulsation(Bo, k)/(k**2/1.3115+1/0.732) for k in k_list]
     splitpoints=np.array([x,k_list]).T
     DC_to_FC = ax.transData.transform
@@ -695,13 +361,13 @@ def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
     splitpointsNDC_ = np.array([X,Y]).T
     splitpointsfirsthalf = NDC_to_DC(splitpointsNDC_)
     plt.plot(
-        splitpointsfirsthalf[:,0],splitpointsfirsthalf[:,1], color=colors["blue grey"][5], linewidth=2, markersize=5, marker="o", markevery=[0, -1], linestyle="--", dash_capstyle="round"
+        splitpointsfirsthalf[:,0],splitpointsfirsthalf[:,1], color=Colors.colors["blue grey"][5], linewidth=2, markersize=5, marker="o", markevery=[0, -1], linestyle="--", dash_capstyle="round"
     )
     X, Y, _ = interpolate(splitpointsNDC[:,0], splitpointsNDC[:,1], np.linspace(vert[:, 0].max() - .1, D , 200))
     splitpointsNDC_ = np.array([X,Y]).T
     splitpointssecondhalf = NDC_to_DC(splitpointsNDC_)
     plt.plot(
-        splitpointssecondhalf[:,0],splitpointssecondhalf[:,1], color=colors["blue grey"][5], linewidth=2, markersize=5, marker="o", markevery=[0, -1], linestyle="--", dash_capstyle="round"
+        splitpointssecondhalf[:,0],splitpointssecondhalf[:,1], color=Colors.colors["blue grey"][5], linewidth=2, markersize=5, marker="o", markevery=[0, -1], linestyle="--", dash_capstyle="round"
     )
     # Faint outline
     patch = PathPatch(
@@ -717,10 +383,10 @@ def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
     #plt.plot(x, y)
     # Actual text
     patch = PathPatch(
-        path, facecolor=colors["blue grey"][5], zorder=30, edgecolor=colors["blue grey"][5], linewidth=0.0,    transform = ax.transAxes
+        path, facecolor=Colors.colors["blue grey"][5], zorder=30, edgecolor=Colors.colors["blue grey"][5], linewidth=0.0,    transform = ax.transAxes
     )
     ax.add_artist(patch)
-    #ax.plot(x, k_list, linewidth = 4, c = colors["orange"][3], linestyle="--", dash_capstyle="round")
+    #ax.plot(x, k_list, linewidth = 4, c = Colors.colors["orange"][3], linestyle="--", dash_capstyle="round")
     text = ax.text(
         0.1,
         0.95,
@@ -802,10 +468,10 @@ def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
 
     Zx = [-2.]
     Zy = [-3.]
-    ax.scatter(Zx, Zy, s=50, zorder=20, edgecolor="black", facecolor=colors["amber"][2], linewidth=0.5)
+    ax.scatter(Zx, Zy, s=50, zorder=20, edgecolor="black", facecolor=Colors.colors["amber"][2], linewidth=0.5)
     Zx = [-6.]
     Zy = [-5.]
-    ax.scatter(Zx, Zy, s=50, zorder=20, edgecolor="black", facecolor=colors["d.orange"][2], linewidth=0.5)
+    ax.scatter(Zx, Zy, s=50, zorder=20, edgecolor="black", facecolor=Colors.colors["d.orange"][2], linewidth=0.5)
     # note, the points lie on the line 0.5 x - 2
 
     ax.text(
@@ -847,7 +513,7 @@ def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
     ax = plt.subplot(gspec[2, 2],aspect=1)
     ax.set_xlim(0.001,10)
     ax.set_ylim(0.01,100)
-    hb_in = plt.hexbin(Oh_full.flatten(), k_full.flatten(), C = err_in.flatten(), gridsize=(21,12), norm=LogNorm(vmax=1.,vmin=0.0001),cmap=cmap_amber,edgecolor='white',linewidths=.25,xscale = 'log', yscale = 'log', reduce_C_function=np.mean)
+    hb_in = plt.hexbin(Oh_full.flatten(), k_full.flatten(), C = err_in.flatten(), gridsize=(21,12), norm=LogNorm(vmax=1.,vmin=0.0001),cmap=Colors.cmap_amber,edgecolor='white',linewidths=.25,xscale = 'log', yscale = 'log', reduce_C_function=np.mean)
     plt.tick_params(
         axis='both',          # changes apply to the x-axis
         which='both',      # both major and minor ticks are affected
@@ -895,7 +561,7 @@ def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
     ax = plt.subplot(gspec[4, 2],aspect=1)
     ax.set_xlim(0.001,10)
     ax.set_ylim(0.01,100)
-    hb_visc = plt.hexbin(Oh_full.flatten(), k_full.flatten(), C = err_visc.flatten(), gridsize=(21,12), norm=LogNorm(vmax=1.,vmin=0.0001),cmap=cmap_lblue,edgecolor='white',linewidths=.25,xscale = 'log', yscale = 'log', reduce_C_function=np.mean)
+    hb_visc = plt.hexbin(Oh_full.flatten(), k_full.flatten(), C = err_visc.flatten(), gridsize=(21,12), norm=LogNorm(vmax=1.,vmin=0.0001),cmap=Colors.cmap_lblue,edgecolor='white',linewidths=.25,xscale = 'log', yscale = 'log', reduce_C_function=np.mean)
     plt.tick_params(
         axis='both',          # changes apply to the x-axis
         which='both',      # both major and minor ticks are affected
@@ -942,7 +608,7 @@ def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
     ax = plt.subplot(gspec[6, 2],aspect=1)
     ax.set_xlim(0.001,10)
     ax.set_ylim(0.01,100)
-    hb_lub = plt.hexbin(Oh_full.flatten(), k_full.flatten(), C = err_lub.flatten(), gridsize=(21,12), norm=LogNorm(vmax=1.,vmin=0.0001),cmap=cmap_pink,edgecolor='white',linewidths=.25,xscale = 'log', yscale = 'log', reduce_C_function=np.mean)
+    hb_lub = plt.hexbin(Oh_full.flatten(), k_full.flatten(), C = err_lub.flatten(), gridsize=(21,12), norm=LogNorm(vmax=1.,vmin=0.0001),cmap=Colors.cmap_pink,edgecolor='white',linewidths=.25,xscale = 'log', yscale = 'log', reduce_C_function=np.mean)
     plt.tick_params(
         axis='both',          # changes apply to the x-axis
     which='both',      # both major and minor ticks are affected
@@ -991,16 +657,16 @@ def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
     for val_in, val_visc, val_lub in zip(hb_in_array, hb_visc_array, hb_lub_array):
         if ((val_in < 10.) & (val_in < val_visc) & (val_in < val_lub)): 
             ind = np.clip((2*np.log10(val_in)+8.).astype(int),0, 7)
-            cols[counter] = cols_amber_rgba[ind]
+            cols[counter] = Colors.cols_amber_rgba[ind]
         elif ((val_visc < 10.) & (val_visc < val_in) & (val_visc > 0.1*val_lub) & (val_visc < val_lub)):
             ind = np.clip((2*np.log10(val_visc)+8.).astype(int),0, 7)
-            cols[counter] = cols_indigo_rgba[ind]
+            cols[counter] = Colors.cols_indigo_rgba[ind]
         elif ((val_visc < 10.) & (val_visc < val_in) & (val_visc < val_lub)):
             ind = np.clip((2*np.log10(val_visc)+8.).astype(int),0, 7)
-            cols[counter] = cols_lblue_rgba[ind]
+            cols[counter] = Colors.cols_lblue_rgba[ind]
         elif ((val_lub < 10.) & (val_lub < val_in) & (val_lub > 0.1*val_visc) & (val_lub < val_visc)):
             ind = np.clip((2*np.log10(val_lub)+8.).astype(int),0, 7)
-            cols[counter] = cols_dpurple_rgba[ind]
+            cols[counter] = Colors.cols_dpurple_rgba[ind]
         else:
             cols[counter] = [0, 0, 0, 1]
         counter+=1
@@ -1085,8 +751,8 @@ fig, ax = plt.subplots(1,2, figsize=(16,8))
     
 Oh = Oh_list[0]
 om_norm = [np.abs(om_normal_mode_inertial_Bo_neg(Oh, Bo, k)) for k in k_list2]
-ax[1].plot(k_list2, om_norm, '-', lw=1.0, alpha = 0.4, color = 'red', label = 'Normal mode')
 ax[1].plot(k_list, om_potential, lw=1.0, alpha = 0.4, color = 'black', label = r'Potential')
+ax[1].plot(k_list2, om_norm, '-', lw=1.0, alpha = 0.4, color = 'red', label = 'Normal mode')
 
 Oh = Oh_list[1]
 ax[0].set_ylabel(r'$\omega$')
@@ -1101,7 +767,7 @@ for Oh, axx, om_gwr in zip(Oh_list, [ax[1],ax[0]], om_gwr_Oh):
     axx.plot(k_list, np.abs(om_gwr), '--', lw=1.0, color = 'orange', alpha = 0.8, label = r'Cortelezzi resolution')
     axx.legend()
 
-plt.tight_layout(pad=0.)
+plt.tight_layout(pad=2.)
 
 # Oh = 0.01
 # k = 0.5
