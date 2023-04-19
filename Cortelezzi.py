@@ -9,11 +9,295 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import matplotlib.ticker
+import matplotlib.gridspec as gridspec
+import matplotlib.ticker as ticker
+import matplotlib.patheffects as path_effects
+from matplotlib.colors import LogNorm
+from matplotlib import cm
+from matplotlib.colors import ListedColormap, LinearSegmentedColormap
+from matplotlib.textpath import TextPath
+from matplotlib.patches import PathPatch
+from matplotlib.font_manager import FontProperties
+import itertools
+
+import os
+# directory of script file
+print(os.path.abspath(os.path.dirname(__file__)))
+# change current working directory
+os.chdir(os.path.abspath(os.path.dirname(__file__)))
+# current working directory
+print(os.getcwd())
+
 import vapeplot
 clrs = vapeplot.palette('vaporwave')
 clrlub=clrs[2]
 clrpole=clrs[6]
 
+# Colors and colormaps definition (Material colors as defined in Rougier's book)
+colors = {
+    "red": {
+        0: "#ffebee",
+        1: "#ffcdd2",
+        2: "#ef9a9a",
+        3: "#e57373",
+        4: "#ef5350",
+        5: "#f44336",
+        6: "#e53935",
+        7: "#d32f2f",
+        8: "#c62828",
+        9: "#b71c1c",
+    },
+    "pink": {
+        0: "#fce4ec",
+        1: "#f8bbd0",
+        2: "#f48fb1",
+        3: "#f06292",
+        4: "#ec407a",
+        5: "#e91e63",
+        6: "#d81b60",
+        7: "#c2185b",
+        8: "#ad1457",
+        9: "#880e4f",
+    },
+    "purple": {
+        0: "#f3e5f5",
+        1: "#e1bee7",
+        2: "#ce93d8",
+        3: "#ba68c8",
+        4: "#ab47bc",
+        5: "#9c27b0",
+        6: "#8e24aa",
+        7: "#7b1fa2",
+        8: "#6a1b9a",
+        9: "#4a148c",
+    },
+    "d.purple": {
+        0: "#ede7f6",
+        1: "#d1c4e9",
+        2: "#b39ddb",
+        3: "#9575cd",
+        4: "#7e57c2",
+        5: "#673ab7",
+        6: "#5e35b1",
+        7: "#512da8",
+        8: "#4527a0",
+        9: "#311b92",
+    },
+    "indigo": {
+        0: "#e8eaf6",
+        1: "#c5cae9",
+        2: "#9fa8da",
+        3: "#7986cb",
+        4: "#5c6bc0",
+        5: "#3f51b5",
+        6: "#3949ab",
+        7: "#303f9f",
+        8: "#283593",
+        9: "#1a237e",
+    },
+    "blue": {
+        0: "#e3f2fd",
+        1: "#bbdefb",
+        2: "#90caf9",
+        3: "#64b5f6",
+        4: "#42a5f5",
+        5: "#2196f3",
+        6: "#1e88e5",
+        7: "#1976d2",
+        8: "#1565c0",
+        9: "#0d47a1",
+    },
+    "l.blue": {
+        0: "#e1f5fe",
+        1: "#b3e5fc",
+        2: "#81d4fa",
+        3: "#4fc3f7",
+        4: "#29b6f6",
+        5: "#03a9f4",
+        6: "#039be5",
+        7: "#0288d1",
+        8: "#0277bd",
+        9: "#01579b",
+    },
+    "cyan": {
+        0: "#e0f7fa",
+        1: "#b2ebf2",
+        2: "#80deea",
+        3: "#4dd0e1",
+        4: "#26c6da",
+        5: "#00bcd4",
+        6: "#00acc1",
+        7: "#0097a7",
+        8: "#00838f",
+        9: "#006064",
+    },
+    "teal": {
+        0: "#e0f2f1",
+        1: "#b2dfdb",
+        2: "#80cbc4",
+        3: "#4db6ac",
+        4: "#26a69a",
+        5: "#009688",
+        6: "#00897b",
+        7: "#00796b",
+        8: "#00695c",
+        9: "#004d40",
+    },
+    "green": {
+        0: "#e8f5e9",
+        1: "#c8e6c9",
+        2: "#a5d6a7",
+        3: "#81c784",
+        4: "#66bb6a",
+        5: "#4caf50",
+        6: "#43a047",
+        7: "#388e3c",
+        8: "#2e7d32",
+        9: "#1b5e20",
+    },
+    "l.green": {
+        0: "#f1f8e9",
+        1: "#dcedc8",
+        2: "#c5e1a5",
+        3: "#aed581",
+        4: "#9ccc65",
+        5: "#8bc34a",
+        6: "#7cb342",
+        7: "#689f38",
+        8: "#558b2f",
+        9: "#33691e",
+    },
+    "lime": {
+        0: "#f9fbe7",
+        1: "#f0f4c3",
+        2: "#e6ee9c",
+        3: "#dce775",
+        4: "#d4e157",
+        5: "#cddc39",
+        6: "#c0ca33",
+        7: "#afb42b",
+        8: "#9e9d24",
+        9: "#827717",
+    },
+    "yellow": {
+        0: "#fffde7",
+        1: "#fff9c4",
+        2: "#fff59d",
+        3: "#fff176",
+        4: "#ffee58",
+        5: "#ffeb3b",
+        6: "#fdd835",
+        7: "#fbc02d",
+        8: "#f9a825",
+        9: "#f57f17",
+    },
+    "amber": {
+        0: "#fff8e1",
+        1: "#ffecb3",
+        2: "#ffe082",
+        3: "#ffd54f",
+        4: "#ffca28",
+        5: "#ffc107",
+        6: "#ffb300",
+        7: "#ffa000",
+        8: "#ff8f00",
+        9: "#ff6f00",
+    },
+    "orange": {
+        0: "#fff3e0",
+        1: "#ffe0b2",
+        2: "#ffcc80",
+        3: "#ffb74d",
+        4: "#ffa726",
+        5: "#ff9800",
+        6: "#fb8c00",
+        7: "#f57c00",
+        8: "#ef6c00",
+        9: "#e65100",
+    },
+    "d.orange": {
+        0: "#fbe9e7",
+        1: "#ffccbc",
+        2: "#ffab91",
+        3: "#ff8a65",
+        4: "#ff7043",
+        5: "#ff5722",
+        6: "#f4511e",
+        7: "#e64a19",
+        8: "#d84315",
+        9: "#bf360c",
+    },
+    "brown": {
+        0: "#efebe9",
+        1: "#d7ccc8",
+        2: "#bcaaa4",
+        3: "#a1887f",
+        4: "#8d6e63",
+        5: "#795548",
+        6: "#6d4c41",
+        7: "#5d4037",
+        8: "#4e342e",
+        9: "#3e2723",
+    },
+    "grey": {
+        0: "#fafafa",
+        1: "#f5f5f5",
+        2: "#eeeeee",
+        3: "#e0e0e0",
+        4: "#bdbdbd",
+        5: "#9e9e9e",
+        6: "#757575",
+        7: "#616161",
+        8: "#424242",
+        9: "#212121",
+    },
+    "blue grey": {
+        0: "#eceff1",
+        1: "#cfd8dc",
+        2: "#b0bec5",
+        3: "#90a4ae",
+        4: "#78909c",
+        5: "#607d8b",
+        6: "#546e7a",
+        7: "#455a64",
+        8: "#37474f",
+        9: "#263238",
+    },
+}
+
+cols_lblue=[colors["l.blue"][count] for count in np.arange(6,-1,-1)]
+cols_lblue.append('#FFFFFF')
+cols_pink=[colors["pink"][count] for count in np.arange(6,-1,-1)]
+cols_pink.append('#FFFFFF')
+cols_amber=[colors["amber"][count] for count in np.arange(6,-1,-1)]
+cols_amber.append('#FFFFFF')
+cols_dpurple=[colors["d.purple"][count] for count in np.arange(6,-1,-1)]
+cols_dpurple.append('#FFFFFF')
+cols_indigo=[colors["indigo"][count] for count in np.arange(6,-1,-1)]
+cols_indigo.append('#FFFFFF')
+
+cmap_lblue = ListedColormap(cols_lblue)
+cmap_pink = ListedColormap(cols_pink)
+cmap_amber = ListedColormap(cols_amber)
+
+def hex_to_rgba(value):
+    """Return [red, green, blue, 1.] for the color given as #rrggbb."""
+    value = value.lstrip('#')
+    lv = len(value)
+    return list(itertools.chain((int(value[i:i + lv // 3], 16)/255 for i in range(0, lv, lv // 3)),[1]))
+
+cols_pink_rgba  = []
+cols_amber_rgba = []
+cols_lblue_rgba = []
+cols_dpurple_rgba = []
+cols_indigo_rgba = []
+for pink_colour, amber_colour, lblue_colour, dpurple_colour, indigo_colour in zip(cols_pink,cols_amber,cols_lblue,cols_dpurple,cols_indigo):
+    cols_pink_rgba.append(hex_to_rgba(pink_colour))
+    cols_amber_rgba.append(hex_to_rgba(amber_colour))
+    cols_lblue_rgba.append(hex_to_rgba(lblue_colour))
+    cols_dpurple_rgba.append(hex_to_rgba(dpurple_colour))
+    cols_indigo_rgba.append(hex_to_rgba(indigo_colour))
+    
 USETEX = True
 
 from mpmath import mp, findroot, j 
@@ -315,6 +599,9 @@ def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
         om_num = np.transpose(om_num,(2,0,1))
         np.save(file_name,om_num)
         
+    Oh_full = np.array([[Oh for Oh in Oh_list] for k in k_list])
+    k_full = np.array([[k for Oh in Oh_list] for k in k_list])
+
     #Numerical complex pulsation
     om_num = np.load(file_name)
 
@@ -333,29 +620,398 @@ def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
         om_num)
   
     #Figure parameter and contour's labels
-    plt.figure(figsize=(5, 4))
-    plt.xscale('log')
-    plt.yscale('log')
-    plt.xlabel('$Oh$', family = "Roboto", weight="ultralight")      
-    plt.ylabel('$k$', family = "Roboto", weight="ultralight")
+    plt.rc('font', size=12)  # general font size
+    plt.rc('axes', labelsize=11, titlesize=10, linewidth=1.)
+    plt.rc('lines', markersize=8, markeredgewidth=0., linewidth=0.4)
+    plt.rc('xtick',  labelsize=12, direction='in', bottom='true', top='true')
+    plt.rc('ytick',  labelsize=12, direction='in', left='true', right='true')
+
+    p = plt.rcParams
+    p['text.usetex'] = False
+    p['font.family'] = 'sans-serif'
+    p["figure.figsize"] = 10.57, 8.3
+    p["font.sans-serif"] = ["Roboto Condensed"]
+    p["font.weight"] = "light"
+    p["ytick.minor.visible"] = True
+    p["xtick.minor.visible"] = True
     
-    fmt = {}
-    for l, s in zip([0.005, 0.05, 0.2], ['0.5 \%', '5 \%', '20 \%']):
-        fmt[l] = s
-        
-    #Plot contour lines and fillings
-    for err, c in zip([err_visc, err_lub, err_in],['red', 'grey', 'blue']):
-        plt.contourf(Oh_list, k_list, err, levels = [-0.2, 0.2], colors = c, alpha = 0.2);
-        cs = plt.contour(Oh_list, k_list, err, levels = [0.005, 0.05, 0.2], colors = c);
-        plt.clabel(cs, fmt=fmt, fontsize=10)
+    def interpolate(X, Y, T):
+        dR = (np.diff(X) ** 2 + np.diff(Y) ** 2) ** 0.5
+        R = np.zeros_like(X)
+        R[1:] = np.cumsum(dR)
+        return np.interp(T, R, X), np.interp(T, R, Y), R[-1]
+
+    fig = plt.figure(constrained_layout=False)
+    nrows, ncols = 7, 5
+    w0, w1, w2, w3, w4 = 83, .7, 20, 1., 1
+    h1, h2, h3, h4, h5, h6, h7 = 20, 1, 20, 1, 20, 1, 20
+    gspec = gridspec.GridSpec(ncols=ncols, nrows=nrows, figure=fig, width_ratios=[w0, w1, w2, w3, w4], height_ratios=[h1,h2,h3,h4,h5,h6,h7], hspace=0., wspace=0.)
+    
+    ax = plt.subplot(gspec[0:, 0],aspect=1)
+    ax.set_xlim(0.001,10)
+    ax.set_ylim(0.01,100)
+    ax.set_xticks(np.logspace(-3, 1, 4 + 1))
+    ax.set_xlabel("Oh")
+    ax.set_yticks(np.logspace(-2, 2, 4 + 1))
+    ax.set_ylabel("k")
+    hb_main = plt.hexbin(Oh_full.flatten(), k_full.flatten(), C = err_in.flatten(), gridsize=(21,12), norm=LogNorm(vmax=1.,vmin=0.0001),cmap=cmap_amber,edgecolor='white',linewidths=1,xscale = 'log', yscale = 'log', reduce_C_function=np.mean)
+    #trying to use https://stackoverflow.com/questions/15140072/how-to-map-number-to-color-using-matplotlibs-colormap
+    ax.figure.canvas.draw()
+    cols=hb_main.get_facecolors()
+    hb_main_array = hb_main.get_array()
+    #print("the shape of hb_main_array is", hb_main_array.shape)
+    #print("the shape of cols is", cols.shape)
+    cols_ind = np.clip((2*np.log10(hb_main_array)+8.).astype(int),0, 7)
     x = [pulsation(Bo, k)/(k**2/1.3115+1/0.732) for k in k_list]
-    plt.plot(x, k_list, linewidth = 1.5, c = 'black')
+    splitpoints=np.array([x,k_list]).T
+    DC_to_FC = ax.transData.transform
+    FC_to_DC = ax.transData.inverted().transform
+    NDC_to_FC = ax.transAxes.transform
+    FC_to_NDC = ax.transAxes.inverted().transform
+    DC_to_NDC = lambda x: FC_to_NDC(DC_to_FC(x))
+    NDC_to_DC = lambda x: FC_to_DC(NDC_to_FC(x))
+    splitpointsNDC=DC_to_NDC(splitpoints)
+
+    path = TextPath(
+        (0, -0.75), "SPLIT LINE", prop=FontProperties(size=10, family="Roboto Condensed", weight="bold")
+    )
+    vert = path.vertices
+    vert.flags.writeable = True
+    xmin, xmax = vert[:, 0].min(), vert[:, 0].max()
+    ymin, ymax = vert[:, 1].min(), vert[:, 1].max()
+    vert -= (xmin + xmax) / 2, (ymin + ymax) / 2
+    vert *= 0.003
+    X0, Y0, D = interpolate(splitpointsNDC[:,0], splitpointsNDC[:,1], .3 + vert[:, 0])
+    X1, Y1, _ = interpolate(splitpointsNDC[:,0], splitpointsNDC[:,1], .3 + vert[:, 0] + 0.1)
+
+    # Transform text vertices
+    dX, dY = X1 - X0, Y1 - Y0
+    norm = np.sqrt(dX ** 2 + dY ** 2)
+    dX, dY = dX / norm, dY / norm
+    X0 += -vert[:, 1] * dY
+    Y0 += +vert[:, 1] * dX
+    vert[:, 0], vert[:, 1] = X0, Y0
+    X, Y, _ = interpolate(splitpointsNDC[:,0], splitpointsNDC[:,1], np.linspace(0, vert[:, 0].min()-0.155, 10))
+    splitpointsNDC_ = np.array([X,Y]).T
+    splitpointsfirsthalf = NDC_to_DC(splitpointsNDC_)
+    plt.plot(
+        splitpointsfirsthalf[:,0],splitpointsfirsthalf[:,1], color=colors["blue grey"][5], linewidth=2, markersize=5, marker="o", markevery=[0, -1], linestyle="--", dash_capstyle="round"
+    )
+    X, Y, _ = interpolate(splitpointsNDC[:,0], splitpointsNDC[:,1], np.linspace(vert[:, 0].max() - .1, D , 200))
+    splitpointsNDC_ = np.array([X,Y]).T
+    splitpointssecondhalf = NDC_to_DC(splitpointsNDC_)
+    plt.plot(
+        splitpointssecondhalf[:,0],splitpointssecondhalf[:,1], color=colors["blue grey"][5], linewidth=2, markersize=5, marker="o", markevery=[0, -1], linestyle="--", dash_capstyle="round"
+    )
+    # Faint outline
+    patch = PathPatch(
+        path,
+        facecolor="white",
+        zorder=10,
+        alpha=0.25,
+        edgecolor="white",
+        linewidth=1.25,
+        transform = ax.transAxes,
+    )
+    ax.add_artist(patch)
+    #plt.plot(x, y)
+    # Actual text
+    patch = PathPatch(
+        path, facecolor=colors["blue grey"][5], zorder=30, edgecolor=colors["blue grey"][5], linewidth=0.0,    transform = ax.transAxes
+    )
+    ax.add_artist(patch)
+    #ax.plot(x, k_list, linewidth = 4, c = colors["orange"][3], linestyle="--", dash_capstyle="round")
+    text = ax.text(
+        0.1,
+        0.95,
+        "Oscillating",
+        va="center",
+        transform=ax.transAxes,
+        size=18,
+        ha="center",
+        #    usetex=True,
+    )
+    text.set_path_effects(
+        [path_effects.Stroke(linewidth=2, foreground="white"), path_effects.Normal()]
+    )
+    text = ax.text(
+        0.1,
+        0.9,
+        "modes",
+        va="center",
+        transform=ax.transAxes,
+        size=18,
+        ha="center",
+        #    usetex=True,
+    )
+    text.set_path_effects(
+        [path_effects.Stroke(linewidth=2, foreground="white"), path_effects.Normal()]
+    )
+    text = ax.text(
+        0.9,
+        0.95,
+        "Damped",
+        va="center",
+        transform=ax.transAxes,
+        size=18,
+        ha="center",
+        color="black"
+        #    usetex=True,
+    )
+    text.set_path_effects(
+        [path_effects.Stroke(linewidth=2, foreground="white"), path_effects.Normal()]
+    )
+    text = ax.text(
+        0.9,
+        0.9,
+        "modes",
+        va="center",
+        transform=ax.transAxes,
+        size=18,
+        ha="center",
+        color="black"
+        #    usetex=True,
+    )
+    text.set_path_effects(
+        [path_effects.Stroke(linewidth=2, foreground="white"), path_effects.Normal()]
+    )
+
+    ax = plt.subplot(gspec[0, 2],aspect=1)
+    ax.tick_params(which="both", direction="in")
+    ax.tick_params(which="both", right=True)
+    ax.tick_params(axis=u'both', which=u'both',length=0)
+    ax.set_axisbelow(True)
+
+    ax.set_xlim(-7, 3)
+    ax.xaxis.set_major_locator(ticker.MultipleLocator(1.00))
+    ax.xaxis.set_minor_locator(ticker.MultipleLocator(1.00))
+    ax.set_xticklabels([])
+
+    ax.set_ylim(-8, 2)
+    ax.yaxis.set_major_locator(ticker.MultipleLocator(1.00))
+    ax.yaxis.set_minor_locator(ticker.MultipleLocator(1.00))
+    ax.set_yticklabels([])
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['bottom'].set_position(('data', 0))
+    ax.spines['left'].set_position(('data', 0))
+    ax.yaxis.set_ticks_position('left')
+    ax.xaxis.set_ticks_position('bottom')
+
+    ax.grid(color=".9", linestyle="--")
+
+    Zx = [-2.]
+    Zy = [-3.]
+    ax.scatter(Zx, Zy, s=50, zorder=20, edgecolor="black", facecolor=colors["amber"][2], linewidth=0.5)
+    Zx = [-6.]
+    Zy = [-5.]
+    ax.scatter(Zx, Zy, s=50, zorder=20, edgecolor="black", facecolor=colors["d.orange"][2], linewidth=0.5)
+    # note, the points lie on the line 0.5 x - 2
+
+    ax.text(
+        -2.8,
+        -4.3,
+        r"$\Delta \omega$",
+        va="top",
+        #    transform=ax.transAxes,
+        size=12,
+        ha="right",
+        usetex=True,
+    )
+
+    ax.text(
+        -5.7,
+        -5.5,
+        r"$\omega$",
+        va="top",
+        #    transform=ax.transAxes,
+        size=12,
+        ha="right",
+        usetex=True,
+    )
+
+    ax.text(
+        -0.5,
+        -1.5,
+        r"$\omega_\mathrm{model}$",
+        va="top",
+        #    transform=ax.transAxes,
+        size=12,
+        ha="right",
+        usetex=True,
+    )
+
+    ax.annotate('', xy=(-5.8, 0.5*(-5.8)-2.), xytext=(-2.2, 0.5*(-2.2)-2.),
+                arrowprops=dict(facecolor='black', arrowstyle='<->'))
+                     
+    ax = plt.subplot(gspec[2, 2],aspect=1)
+    ax.set_xlim(0.001,10)
+    ax.set_ylim(0.01,100)
+    hb_in = plt.hexbin(Oh_full.flatten(), k_full.flatten(), C = err_in.flatten(), gridsize=(21,12), norm=LogNorm(vmax=1.,vmin=0.0001),cmap=cmap_amber,edgecolor='white',linewidths=.25,xscale = 'log', yscale = 'log', reduce_C_function=np.mean)
+    plt.tick_params(
+        axis='both',          # changes apply to the x-axis
+        which='both',      # both major and minor ticks are affected
+        direction='in')
+    ax.get_xaxis().set_ticks([])
+    ax.get_yaxis().set_ticks([])
+    hb_in_array = hb_in.get_array()
+
+    text = ax.text(
+        0.05,
+        0.9,
+        "Inertial model",
+        va="center",
+        transform=ax.transAxes,
+        size=12,
+        ha="left",
+        #    usetex=True,
+    )
+    text.set_path_effects(
+        [path_effects.Stroke(linewidth=2, foreground="white"), path_effects.Normal()]
+    )
+    ax.text(
+        0.85,
+        0.95,
+        r"$$\frac{\left\|\Delta\omega\right\|}{\left\|\omega\right\|}$$",
+        va="top",
+        transform=ax.transAxes,
+        size=10,
+        ha="center",
+        usetex=True,
+    )
+    text.set_path_effects(
+        [path_effects.Stroke(linewidth=2, foreground="white"), path_effects.Normal()]
+    )
+
+    ax = plt.subplot(gspec[2, 4])
+    cb = plt.colorbar(hb_in, cax=ax,aspect=20/1, ticks=[1.5e-4, 1e-2, 7e-1])
+    cb.ax.set_yticklabels(['0.01 %', '1 %', '100 %'])
+    ax.tick_params(axis=u'both', which=u'both',length=0)
+    for t in cb.ax.get_yticklabels():
+        t.set_horizontalalignment('left')
+        t.set_fontsize('8')
+    #cb.ax.yaxis.set_tick_params(pad=33)
+
+    ax = plt.subplot(gspec[4, 2],aspect=1)
+    ax.set_xlim(0.001,10)
+    ax.set_ylim(0.01,100)
+    hb_visc = plt.hexbin(Oh_full.flatten(), k_full.flatten(), C = err_visc.flatten(), gridsize=(21,12), norm=LogNorm(vmax=1.,vmin=0.0001),cmap=cmap_lblue,edgecolor='white',linewidths=.25,xscale = 'log', yscale = 'log', reduce_C_function=np.mean)
+    plt.tick_params(
+        axis='both',          # changes apply to the x-axis
+        which='both',      # both major and minor ticks are affected
+        direction='in')
+    ax.get_xaxis().set_ticks([])
+    ax.get_yaxis().set_ticks([])
+    hb_visc_array = hb_visc.get_array()
+
+    text = ax.text(
+        0.05,
+        0.9,
+        "Viscous model",
+        va="center",
+        transform=ax.transAxes,
+        size=12,
+        ha="left",
+        #    usetex=True,
+    )
+    text.set_path_effects(
+        [path_effects.Stroke(linewidth=2, foreground="white"), path_effects.Normal()]
+    )
+    ax.text(
+        0.35,
+        0.8,
+        r"$$\frac{\left\|\Delta\omega\right\|}{\left\|\omega\right\|}$$",
+        va="top",
+        transform=ax.transAxes,
+        size=10,
+        ha="center",
+        usetex=True,
+    )
+    text.set_path_effects(
+        [path_effects.Stroke(linewidth=2, foreground="white"), path_effects.Normal()]
+    )
+
+    ax = plt.subplot(gspec[4, 4])
+    cb = plt.colorbar(hb_visc, cax=ax,aspect=20/1, ticks=[1.5e-4, 1e-2, 7e-1])
+    cb.ax.set_yticklabels(['0.01 %', '1 %', '100 %'])
+    ax.tick_params(axis=u'both', which=u'both',length=0)
+    for t in cb.ax.get_yticklabels():
+        t.set_horizontalalignment('left')
+        t.set_fontsize('8')
+
+    ax = plt.subplot(gspec[6, 2],aspect=1)
+    ax.set_xlim(0.001,10)
+    ax.set_ylim(0.01,100)
+    hb_lub = plt.hexbin(Oh_full.flatten(), k_full.flatten(), C = err_lub.flatten(), gridsize=(21,12), norm=LogNorm(vmax=1.,vmin=0.0001),cmap=cmap_pink,edgecolor='white',linewidths=.25,xscale = 'log', yscale = 'log', reduce_C_function=np.mean)
+    plt.tick_params(
+        axis='both',          # changes apply to the x-axis
+    which='both',      # both major and minor ticks are affected
+    direction='in')
+    ax.get_xaxis().set_ticks([])
+    ax.get_yaxis().set_ticks([])
+    hb_lub_array = hb_lub.get_array()
+
+    text = ax.text(
+        0.05,
+        0.9,
+        "Lubrication theory",
+        va="center",
+        transform=ax.transAxes,
+        size=12,
+        ha="left",
+        #    usetex=True,
+    )
+    text.set_path_effects(
+        [path_effects.Stroke(linewidth=2, foreground="white"), path_effects.Normal()]
+    )
+    ax.text(
+        0.45,
+        0.8,
+        r"$$\frac{\left\|\Delta\omega\right\|}{\left\|\omega\right\|}$$",
+        va="top",
+        transform=ax.transAxes,
+        size=10,
+        ha="center",
+        usetex=True,
+    )
+    text.set_path_effects(
+        [path_effects.Stroke(linewidth=2, foreground="white"), path_effects.Normal()]
+    )
+
+    ax = plt.subplot(gspec[6, 4])
+    cb = plt.colorbar(hb_lub, cax=ax,aspect=20/1, ticks=[1.5e-4, 1e-2, 7e-1])
+    cb.ax.set_yticklabels(['0.01 %', '1 %', '100 %'])
+    ax.tick_params(axis=u'both', which=u'both',length=0)
+    for t in cb.ax.get_yticklabels():
+        t.set_horizontalalignment('left')
+        t.set_fontsize('8')
+
+
+    counter = 0
+    for val_in, val_visc, val_lub in zip(hb_in_array, hb_visc_array, hb_lub_array):
+        if ((val_in < 10.) & (val_in < val_visc) & (val_in < val_lub)): 
+            ind = np.clip((2*np.log10(val_in)+8.).astype(int),0, 7)
+            cols[counter] = cols_amber_rgba[ind]
+        elif ((val_visc < 10.) & (val_visc < val_in) & (val_visc > 0.1*val_lub) & (val_visc < val_lub)):
+            ind = np.clip((2*np.log10(val_visc)+8.).astype(int),0, 7)
+            cols[counter] = cols_indigo_rgba[ind]
+        elif ((val_visc < 10.) & (val_visc < val_in) & (val_visc < val_lub)):
+            ind = np.clip((2*np.log10(val_visc)+8.).astype(int),0, 7)
+            cols[counter] = cols_lblue_rgba[ind]
+        elif ((val_lub < 10.) & (val_lub < val_in) & (val_lub > 0.1*val_visc) & (val_lub < val_visc)):
+            ind = np.clip((2*np.log10(val_lub)+8.).astype(int),0, 7)
+            cols[counter] = cols_dpurple_rgba[ind]
+        else:
+            cols[counter] = [0, 0, 0, 1]
+        counter+=1
+        
+        hb_main.set(array=None,facecolors=cols)
+
 
 Oh_list = np.logspace(-3, 1, 50)
 k_list = np.logspace(-2, 2, 50)
 Bo = 1
-plotErrorOm (Oh_list, k_list, Bo, 'fig3_om_num.npy', True)
-plt.tight_layout(pad=1.)
+plotErrorOm (Oh_list, k_list, Bo, 'fig3_om_num.npy', False)
 plt.savefig("figure3.pdf")
 
 # #%% Visu_Figure 3
