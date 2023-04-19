@@ -6,6 +6,10 @@
 #Must install the packages gwr_inversion and mpmath
 
 #%% 
+# Ensure working directory
+import os
+os.chdir(os.path.abspath(os.path.dirname(__file__)))
+
 # Import
 import numpy as np
 import matplotlib.pyplot as plt
@@ -18,16 +22,10 @@ from matplotlib.textpath import TextPath
 from matplotlib.patches import PathPatch
 from matplotlib.font_manager import FontProperties
 from mpmath import mp, findroot, j 
-
 from scipy.optimize import curve_fit
-from Functions import denom, freeSurface, om_lub, pulsation, decaying_sinusoid, better_sinusoid
-from Functions import om_normal_mode_viscous, puls_normal_mode_inertial, om_normal_mode_inertial
 
-# Working directory
-import os
-os.chdir(os.path.abspath(os.path.dirname(__file__)))
-# current working directory
-print(os.getcwd())
+from Functions import denom, freeSurface, om_lub, pulsation, decaying_sinusoid, better_sinusoid
+from Functions import om_normal_mode_viscous, puls_normal_mode_inertial, om_normal_mode_inertial, om_analytic
 
 #Colors
 import Colors
@@ -63,12 +61,6 @@ plt.rc('savefig', bbox='tight', transparent=True, dpi=300)
 
 #%% Figure 1
 #Comparison between lubrication, analytical and numerical results for 2 different situations : oscillations and relaxation
-def om_analytic(Oh, Bo, k):
-    try:
-        root_denom = findroot(lambda s: denom (s, Oh, Bo, k), om_lub(Oh, Bo, k))
-    except ValueError:
-        root_denom = findroot(lambda s: denom (s, Oh, Bo, k), j*pulsation(Bo, k))
-    return root_denom
 
 def plotHeight(Oh, Bo, k, ax, labelinset):
     om_lub_relax = om_lub(Oh, Bo, k)

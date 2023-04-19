@@ -3,7 +3,7 @@
 @author: Clément & Arnaud
 """
 import numpy as np
-from mpmath import mp, cosh, sinh, tanh, exp, sqrt
+from mpmath import mp, cosh, sinh, tanh, exp, sqrt, findroot, j
 import time
 
 #The package must be installed through "conda install gwr_inversion"
@@ -74,3 +74,10 @@ def om_normal_mode_inertial(Oh, Bo, k):
             2*k**2*Oh * (np.cosh(4*k)+np.cosh(2*k)-1) / (np.cosh(4*k) -1)
             - pow(k**2*Oh,3./2.)/np.sqrt(2*pulsation(Bo, k))
             *(3-8*np.cosh(2*k)-14*np.cosh(4*k)+4*np.cosh(6*k))/(8*np.sinh(2*k)**3)) 
+
+def om_analytic(Oh, Bo, k):
+    try:
+        root_denom = findroot(lambda s: denom (s, Oh, Bo, k), om_lub(Oh, Bo, k))
+    except ValueError:
+        root_denom = findroot(lambda s: denom (s, Oh, Bo, k), j*pulsation(Bo, k))
+    return root_denom
