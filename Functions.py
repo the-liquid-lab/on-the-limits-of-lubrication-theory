@@ -10,6 +10,7 @@
 import numpy as np
 from mpmath import mp, cosh, sinh, tanh, exp, sqrt, findroot, j
 import time
+from scipy.optimize import curve_fit
 
 #The package must be installed through "conda install gwr_inversion"
 from gwr_inversion import gwr
@@ -90,6 +91,22 @@ def om_analytic(Oh, Bo, k):
         root_denom = findroot(lambda s: denom (s, Oh, Bo, k), j*pulsation(Bo, k))
     return root_denom
 
+#Growth rate and pulsations obtained by fit of the numerical solution.
+def om_numerical(Oh, Bo, k, guess_value):
+    M = 64
+    om_relax = guess_value[0]
+    om_0 = guess_value[1]
+    logspan = np.array([1e-4,2e-4,5e-4,1e-3,2e-3,5e-3])
+    linspan = np.linspace(0.01, 1., 50)
+    loglinspan = np.concatenate((logspan,linspan))
+    t_all = loglinspan * 10./max(om_0, abs(om_relax))
+    sampled_eta = freeSurface(t_all, Oh, Bo, k, M)
+    guess_value = list(guess_value)
+    guess_value[3] = 7.*np.pi/4.
+    guess_value = tuple(guess_value)
+    popt = curve_fit(decaying_sinusoid, t_all, sampled_eta, p0=guess_value, bounds=([0.,0.,1.,0.],[np.inf, 5.*om_0, 2., 2.*np.pi]), sigma=(1.+10.*np.exp(-om_relax*t_all)))[0]
+    return popt, t_all, sampled_eta
+
 ############################## Error calculation ##############################
 # Relative error of different models compare to the numerical results.
 def err_norm(relax, puls, om_num):
@@ -98,3 +115,4 @@ def err_norm(relax, puls, om_num):
     return np.sqrt((np.square(relax-relax_num) + 
                         np.square(puls-puls_num))/
                        (np.square(relax_num) + np.square(puls_num)))
+

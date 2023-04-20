@@ -18,7 +18,6 @@ from matplotlib.textpath import TextPath
 from matplotlib.patches import PathPatch
 from matplotlib.font_manager import FontProperties
 from mpmath import mp, findroot, j 
-from scipy.optimize import curve_fit
 
 # Ensure working directory
 import os
@@ -167,6 +166,7 @@ fig.savefig("figure1.pdf")
 Bo = 0.001
 k = 0.5
 Oh_list = np.logspace(-3.5, 0.5, 600)
+
 om_ana = []
 root_denom = j
 
