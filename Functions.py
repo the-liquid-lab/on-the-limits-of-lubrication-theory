@@ -2,6 +2,11 @@
 """
 @author: Clément & Arnaud
 """
+
+#This file contain basic functions and define the equations nedded for 
+#analytical resolution
+
+############################## Import #########################################
 import numpy as np
 from mpmath import mp, cosh, sinh, tanh, exp, sqrt, findroot, j
 import time
@@ -9,17 +14,11 @@ import time
 #The package must be installed through "conda install gwr_inversion"
 from gwr_inversion import gwr
 
-## Functions and expressions declarations
-def decaying_sinusoid(t, om_dec, om_osc):
-    return np.exp(- om_dec * t)*np.cos(om_osc * t)
-
-def better_sinusoid(t, om_dec, om_osc, amp, phi):
+######################## Basic signal evolutions ##############################
+def decaying_sinusoid(t, om_dec, om_osc, amp = 1., phi = 0.):
     return amp*np.exp(- om_dec * t)*np.cos(om_osc * t + phi)
 
-def my_exp(t, om_dec):
-      return np.exp(- om_dec * t)
-  
-#Declare the expressions of the kernel and eta
+################# Basic length of Cortelezzi resolution #######################
 def ker_sy (s, Oh, Bo, k, lbda):
     return 2*Oh/s*k*(k-lbda*tanh(k)) - Oh/s*(4*lbda*k*sinh(k)*(k*exp(-lbda)
             *(k*cosh(k)+lbda*sinh(k))-(k**2+lbda**2))+(k**2+lbda**2)**2
@@ -28,6 +27,7 @@ def ker_sy (s, Oh, Bo, k, lbda):
 def eta_sy (s, Oh, k, omega2, Kern):
     return 1/s*(1-omega2/(s**2+4*Oh*k**2*s+omega2+2*Oh*k**2*s*Kern))
 
+######################## Reduction of the expression ##########################
 #Reduce the expressions as functions of s and of the parameters Oh, Bo and k
 def freeSurfaceLaplace(s, Oh, Bo, k):
     lbda = sqrt(k**2 + s/Oh)
@@ -41,8 +41,11 @@ def denom (s, Oh, Bo, k):
     ker = ker_sy (s, Oh, Bo, k, lbda)
     return (s**2+4*Oh*k**2*s+omega2+2*Oh*k**2*s*ker)
 
+############################## Laplace Inversion ##############################
 #Inverse the Laplace transfrom and return the values of eta as a function 
 #of a range of t and the parameters Oh, Bo and k
+#This resolution uses the gwr packageand need mp package for variable definitions.
+#The M_value is an important parameter for precision.
 def freeSurface(t_all, Ohnumb, Bonumb, knumb, M_value = 32):
     store = time.time()
     Oh = mp.mpmathify(Ohnumb)
@@ -53,10 +56,14 @@ def freeSurface(t_all, Ohnumb, Bonumb, knumb, M_value = 32):
     print (time.time()-store)
     return a
 
-#Calculation of the different growth rates and pulsations
+
+############ Expression of the growth rates and pulsations ####################
+###Purely analytical expressions
+#Lubrication growth rate
 def om_lub(Oh, Bo, k):
     return (k**2*Bo+k**4)/(3*Oh)
 
+#Inertial pulsation
 def pulsation(Bo, k):
     return np.sqrt(np.abs(Bo + k**2)*k*np.tanh(k))
 
@@ -75,9 +82,19 @@ def om_normal_mode_inertial(Oh, Bo, k):
             - pow(k**2*Oh,3./2.)/np.sqrt(2*pulsation(Bo, k))
             *(3-8*np.cosh(2*k)-14*np.cosh(4*k)+4*np.cosh(6*k))/(8*np.sinh(2*k)**3)) 
 
+###Resolution by normal mode analysis (zero of the denominator)
 def om_analytic(Oh, Bo, k):
     try:
         root_denom = findroot(lambda s: denom (s, Oh, Bo, k), om_lub(Oh, Bo, k))
     except ValueError:
         root_denom = findroot(lambda s: denom (s, Oh, Bo, k), j*pulsation(Bo, k))
     return root_denom
+
+############################## Error calculation ##############################
+# Relative error of different models compare to the numerical results.
+def err_norm(relax, puls, om_num):
+    relax_num = om_num[0] # 0 for decaying
+    puls_num = om_num[1] # 1 for oscillation
+    return np.sqrt((np.square(relax-relax_num) + 
+                        np.square(puls-puls_num))/
+                       (np.square(relax_num) + np.square(puls_num)))

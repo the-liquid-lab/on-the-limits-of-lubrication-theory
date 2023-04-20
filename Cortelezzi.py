@@ -6,10 +6,6 @@
 #Must install the packages gwr_inversion and mpmath
 
 #%% 
-# Ensure working directory
-import os
-os.chdir(os.path.abspath(os.path.dirname(__file__)))
-
 # Import
 import numpy as np
 import matplotlib.pyplot as plt
@@ -24,7 +20,11 @@ from matplotlib.font_manager import FontProperties
 from mpmath import mp, findroot, j 
 from scipy.optimize import curve_fit
 
-from Functions import denom, freeSurface, om_lub, pulsation, decaying_sinusoid, better_sinusoid
+# Ensure working directory
+import os
+os.chdir(os.path.abspath(os.path.dirname(__file__)))
+
+from Functions import denom, freeSurface, om_lub, pulsation, decaying_sinusoid, err_norm, om_numerical
 from Functions import om_normal_mode_viscous, puls_normal_mode_inertial, om_normal_mode_inertial, om_analytic
 
 #Colors
@@ -37,27 +37,31 @@ clrpole=clrs[6]
 
 
 ## Parameters figures
-USETEX = True
 #The font Roboto and Roboto Condensed must be installed
-if USETEX:
-    plt.rcParams['text.usetex'] = True
-    plt.rcParams['text.latex.preamble'] = r'\usepackage{amsmath,amssymb} \usepackage[squaren,Gray]{SIunits} \usepackage{nicefrac}'
-    plt.rcParams['font.family'] = 'serif'
-    plt.rcParams['font.serif'] = 'cm'
-else:
-    plt.rcParams['font.sans-serif'] = "Roboto"
-    plt.rcParams['font.weight'] = "light"
-    plt.rcParams['font.family'] = "sans-serif" # always use sans-serif fonts
+p = plt.rcParams
+p['text.usetex'] = False
+p['font.family'] = 'sans-serif'
+p["figure.figsize"] = 10.57, 8.3
+p["font.sans-serif"] = ["Roboto Condensed"]
+p["font.weight"] = "light"
+p["ytick.minor.visible"] = True
+p["xtick.minor.visible"] = True
 
-#font size
-plt.rc('font', size=10)  # general font size
-plt.rc('axes', labelsize=11, titlesize=10, linewidth=2.)
+#Figure parameter and contour's labels
+plt.rc('font', size=12)  # general font size
+plt.rc('axes', labelsize=11, titlesize=10, linewidth=1.)
 plt.rc('lines', markersize=8, markeredgewidth=0., linewidth=0.4)
+plt.rc('xtick',  labelsize=12, direction='in', bottom='true', top='true')
+plt.rc('ytick',  labelsize=12, direction='in', left='true', right='true')
 #plt.rc('legend', frameon=False, fancybox=False, numpoints=1, markerscale=1, 
 #       fontsize=10, handlelength=0.6, handletextpad=0.6, labelspacing=0.3)
-plt.rc('xtick',  labelsize=10, direction='in', bottom='true', top='true')
-plt.rc('ytick',  labelsize=10, direction='in', left='true', right='true')
 plt.rc('savefig', bbox='tight', transparent=True, dpi=300) 
+
+#Old parameters for Latex
+# plt.rcParams['text.usetex'] = True
+# plt.rcParams['text.latex.preamble'] = r'\usepackage{amsmath,amssymb} \usepackage[squaren,Gray]{SIunits} \usepackage{nicefrac}'
+# plt.rcParams['font.family'] = 'serif'
+# plt.rcParams['font.serif'] = 'cm'
 
 #%% Figure 1
 #Comparison between lubrication, analytical and numerical results for 2 different situations : oscillations and relaxation
@@ -79,10 +83,7 @@ def plotHeight(Oh, Bo, k, ax, labelinset):
             linewidth=2, label = 'Analytical resolution')
     ax.plot(sampled_t,sampled_eta_lub, color=clrlub, ls=(0,(0.01,2)), linewidth=2, dash_capstyle="round", label = 'Lubrication theory')
     ax.plot(sampled_t,np.abs(sampled_eta), color=clrs[8], dash_capstyle="round", linewidth=2)
-    if USETEX:
-        text = r'Time (in $\tau_\mathrm{relax}$ units)'
-    else:
-        text = r'Time (in $\mathregular{\tau_{relax}}$ units)'        
+    text = r'Time (in $\mathregular{\tau_{relax}}$ units)'        
     ax.set_xlabel(text, family = "Roboto", weight="ultralight")
     textOh = "Oh = " + str(Oh) 
     textk  = "k = " + str(k)
@@ -120,12 +121,8 @@ def plotHeight(Oh, Bo, k, ax, labelinset):
     for axis in ['top','bottom','left','right']:
         axinset.spines[axis].set_linewidth(0.5)
     axinset.patch.set_alpha(0.5)
-    if USETEX:
-        textxinset = r'\textbf{Time}'
-        textyinset = r'\textbf{Abs. error}'
-    else:
-        textxinset = r'Time'
-        textyinset = r'Abs. error'
+#    textxinset = r'Time'
+#    textyinset = r'Abs. error'
     axinset.set_xlabel(text, family = "Roboto", weight="ultralight", fontsize=6)
     axinset.set_ylabel(text, family = "Roboto", weight="ultralight", fontsize=6)
     for i in axinset.xaxis.get_ticklines():
@@ -139,20 +136,12 @@ def plotHeight(Oh, Bo, k, ax, labelinset):
         i._marker._capstyle = 'round' 
         # this is not officially supported
     if labelinset:
-        if USETEX:
-            axinset.text(0.33, 0.25, r'\textbf{\textsf{discrete pole}}', size="x-small", 
-                         ha="left", va="center", family = "sans-serif", weight="bold",
-                         transform=axinset.transAxes, color=clrpole)
-            axinset.text(0.15, 0.85, r'\textbf{\textsf{lubrication}}', size="x-small", 
-                         ha="left", va="center", family = "sans-serif", weight="bold",
-                         transform=axinset.transAxes, color=clrlub)
-        else:
-            axinset.text(0.33, 0.25, "discrete pole", size="x-small", 
-                         ha="left", va="center", family = "Roboto Condensed", weight="bold",
-                         transform=axinset.transAxes, color=clrpole)
-            axinset.text(0.15, 0.85, "lubrication", size="x-small", 
-                         ha="left", va="center", family = "Roboto Condensed", weight="bold",
-                         transform=axinset.transAxes, color=clrlub)
+        axinset.text(0.33, 0.25, "discrete pole", size="x-small", 
+                     ha="left", va="center", family = "Roboto Condensed", weight="bold",
+                     transform=axinset.transAxes, color=clrpole)
+        axinset.text(0.15, 0.85, "lubrication", size="x-small", 
+                     ha="left", va="center", family = "Roboto Condensed", weight="bold",
+                     transform=axinset.transAxes, color=clrlub)
 
             
     # ax.plot(sampled_t[::8],np.abs(sampled_eta), '.b', ms = 6., label = r'Numerical resolution')
@@ -213,30 +202,6 @@ plt.tight_layout(pad=1.)
 plt.savefig("figure2.pdf")
 
 #%% Figure 3
-# Relative error of different models compare to the numerical results.
-def err_norm(relax, puls, om_num):
-    relax_num = om_num[0] # 0 for decaying
-    puls_num = om_num[1] # 1 for oscillation
-    return np.sqrt((np.square(relax-relax_num) + 
-                        np.square(puls-puls_num))/
-                       (np.square(relax_num) + np.square(puls_num)))
-
-#Growth rate and pulsations obtained by fit of the numerical solution.
-def om_numerical(Oh, Bo, k, guess_value):
-    M = 64
-    om_relax = guess_value[0]
-    om_0 = guess_value[1]
-    logspan = np.array([1e-4,2e-4,5e-4,1e-3,2e-3,5e-3])
-    linspan = np.linspace(0.01, 1., 50)
-    loglinspan = np.concatenate((logspan,linspan))
-    t_all = loglinspan * 10./max(om_0, abs(om_relax))
-    sampled_eta = freeSurface(t_all, Oh, Bo, k, M)
-    guess_value = list(guess_value)
-    guess_value[3] = 7.*np.pi/4.
-    guess_value = tuple(guess_value)
-    popt = curve_fit(better_sinusoid, t_all, sampled_eta, p0=guess_value, bounds=([0.,0.,1.,0.],[np.inf, 5.*om_0, 2., 2.*np.pi]), sigma=(1.+10.*np.exp(-om_relax*t_all)))[0]
-    return popt, t_all, sampled_eta
-
 
 #Compare the different models for a range of Oh and k.
 def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
@@ -276,22 +241,7 @@ def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
         np.array([[om_normal_mode_inertial(Oh, Bo, k) for Oh in Oh_list] for k in k_list]),
         np.array([[puls_normal_mode_inertial(Oh, Bo, k) for Oh in Oh_list] for k in k_list]),
         om_num)
-  
-    #Figure parameter and contour's labels
-    plt.rc('font', size=12)  # general font size
-    plt.rc('axes', labelsize=11, titlesize=10, linewidth=1.)
-    plt.rc('lines', markersize=8, markeredgewidth=0., linewidth=0.4)
-    plt.rc('xtick',  labelsize=12, direction='in', bottom='true', top='true')
-    plt.rc('ytick',  labelsize=12, direction='in', left='true', right='true')
 
-    p = plt.rcParams
-    p['text.usetex'] = False
-    p['font.family'] = 'sans-serif'
-    p["figure.figsize"] = 10.57, 8.3
-    p["font.sans-serif"] = ["Roboto Condensed"]
-    p["font.weight"] = "light"
-    p["ytick.minor.visible"] = True
-    p["xtick.minor.visible"] = True
     
     def interpolate(X, Y, T):
         dR = (np.diff(X) ** 2 + np.diff(Y) ** 2) ** 0.5
@@ -372,7 +322,6 @@ def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
         transform = ax.transAxes,
     )
     ax.add_artist(patch)
-    #plt.plot(x, y)
     # Actual text
     patch = PathPatch(
         path, facecolor=Colors.colors["blue grey"][5], zorder=30, edgecolor=Colors.colors["blue grey"][5], linewidth=0.0,    transform = ax.transAxes
@@ -387,7 +336,6 @@ def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
         transform=ax.transAxes,
         size=18,
         ha="center",
-        #    usetex=True,
     )
     text.set_path_effects(
         [path_effects.Stroke(linewidth=2, foreground="white"), path_effects.Normal()]
@@ -400,7 +348,6 @@ def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
         transform=ax.transAxes,
         size=18,
         ha="center",
-        #    usetex=True,
     )
     text.set_path_effects(
         [path_effects.Stroke(linewidth=2, foreground="white"), path_effects.Normal()]
@@ -414,7 +361,6 @@ def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
         size=18,
         ha="center",
         color="black"
-        #    usetex=True,
     )
     text.set_path_effects(
         [path_effects.Stroke(linewidth=2, foreground="white"), path_effects.Normal()]
@@ -428,7 +374,6 @@ def plotErrorOm (Oh_list, k_list, Bo, file_name, compute = False):
         size=18,
         ha="center",
         color="black"
-        #    usetex=True,
     )
     text.set_path_effects(
         [path_effects.Stroke(linewidth=2, foreground="white"), path_effects.Normal()]
