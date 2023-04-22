@@ -84,11 +84,14 @@ def om_normal_mode_inertial(Oh, Bo, k):
             *(3-8*np.cosh(2*k)-14*np.cosh(4*k)+4*np.cosh(6*k))/(8*np.sinh(2*k)**3)) 
 
 ###Resolution by normal mode analysis (zero of the denominator)
-def om_analytic(Oh, Bo, k):
-    try:
-        root_denom = findroot(lambda s: denom (s, Oh, Bo, k), om_lub(Oh, Bo, k))
-    except ValueError:
-        root_denom = findroot(lambda s: denom (s, Oh, Bo, k), j*pulsation(Bo, k))
+def om_analytic(Oh, Bo, k, guess = False):
+    if guess:
+        root_denom = findroot(lambda s: denom (s, Oh, Bo, k), guess)
+    else: 
+        try:
+            root_denom = findroot(lambda s: denom (s, Oh, Bo, k), om_lub(Oh, Bo, k))
+        except ValueError:
+            root_denom = findroot(lambda s: denom (s, Oh, Bo, k), j*pulsation(Bo, k))
     return root_denom
 
 #Growth rate and pulsations obtained by fit of the numerical solution.
@@ -115,4 +118,3 @@ def err_norm(relax, puls, om_num):
     return np.sqrt((np.square(relax-relax_num) + 
                         np.square(puls-puls_num))/
                        (np.square(relax_num) + np.square(puls_num)))
-
