@@ -109,12 +109,3 @@ def om_numerical(Oh, Bo, k, guess_value):
     guess_value = tuple(guess_value)
     popt = curve_fit(decaying_sinusoid, t_all, sampled_eta, p0=guess_value, bounds=([0.,0.,1.,0.],[np.inf, 5.*om_0, 2., 2.*np.pi]), sigma=(1.+10.*np.exp(-om_relax*t_all)))[0]
     return popt, t_all, sampled_eta
-
-############################## Error calculation ##############################
-# Relative error of different models compare to the numerical results.
-def err_norm(relax, puls, om_num):
-    relax_num = om_num[0] # 0 for decaying
-    puls_num = om_num[1] # 1 for oscillation
-    return np.sqrt((np.square(relax-relax_num) + 
-                        np.square(puls-puls_num))/
-                       (np.square(relax_num) + np.square(puls_num)))

@@ -213,8 +213,6 @@ def draw_scheme(ax):
     ax.annotate('', xy=(-5.8, 0.5*(-5.8)-2.), xytext=(-2.2, 0.5*(-2.2)-2.),
                 arrowprops=dict(facecolor='black', arrowstyle='<->'))
 
-
-
 def draw_subplot(ax, string, x, y):
     ax.set_xlim(0.001,10)
     ax.set_ylim(0.01,100)
@@ -318,3 +316,24 @@ def plot_fig3(Oh_list, k_list, err_lub, err_visc, err_in, splitline):
     
     ## Save figure
     plt.savefig("figure3.pdf")
+
+############################# Figure 4 ########################################
+def plot_fig4(Oh_list, k_list, k_list2, om_gwr_Oh, om_potential, om_norm_in, om_lub_list, om_norm_visc):
+    fig, ax = plt.subplots(1,2, figsize=(10.57, 8.3))
+        
+    ax[1].plot(k_list, om_potential, lw=1.0, alpha = 0.4, color = 'black', label = r'Potential')
+    ax[1].plot(k_list2, om_norm_in, '-', lw=1.0, alpha = 0.4, color = 'red', label = 'Normal mode')
+    
+    ax[0].set_ylabel(r'$\omega$')
+    ax[0].plot(k_list2, om_lub_list, '-', lw=1.0, alpha = 0.4, color = 'blue', label = 'Lubrication')
+    ax[0].plot(k_list2, om_norm_visc, '-', lw=1.0, alpha = 0.4, color = 'red', label = 'Normal mode')
+    
+    for Oh, axx, om_gwr in zip(Oh_list, [ax[1],ax[0]], om_gwr_Oh):
+        axx.set_xlabel(r'k')
+        axx.set_title('Oh = ' + str(Oh))
+        axx.plot(k_list, np.abs(om_gwr), '--', lw=1.0, color = 'orange', alpha = 0.8, label = r'Cortelezzi resolution')
+        axx.legend()
+    
+    plt.tight_layout(pad=1.)
+    ## Save figure
+    plt.savefig("figure4.pdf")

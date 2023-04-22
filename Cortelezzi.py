@@ -8,30 +8,30 @@
 #%% 
 # Import
 import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-from matplotlib import ticker
 # Ensure working directory
 import os
 os.chdir(os.path.abspath(os.path.dirname(__file__)))
 
-from Functions import freeSurface, om_lub, pulsation
-from Functions import om_normal_mode_viscous
-from Compute_datas import compute_datas_fig1, compute_datas_fig2, compute_datas_fig3
-from Plots import fig_init, plot_fig2, plot_fig3
+from Compute_datas import datas_fig1, datas_fig2, datas_fig3, datas_fig4
+from Plots import fig_init, plot_fig2, plot_fig3, plot_fig4
+fig_init()
+
+#%% Figure 1
+
+import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+from matplotlib import ticker
+
 #Colors
 import vapeplot
 clrs = vapeplot.palette('vaporwave')
 clrlub=clrs[2]
 clrpole=clrs[6]
 
-fig_init()
-
-#%% Figure 1
 #Comparison between lubrication, analytical and numerical results for 2 different situations : oscillations and relaxation
 def plotHeight(Oh, Bo, k, ax, labelinset):
 
-    t, eta, eta_lub, eta_ana = compute_datas_fig1(Oh, Bo, k)
+    t, eta, eta_lub, eta_ana = datas_fig1(Oh, Bo, k)
     
     ax.plot(t, np.abs(eta_ana), color=clrpole, ls=":", dash_capstyle="round", 
             linewidth=2, label = 'Analytical resolution')
@@ -126,7 +126,7 @@ k = 0.5
 Oh_list = np.logspace(-3.5, 0.5, 600)
 
 ## Import datas
-om_ana, om_0 = compute_datas_fig2(Oh_list, Bo, k)
+om_ana, om_0 = datas_fig2(Oh_list, Bo, k)
 
 ## Plot datas
 plot_fig2(Oh_list, Bo, k, om_ana, om_0)
@@ -142,7 +142,7 @@ Bo = 1
 #The data can be easily recompute but it takes about 1h.
 #For time efficiency, numerical values are by default taken in the txt file. 
 ComputeAllFig3 = False
-err_lub, err_visc, err_in, splitline = compute_datas_fig3 (Oh_list, k_list, Bo, 'fig3_om_num.npy', ComputeAllFig3)
+err_lub, err_visc, err_in, splitline = datas_fig3 (Oh_list, k_list, Bo, 'fig3_om_num.npy', ComputeAllFig3)
 
 ## Plot datas
 plot_fig3(Oh_list, k_list, err_lub, err_visc, err_in, splitline)
@@ -150,74 +150,12 @@ plot_fig3(Oh_list, k_list, err_lub, err_visc, err_in, splitline)
 
 #%% Figure 4 
 #Rayleigh-Taylor
-from scipy import stats
-compute = False 
-
-def growth_rate(Oh, Bo, k):
-    t_all = np.linspace(0.001, 25., 50)/k
-    sampled_eta = freeSurface(t_all, Oh, Bo, k)
-    
-    reg = stats.linregress(t_all[20:], np.log(sampled_eta[20:]))
-    if (reg[2]<0.999):
-        print(Oh, k, reg[2])
-        plt.figure()
-        plt.xlabel(r'Time (in $\tau_{relax}$ units)')
-        plt.ylabel("Relative wave amplitude") 
-        plt.semilogy(t_all*abs(om_lub(Oh, Bo, k)), sampled_eta, 'black', label = r'Cortelezzi \& Prosperetti')
-        plt.semilogy(t_all*abs(om_lub(Oh, Bo, k)), np.exp(reg[1] + t_all*reg[0]), 'gray', label = 'Regression')
-    return reg[0]
-
-def om_normal_mode_inertial_Bo_neg(Oh, Bo, k):
-    return pulsation(Bo, k) - (1/np.sinh(2*k)*np.sqrt(pulsation(Bo, k) * k**2*Oh/2)
-            + 2*k**2*Oh * (np.cosh(4*k)+np.cosh(2*k)-1) / (np.cosh(4*k) -1)
-            + pow(k**2*Oh,3./2.)/np.sqrt(2*pulsation(Bo, k))
-            *(3-8*np.cosh(2*k)-14*np.cosh(4*k)+4*np.cosh(6*k))/(8*np.sinh(2*k)**3))
 
 Bo = -0.5
 Oh_list = [0.01, 1.]
 k_list = np.linspace(0.005, 0.999, 100) * np.sqrt(-Bo)
 k_list2 = np.linspace(0.005, 1., 100) * np.sqrt(-Bo)
 
-if compute:
-    om_gwr_Oh = []
-    for Oh in Oh_list:
-        om_gwr_Oh.append([growth_rate(Oh, Bo, k) for k in k_list])
-    np.save("RayleighTaylor",om_gwr_Oh)
-else:
-    om_gwr_Oh = np.load("RayleighTaylor.npy")
-   
-om_potential = [pulsation(Bo, k) for k in k_list]
+om_gwr_Oh, om_potential, om_norm_in, om_lub_list, om_norm_visc = datas_fig4 (Oh_list, k_list, k_list2, Bo, "RayleighTaylor.npy")
 
-
-fig, ax = plt.subplots(1,2, figsize=(16,8))
-    
-Oh = Oh_list[0]
-om_norm = [np.abs(om_normal_mode_inertial_Bo_neg(Oh, Bo, k)) for k in k_list2]
-ax[1].plot(k_list, om_potential, lw=1.0, alpha = 0.4, color = 'black', label = r'Potential')
-ax[1].plot(k_list2, om_norm, '-', lw=1.0, alpha = 0.4, color = 'red', label = 'Normal mode')
-
-Oh = Oh_list[1]
-ax[0].set_ylabel(r'$\omega$')
-om_lub_list = [np.abs(om_lub(Oh, Bo, k)) for k in k_list2]
-ax[0].plot(k_list2, om_lub_list, '-', lw=1.0, alpha = 0.4, color = 'blue', label = 'Lubrication')
-om_norm = [np.abs(om_normal_mode_viscous(Oh, Bo, k)) for k in k_list2]
-ax[0].plot(k_list2, om_norm, '-', lw=1.0, alpha = 0.4, color = 'red', label = 'Normal mode')
-
-for Oh, axx, om_gwr in zip(Oh_list, [ax[1],ax[0]], om_gwr_Oh):
-    axx.set_xlabel(r'k')
-    axx.set_title('Oh = ' + str(Oh))
-    axx.plot(k_list, np.abs(om_gwr), '--', lw=1.0, color = 'orange', alpha = 0.8, label = r'Cortelezzi resolution')
-    axx.legend()
-
-plt.tight_layout(pad=2.)
-
-# Oh = 0.01
-# k = 0.5
-# t_all = np.linspace(0.001, 25., 50)/k
-# sampled_eta = freeSurface(t_all, Oh, Bo, k)
-# reg = stats.linregress(t_all[20:], np.log(sampled_eta[20:]))
-# plt.figure()
-# plt.xlabel(r'Time (in $\tau_{relax}$ units)')
-# plt.ylabel("Relative wave amplitude") 
-# plt.plot(t_all*abs(om_lub(Oh, Bo, k)), sampled_eta, 'black', label = r'Cortelezzi \& Prosperetti')
-# plt.plot(t_all*abs(om_lub(Oh, Bo, k)), np.exp(reg[1] + t_all*reg[0]), 'gray', label = 'Regression')
+plot_fig4(Oh_list, k_list, k_list2, om_gwr_Oh, om_potential, om_norm_in, om_lub_list, om_norm_visc)

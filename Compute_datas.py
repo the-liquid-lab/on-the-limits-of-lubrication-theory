@@ -5,9 +5,8 @@
 
 import numpy as np
 from mpmath import mp, j
-from Functions import freeSurface, om_lub, pulsation, om_analytic, om_numerical, decaying_sinusoid, err_norm
+from Functions import freeSurface, om_lub, pulsation, om_analytic, om_numerical, decaying_sinusoid
 from Functions import om_normal_mode_viscous, puls_normal_mode_inertial, om_normal_mode_inertial
-
 
 ############################# Figure 1 ########################################
 # This function returns height evolution with time with three different approaches : 
@@ -16,7 +15,7 @@ from Functions import om_normal_mode_viscous, puls_normal_mode_inertial, om_norm
 #    * Lubrication approximation
 # These approaches are compared for two cases on Figure 1.
 
-def compute_datas_fig1(Oh, Bo, k):
+def datas_fig1(Oh, Bo, k):
     om_lub_relax = om_lub(Oh, Bo, k)
     om_0 = pulsation(Bo, k)
     om_ana = om_analytic(Oh, Bo, k)/om_lub_relax
@@ -33,7 +32,7 @@ def compute_datas_fig1(Oh, Bo, k):
 ############################# Figure 2 ########################################
 # For a given couple (Bo, k), this function returns the analytical value of the 
 # complexe growth rate (obtained by normal mode analysis) for a range of Oh values.
-def compute_datas_fig2(Oh_list, Bo, k):
+def datas_fig2(Oh_list, Bo, k):
     om_ana = []
     root_denom = j
     
@@ -46,6 +45,13 @@ def compute_datas_fig2(Oh_list, Bo, k):
     return om_ana, om_0
 
 ############################# Figure 3 ########################################
+# Relative error of different models compare to the numerical results.
+def err_norm(relax, puls, om_num):
+    relax_num = om_num[0] # 0 for decaying
+    puls_num = om_num[1] # 1 for oscillation
+    return np.sqrt((np.square(relax-relax_num) + 
+                        np.square(puls-puls_num))/
+                       (np.square(relax_num) + np.square(puls_num)))
 
 def compute_om_num(Oh_list, k_list, Bo):
     om_num = []
@@ -63,7 +69,7 @@ def compute_om_num(Oh_list, k_list, Bo):
     return om_num
 
 #Compare the different models for a range of Oh and k.
-def compute_datas_fig3 (Oh_list, k_list, Bo, file_name, compute = False):
+def datas_fig3 (Oh_list, k_list, Bo, file_name, compute = False):
     #The data can be easily recompute but it takes about 1h.
     #For time efficiency, numerical values are by default taken in the txt file. 
     if compute:
@@ -89,3 +95,44 @@ def compute_datas_fig3 (Oh_list, k_list, Bo, file_name, compute = False):
     splitline = np.array([[pulsation(Bo, k)/(k**2/1.3115+1/0.732),k] for k in k_list])    
 
     return err_lub, err_visc, err_in, splitline
+
+
+############################# Figure 4 ########################################
+from scipy import stats
+def growth_rate(Oh, Bo, k):
+    t_all = np.linspace(0.001, 25., 50)/k
+    sampled_eta = freeSurface(t_all, Oh, Bo, k)
+    
+    reg = stats.linregress(t_all[20:], np.log(sampled_eta[20:]))
+    # if (reg[2]<0.999):
+    #     print(Oh, k, reg[2])
+    #     plt.figure()
+    #     plt.xlabel(r'Time (in $\tau_{relax}$ units)')
+    #     plt.ylabel("Relative wave amplitude") 
+    #     plt.semilogy(t_all*abs(om_lub(Oh, Bo, k)), sampled_eta, 'black', label = r'Cortelezzi \& Prosperetti')
+    #     plt.semilogy(t_all*abs(om_lub(Oh, Bo, k)), np.exp(reg[1] + t_all*reg[0]), 'gray', label = 'Regression')
+    return reg[0]
+
+def om_normal_mode_inertial_Bo_neg(Oh, Bo, k):
+    return pulsation(Bo, k) - (1/np.sinh(2*k)*np.sqrt(pulsation(Bo, k) * k**2*Oh/2)
+            + 2*k**2*Oh * (np.cosh(4*k)+np.cosh(2*k)-1) / (np.cosh(4*k) -1)
+            + pow(k**2*Oh,3./2.)/np.sqrt(2*pulsation(Bo, k))
+            *(3-8*np.cosh(2*k)-14*np.cosh(4*k)+4*np.cosh(6*k))/(8*np.sinh(2*k)**3))
+
+
+def datas_fig4 (Oh_list, k_list, k_list2, Bo, file_name, compute = False):
+    if compute:
+        om_gwr_Oh = []
+        for Oh in Oh_list:
+            om_gwr_Oh.append([growth_rate(Oh, Bo, k) for k in k_list])
+        np.save(file_name,om_gwr_Oh)
+    else:
+        om_gwr_Oh = np.load(file_name)
+       
+    om_potential = [pulsation(Bo, k) for k in k_list]
+    
+    om_norm_in = [np.abs(om_normal_mode_inertial_Bo_neg(Oh_list[0], Bo, k)) for k in k_list2]
+    om_lub_list = [np.abs(om_lub(Oh_list[1], Bo, k)) for k in k_list2]
+    om_norm_visc = [np.abs(om_normal_mode_viscous(Oh_list[1], Bo, k)) for k in k_list2]
+
+    return om_gwr_Oh, om_potential, om_norm_in, om_lub_list, om_norm_visc
