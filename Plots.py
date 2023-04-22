@@ -23,7 +23,7 @@ def fig_init():
 
     #Figure parameter and contour's labels
     plt.rc('font', size=12)  # general font size
-    plt.rc('axes', labelsize=11, titlesize=10, linewidth=1.)
+    plt.rc('axes', labelsize=11, titlesize=12, linewidth=1.)
     plt.rc('lines', markersize=8, markeredgewidth=0., linewidth=0.4)
     plt.rc('xtick',  labelsize=12, direction='in', bottom='true', top='true')
     plt.rc('ytick',  labelsize=12, direction='in', left='true', right='true')
@@ -322,7 +322,7 @@ def plot_fig4(Oh_list, k_list, k_list2, om_gwr_Oh, om_potential, om_norm_in, om_
     fig, ax = plt.subplots(1,2, figsize=(10.57, 8.3))
         
     ax[1].plot(k_list, om_potential, lw=1.0, alpha = 0.4, color = 'black', label = r'Potential')
-    ax[1].plot(k_list2, om_norm_in, '-', lw=1.0, alpha = 0.4, color = 'red', label = 'Normal mode')
+    ax[1].plot(k_list, om_norm_in, '-', lw=1.0, alpha = 0.4, color = 'red', label = 'Normal mode')
     
     ax[0].set_ylabel(r'$\omega$')
     ax[0].plot(k_list2, om_lub_list, '-', lw=1.0, alpha = 0.4, color = 'blue', label = 'Lubrication')

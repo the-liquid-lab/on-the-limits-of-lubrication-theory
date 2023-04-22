@@ -150,12 +150,14 @@ plot_fig3(Oh_list, k_list, err_lub, err_visc, err_in, splitline)
 
 #%% Figure 4 
 #Rayleigh-Taylor
-
+## Parameters
 Bo = -0.5
 Oh_list = [0.01, 1.]
 k_list = np.linspace(0.005, 0.999, 100) * np.sqrt(-Bo)
 k_list2 = np.linspace(0.005, 1., 100) * np.sqrt(-Bo)
 
+## Import datas
 om_gwr_Oh, om_potential, om_norm_in, om_lub_list, om_norm_visc = datas_fig4 (Oh_list, k_list, k_list2, Bo, "RayleighTaylor.npy")
 
+## Plot datas
 plot_fig4(Oh_list, k_list, k_list2, om_gwr_Oh, om_potential, om_norm_in, om_lub_list, om_norm_visc)
