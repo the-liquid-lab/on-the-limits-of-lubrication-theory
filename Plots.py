@@ -22,20 +22,23 @@ def fig_init():
     p["xtick.minor.visible"] = True
 
     #Figure parameter and contour's labels
-    plt.rc('font', size=12)  # general font size
-    plt.rc('axes', labelsize=11, titlesize=12, linewidth=1.)
+    plt.rc('font', size=11)  # general font size
+    plt.rc('axes', labelsize=11, titlesize=11, linewidth=1.)
     plt.rc('lines', markersize=8, markeredgewidth=0., linewidth=0.4)
-    plt.rc('xtick',  labelsize=12, direction='in', bottom='true', top='true')
-    plt.rc('ytick',  labelsize=12, direction='in', left='true', right='true')
+    plt.rc('xtick',  labelsize=8, direction='in', bottom='true', top='true')
+    plt.rc('ytick',  labelsize=8, direction='in', left='true', right='true')
+    plt.rc('legend',  fontsize=8)
     plt.rc('savefig', bbox='tight', transparent=True, dpi=300) 
 
     #Old parameters for Latex
-    # plt.rcParams['text.usetex'] = True
     # plt.rcParams['text.latex.preamble'] = r'\usepackage{amsmath,amssymb} \usepackage[squaren,Gray]{SIunits} \usepackage{nicefrac}'
-    # plt.rcParams['font.family'] = 'serif'
-    # plt.rcParams['font.serif'] = 'cm'
 
-
+############################# Figure 1 ########################################
+def plot_fig1():
+    plt.tight_layout(pad=1.)
+    plt.savefig("figure1.pdf")
+    
+############################# Figure 2 ########################################
 def plot_fig2(Oh_list, Bo, k, om_ana, om_0):
     ## Creation of the colormap.
     #Two colormap are sampled to be printed on each side of the split point
@@ -47,20 +50,20 @@ def plot_fig2(Oh_list, Bo, k, om_ana, om_0):
     mymap = mcolors.LinearSegmentedColormap.from_list('my_colormap', colors)
     
     ## Ploting datas
-    plt.figure(constrained_layout=False, figsize = (8,4))
-    [plt.scatter(0, 1, label = 'Natural pulsations', marker = 'P', s = 80, c = 'black'),
-         plt.scatter(-0.93, 0, label = 'Split point', marker = '*', s = 60, c = 'black')]
-    plt.scatter(0, -1, marker = 'P', s = 80, c = 'black')
+    plt.figure(constrained_layout=False, figsize = (4,2))
+    [plt.scatter(0, 1, label = 'Inviscid pulsations', marker = 'P', s = 50, c = 'black'),
+         plt.scatter(-0.93, 0, label = 'Split point', marker = '*', s = 40, c = 'black')]
+    plt.scatter(0, -1, marker = 'P', s = 50, c = 'black')
     for i in [1, -1]:
         plt.arrow(-0.91, i*0.05, 0.05, i*0.2, head_width = 0.02, color = 'black')
-        plt.scatter(om_ana[:,0]/om_0, i*om_ana[:,1]/om_0, s = 20, c = Oh_list, 
+        plt.scatter(om_ana[:,0]/om_0, i*om_ana[:,1]/om_0, s = 10, c = Oh_list, 
                     cmap=mymap, norm=mcolors.LogNorm())
     
     ## Axes titles
     plt.xlabel('$\omega_{relax}/\omega_0 = \Re(s/\omega_0)$', usetex=True)      
     plt.ylabel('$\omega_{osc}/\omega_0 = \Im(s/\omega_0)$', usetex=True)
     plt.colorbar(label = 'Oh')
-    plt.legend()
+    plt.legend(loc = 3)
     plt.tight_layout(pad=1.)
     
     ##Save figure
@@ -78,7 +81,7 @@ def interpolate(X, Y, T):
     R[1:] = np.cumsum(dR)
     return np.interp(T, R, X), np.interp(T, R, Y), R[-1]
 
-def add_text(ax, x, y, string, va="center", ha="center", size = 18, usetex = False):
+def add_text(ax, x, y, string, va="center", ha="center", size = 12, usetex = False):
     text = ax.text(
     x,
     y,
@@ -101,7 +104,7 @@ def simple_text(ax, x, y, string):
     y,
     string,
     va="top",
-    size=12,
+    size=8,
     ha="right",
     usetex = True
     )
@@ -116,7 +119,7 @@ def draw_split_line(ax, splitpoints, color):
     splitpointsNDC=DC_to_NDC(splitpoints)
         
     path = TextPath(
-        (0, -0.75), "SPLIT LINE", prop=FontProperties(size=10, weight="bold")
+        (0, -0.75), "SPLIT LINE", prop=FontProperties(size = 11, weight="bold")
     )
     
     vert = path.vertices
@@ -164,7 +167,7 @@ def draw_split_line(ax, splitpoints, color):
 
 #Hexagonal plot
 #trying to use https://stackoverflow.com/questions/15140072/how-to-map-number-to-color-using-matplotlibs-colormap
-def hexagonal_plot(Oh_full, k_full, err, cmap, lw=1):
+def hexagonal_plot(Oh_full, k_full, err, cmap, lw=0.5):
     return plt.hexbin(Oh_full.flatten(), k_full.flatten(), 
                          C = err.flatten(), gridsize=(21,12), 
                          norm=mcolors.LogNorm(vmax=1.,vmin=0.0001),
@@ -199,21 +202,21 @@ def draw_scheme(ax):
 
     Zx = [-2.]
     Zy = [-3.]
-    ax.scatter(Zx, Zy, s=50, zorder=20, edgecolor="black", facecolor=colors["amber"][2], linewidth=0.5)
+    ax.scatter(Zx, Zy, s=20, zorder=10, edgecolor="black", facecolor=colors["amber"][2], linewidth=0.3)
     Zx = [-6.]
     Zy = [-5.]
-    ax.scatter(Zx, Zy, s=50, zorder=20, edgecolor="black", facecolor=colors["d.orange"][2], linewidth=0.5)
+    ax.scatter(Zx, Zy, s=20, zorder=10, edgecolor="black", facecolor=colors["d.orange"][2], linewidth=0.3)
     # note, the points lie on the line 0.5 x - 2
 
    
-    simple_text(ax, -2.8, -4.3, r"$\Delta \omega$")
-    simple_text(ax, -5.7, -5.5, r"$\omega$")
-    simple_text(ax, -0.5, -1.5, r"$\omega_\mathrm{model}$")
+    simple_text(ax, -2, -4.8, r"$\Delta \omega$")
+    simple_text(ax, -5.2, -6, r"$\omega$")
+    simple_text(ax, -0.3, -1, r"$\omega_\mathrm{model}$")
 
-    ax.annotate('', xy=(-5.8, 0.5*(-5.8)-2.), xytext=(-2.2, 0.5*(-2.2)-2.),
-                arrowprops=dict(facecolor='black', arrowstyle='<->'))
+    ax.annotate('', xy=(-5.9, 0.5*(-5.9)-2.), xytext=(-2.1, 0.5*(-2.1)-2.),
+                arrowprops=dict(facecolor='black', lw = 0.5, arrowstyle='<->'))
 
-def draw_subplot(ax, string, x, y):
+def draw_subplot(ax, string, x):
     ax.set_xlim(0.001,10)
     ax.set_ylim(0.01,100)
 
@@ -224,18 +227,18 @@ def draw_subplot(ax, string, x, y):
     ax.get_xaxis().set_ticks([])
     ax.get_yaxis().set_ticks([])
 
-    add_text(ax, 0.05, 0.9, string, size=12, ha="left")
+    add_text(ax, 0.05, 0.85, string, size=8, ha="left")
 
-    add_text(ax, x,y, r"$$\frac{\left\|\Delta\omega\right\|}{\left\|\omega\right\|}$$",
-        va="top", size=10, usetex=True)
+    add_text(ax, x,0.7, r"$$\frac{\left\|\Delta\omega\right\|}{\left\|\omega\right\|}$$",
+        va="top", size=8, usetex=True)
 
 def draw_colorbar(ax, hb):
-    cb = plt.colorbar(hb, cax=ax,aspect=20/1, ticks=[1.5e-4, 1e-2, 7e-1])
+    cb = plt.colorbar(hb, cax=ax,aspect=15/1, ticks=[1.5e-4, 1e-2, 7e-1])
     cb.ax.set_yticklabels(['0.01 %', '1 %', '100 %'])
     ax.tick_params(axis=u'both', which=u'both',length=0)
     for t in cb.ax.get_yticklabels():
         t.set_horizontalalignment('left')
-        t.set_fontsize('8')
+        t.set_fontsize('6')
         
 def draw_major_plot(ax, hb_main, hb_array, splitline):
     #Formatting
@@ -247,10 +250,10 @@ def draw_major_plot(ax, hb_main, hb_array, splitline):
     ax.set_ylabel("k")
     
     #Add text
-    add_text(ax, 0.9, 0.9, "modes")
-    add_text(ax, 0.9, 0.95, "Damped")
-    add_text(ax, 0.1, 0.9, "modes")
-    add_text(ax, 0.1, 0.95, "Oscillating")
+    add_text(ax, 0.85, 0.85, "modes")
+    add_text(ax, 0.85, 0.9, "Damped")
+    add_text(ax, 0.15, 0.85, "modes")
+    add_text(ax, 0.15, 0.9, "Oscillating")
     
     #Add Split line
     draw_split_line(ax, splitline, colors["blue grey"][5])
@@ -283,10 +286,10 @@ def plot_fig3(Oh_list, k_list, err_lub, err_visc, err_in, splitline):
     k_full = np.array([[k for Oh in Oh_list] for k in k_list])
 
     ## Initialise the figure
-    fig = plt.figure(constrained_layout=False, figsize=(10.57, 8.3))
+    fig = plt.figure(constrained_layout=False, figsize=(5, 3.9))
     gspec = gridspec.GridSpec(ncols=5, nrows=7, figure=fig, 
-                              width_ratios=[83, .7, 20, 1., 1], 
-                              height_ratios=[20, 1, 20, 1, 20, 1, 20], 
+                              width_ratios=[80, 2, 20, 0.5, 1], 
+                              height_ratios=[18, 2, 18, 2, 18, 2, 18], 
                               hspace=0., wspace=0.)
 
     ## Draw first subplot (scheme)
@@ -295,17 +298,16 @@ def plot_fig3(Oh_list, k_list, err_lub, err_visc, err_in, splitline):
 
     ## Draw subplots with hexagons for inertial, viscous and lubrication
     hb_array = []
-    for i, err, cmap, string, x, y in zip([2, 4, 6], 
+    for i, err, cmap, string, x in zip([2, 4, 6], 
                                     [err_in, err_visc, err_lub], 
                                     [cmap_amber, cmap_lblue, cmap_pink],
-                                    ["Inertial model", "Viscous model", "Lubrication theory"],
-                                    [0.85, 0.35, 0.45],
-                                    [0.95, 0.8, 0.8]):
+                                    ["Inertial model", "Viscous model", "Lubrication"],
+                                    [0.75, 0.35, 0.35]):
 
         ax = plt.subplot(gspec[i,2],aspect=1)
-        hb = hexagonal_plot(Oh_full, k_full, err, cmap, 0.25)
+        hb = hexagonal_plot(Oh_full, k_full, err, cmap, 0.1)
         hb_array.append(hb.get_array())
-        draw_subplot(ax, string, x, y)
+        draw_subplot(ax, string, x)
         ax = plt.subplot(gspec[i,4])
         draw_colorbar(ax, hb)
 
@@ -319,20 +321,20 @@ def plot_fig3(Oh_list, k_list, err_lub, err_visc, err_in, splitline):
 
 ############################# Figure 4 ########################################
 def plot_fig4(Oh_list, k_list, k_list2, om_gwr_Oh, om_potential, om_norm_in, om_lub_list, om_norm_visc):
-    fig, ax = plt.subplots(1,2, figsize=(10.57, 8.3))
+    fig, ax = plt.subplots(1,2, figsize=(4, 3))
         
     ax[1].plot(k_list, om_potential, lw=1.0, alpha = 0.4, color = 'black', label = r'Potential')
     ax[1].plot(k_list, om_norm_in, '-', lw=1.0, alpha = 0.4, color = 'red', label = 'Normal mode')
     
-    ax[0].set_ylabel(r'$\omega$')
+    ax[0].set_ylabel(r'$\omega$', usetex = True)
     ax[0].plot(k_list2, om_lub_list, '-', lw=1.0, alpha = 0.4, color = 'blue', label = 'Lubrication')
     ax[0].plot(k_list2, om_norm_visc, '-', lw=1.0, alpha = 0.4, color = 'red', label = 'Normal mode')
     
     for Oh, axx, om_gwr in zip(Oh_list, [ax[1],ax[0]], om_gwr_Oh):
-        axx.set_xlabel(r'k')
-        axx.set_title('Oh = ' + str(Oh))
+        axx.set_xlabel(r'$k$', usetex = True)
+        axx.set_title('$Oh = ' + str(Oh) + '$', usetex = True)
         axx.plot(k_list, np.abs(om_gwr), '--', lw=1.0, color = 'orange', alpha = 0.8, label = r'Cortelezzi resolution')
-        axx.legend()
+        axx.legend(loc = 3)
     
     plt.tight_layout(pad=1.)
     ## Save figure

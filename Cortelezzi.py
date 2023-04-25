@@ -13,7 +13,7 @@ import os
 os.chdir(os.path.abspath(os.path.dirname(__file__)))
 
 from Compute_datas import datas_fig1, datas_fig2, datas_fig3, datas_fig4
-from Plots import fig_init, plot_fig2, plot_fig3, plot_fig4
+from Plots import fig_init, plot_fig1, plot_fig2, plot_fig3, plot_fig4
 fig_init()
 
 #%% Figure 1
@@ -115,9 +115,8 @@ plotHeight(0.01, 0.001, 0.5, ax[1], False)
 #lines, labels = ax[-1].get_legend_handles_labels()
 #fig.legend(lines, labels, loc = 'lower center', borderaxespad=0.1, ncol=3)
 ax[0].set_ylabel('Relative amplitude', family = "Roboto", weight="ultralight")
-plt.tight_layout(pad=1.)
-fig.savefig("figure1.pdf")
 
+plot_fig1()
 #%% Figure 2
 
 ## Parameters
