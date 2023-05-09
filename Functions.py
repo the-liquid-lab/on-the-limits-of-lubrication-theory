@@ -78,10 +78,16 @@ def puls_normal_mode_inertial(Oh, Bo, k):
             *(3-8*np.cosh(2*k)-14*np.cosh(4*k)+4*np.cosh(6*k))/(8*np.sinh(2*k)**3)) 
 
 def om_normal_mode_inertial(Oh, Bo, k):
-    return (1/np.sinh(2*k)*np.sqrt(pulsation(Bo, k) * k**2*Oh/2) +
-            2*k**2*Oh * (np.cosh(4*k)+np.cosh(2*k)-1) / (np.cosh(4*k) -1)
-            - pow(k**2*Oh,3./2.)/np.sqrt(2*pulsation(Bo, k))
-            *(3-8*np.cosh(2*k)-14*np.cosh(4*k)+4*np.cosh(6*k))/(8*np.sinh(2*k)**3)) 
+    if Bo > 0:
+        return (1/np.sinh(2*k)*np.sqrt(pulsation(Bo, k) * k**2*Oh/2) +
+                2*k**2*Oh * (np.cosh(4*k)+np.cosh(2*k)-1) / (np.cosh(4*k) -1)
+                - pow(k**2*Oh,3./2.)/np.sqrt(2*pulsation(Bo, k))
+                *(3-8*np.cosh(2*k)-14*np.cosh(4*k)+4*np.cosh(6*k))/(8*np.sinh(2*k)**3))
+    else:
+        return pulsation(Bo, k) - (1/np.sinh(2*k)*np.sqrt(pulsation(Bo, k) * k**2*Oh/2)
+                + 2*k**2*Oh * (np.cosh(4*k)+np.cosh(2*k)-1) / (np.cosh(4*k) -1)
+                + pow(k**2*Oh,3./2.)/np.sqrt(2*pulsation(Bo, k))
+                *(3-8*np.cosh(2*k)-14*np.cosh(4*k)+4*np.cosh(6*k))/(8*np.sinh(2*k)**3))
 
 ###Resolution by normal mode analysis (zero of the denominator)
 def om_analytic(Oh, Bo, k, guess = False):

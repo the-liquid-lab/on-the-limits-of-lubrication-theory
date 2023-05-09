@@ -22,8 +22,8 @@ def fig_init():
     p["xtick.minor.visible"] = True
 
     #Figure parameter and contour's labels
-    plt.rc('font', size=11)  # general font size
-    plt.rc('axes', labelsize=11, titlesize=11, linewidth=1.)
+    plt.rc('font', size=10.5)  # general font size
+    plt.rc('axes', labelsize=10.5, titlesize=10.5, linewidth=1.)
     plt.rc('lines', markersize=8, markeredgewidth=0., linewidth=0.4)
     plt.rc('xtick',  labelsize=8, direction='in', bottom='true', top='true')
     plt.rc('ytick',  labelsize=8, direction='in', left='true', right='true')
@@ -50,7 +50,7 @@ def plot_fig2(Oh_list, Bo, k, om_ana, om_0):
     mymap = mcolors.LinearSegmentedColormap.from_list('my_colormap', colors)
     
     ## Ploting datas
-    plt.figure(constrained_layout=False, figsize = (4,2))
+    plt.figure(constrained_layout=False, figsize = (5,2.5))
     [plt.scatter(0, 1, label = 'Inviscid pulsations', marker = 'P', s = 50, c = 'black'),
          plt.scatter(-0.93, 0, label = 'Split point', marker = '*', s = 40, c = 'black')]
     plt.scatter(0, -1, marker = 'P', s = 50, c = 'black')
@@ -245,9 +245,9 @@ def draw_major_plot(ax, hb_main, hb_array, splitline):
     ax.set_xlim(0.001,10)
     ax.set_ylim(0.01,100)
     ax.set_xticks(np.logspace(-3, 1, 4 + 1))
-    ax.set_xlabel("Oh")
+    ax.set_xlabel(r"$Oh$", usetex = True)
     ax.set_yticks(np.logspace(-2, 2, 4 + 1))
-    ax.set_ylabel("k")
+    ax.set_ylabel(r"$k$", usetex = True)
     
     #Add text
     add_text(ax, 0.85, 0.85, "modes")
@@ -321,7 +321,8 @@ def plot_fig3(Oh_list, k_list, err_lub, err_visc, err_in, splitline):
 
 ############################# Figure 4 ########################################
 def plot_fig4(Oh_list, k_list, k_list2, om_gwr_Oh, om_potential, om_norm_in, om_lub_list, om_norm_visc):
-    fig, ax = plt.subplots(1,2, figsize=(4, 3))
+    
+    fig, ax = plt.subplots(1,2, figsize=(5, 4))
         
     ax[1].plot(k_list, om_potential, lw=1.0, alpha = 0.4, color = 'black', label = r'Potential')
     ax[1].plot(k_list, om_norm_in, '-', lw=1.0, alpha = 0.4, color = 'red', label = 'Normal mode')

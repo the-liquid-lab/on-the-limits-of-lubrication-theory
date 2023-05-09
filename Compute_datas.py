@@ -113,13 +113,6 @@ def growth_rate(Oh, Bo, k):
     #     plt.semilogy(t_all*abs(om_lub(Oh, Bo, k)), np.exp(reg[1] + t_all*reg[0]), 'gray', label = 'Regression')
     return reg[0]
 
-def om_normal_mode_inertial_Bo_neg(Oh, Bo, k):
-    return pulsation(Bo, k) - (1/np.sinh(2*k)*np.sqrt(pulsation(Bo, k) * k**2*Oh/2)
-            + 2*k**2*Oh * (np.cosh(4*k)+np.cosh(2*k)-1) / (np.cosh(4*k) -1)
-            + pow(k**2*Oh,3./2.)/np.sqrt(2*pulsation(Bo, k))
-            *(3-8*np.cosh(2*k)-14*np.cosh(4*k)+4*np.cosh(6*k))/(8*np.sinh(2*k)**3))
-
-
 def datas_fig4 (Oh_list, k_list, k_list2, Bo, file_name, compute = False):
     if compute:
         om_gwr_Oh = []
@@ -131,7 +124,7 @@ def datas_fig4 (Oh_list, k_list, k_list2, Bo, file_name, compute = False):
        
     om_potential = [pulsation(Bo, k) for k in k_list]
     
-    om_norm_in = [np.abs(om_normal_mode_inertial_Bo_neg(Oh_list[0], Bo, k)) for k in k_list]
+    om_norm_in = [np.abs(om_normal_mode_inertial(Oh_list[0], Bo, k)) for k in k_list]
     om_lub_list = [np.abs(om_lub(Oh_list[1], Bo, k)) for k in k_list2]
     om_norm_visc = [np.abs(om_normal_mode_viscous(Oh_list[1], Bo, k)) for k in k_list2]
 
