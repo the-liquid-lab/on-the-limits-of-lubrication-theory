@@ -8,37 +8,32 @@ import matplotlib.colors as mcolors
 from matplotlib import gridspec, ticker
 from Colors import cmap_amber, cmap_lblue, cmap_pink, colors
 from Colors import cols_amber_rgba, cols_dpurple_rgba, cols_lblue_rgba, cols_indigo_rgba
+clrpole = colors["teal"][6]
+clrlub = colors["pink"][6]
+clrlaplace = colors["amber"][7]
+clrinertia = colors["blue"][1]
+
 
 ########################### Initialisation ####################################
 def fig_init():
     ## Parameters figures
     #The fonts Roboto and Roboto Condensed must be installed
     p = plt.rcParams
-    p['text.usetex'] = False
-    p['font.family'] = 'sans-serif'
     p["font.sans-serif"] = ["Roboto Condensed"]
-    p["font.weight"] = "light"
     p["ytick.minor.visible"] = True
     p["xtick.minor.visible"] = True
 
     #Figure parameter and contour's labels
-    plt.rc('font', size=10.5)  # general font size
+    plt.rc('font', size=10.5, weight = "light", family = "sans-serif")  # general font size
     plt.rc('axes', labelsize=10.5, titlesize=10.5, linewidth=1.)
     plt.rc('lines', markersize=8, markeredgewidth=0., linewidth=0.4)
+    plt.rc('scatter', edgecolors = "black")
     plt.rc('xtick',  labelsize=10.5, direction='in', bottom='true', top='true')
     plt.rc('ytick',  labelsize=10.5, direction='in', left='true', right='true')
     plt.rc('legend',  fontsize=8)
     plt.rc('savefig', bbox='tight', transparent=True, dpi=300) 
-    
+    plt.rc('text',  usetex=False)
     plt.rc('text.latex', preamble=r'\usepackage{amsmath} \usepackage{amssymb}')
-
-    #Old parameters for Latex
-    # plt.rcParams['text.latex.preamble'] = r'\usepackage{amsmath,amssymb} \usepackage[squaren,Gray]{SIunits} \usepackage{nicefrac}'
-
-clrpole = colors["teal"][6]
-clrlub = colors["pink"][6]
-clrlaplace = colors["amber"][7]
-clrinertia = colors["blue"][1]
 
 ############################# Figure 1 ########################################
 ##Function to plot the evolution of the amplitude (top figure)
@@ -79,8 +74,7 @@ def plot_inset(t, eta, eta_lub, eta_ana, ax):
     ax.set_xticks(np.arange(6))
     ax.grid(True, axis='both', which='both', linewidth=0.125, alpha=0.5) # which='major',
     ax.set_axisbelow(True)
-    for axis in ['top','bottom','left','right']:
-        ax.spines[axis].set_linewidth(0.5)
+    ax.spines[['top','bottom','left','right']].set_linewidth(0.5)
     ax.patch.set_alpha(0.5)
     ax.tick_params(axis='both', which='major', labelsize=6, width=0.5)
     ax.tick_params(axis='both', which='minor', labelsize=6, width=0.25)
@@ -108,15 +102,15 @@ def branch_cut(ax, xmin, xmax, y, ad_split, xtrsl = 0., dilat = 1.):
     
     tax = np.linspace(max(ad_split, xmin+2e-5),xmax-1e-5,3)
     if ad_split < xmax:
-        ax.plot (tax, 0. * tax, color="black", solid_capstyle='round', linewidth = 1)
+        ax.plot (tax, 0. * tax, solid_capstyle='round', linewidth = 1)
 
     if ad_split > xmin:
         x0 = min(ad_split, xmax)
         tcut = np.linspace(xmin+xtrsl,x0,200)
         zcut = -0.05*y*np.sin(2.*np.pi*9.*dilat/(xmax-xmin)*(tcut-x0))
-        ax.plot (tcut, zcut, color=colors["amber"][6], solid_capstyle='round', linewidth = 1.5)
+        ax.plot (tcut, zcut, color=clrlaplace, solid_capstyle='round', linewidth = 1.5)
         if ad_split  < xmax:
-            ax.scatter([ad_split], [0], s=10, zorder=20, edgecolor="black", facecolor=colors["amber"][6], linewidth=0.5)
+            ax.scatter([ad_split], [0], s=10, zorder=20, facecolor=clrlaplace, linewidth=0.5)
 
     #Draw the diagonal for separation (X position depends on left or right side)
     d = .03
@@ -129,7 +123,7 @@ def branch_cut(ax, xmin, xmax, y, ad_split, xtrsl = 0., dilat = 1.):
 
 #Draw the points for the different omega
 def draw_point(ax, Zl, clr, marker='o'):
-        ax.scatter(Zl[0], Zl[1], s=20, zorder=10, edgecolor="black", facecolor="None", linewidth=0.75)
+        ax.scatter(Zl[0], Zl[1], s=20, zorder=10, facecolor="None", linewidth=0.75)
         ax.scatter(Zl[0], Zl[1], s=20, zorder=20, edgecolor="None", facecolor=clr, alpha=0.75)
  
 def plot_om(ax_left, ax_right, ad_om_lub, ad_om_ana_r, ad_om_ana_i, i):
@@ -141,7 +135,7 @@ def plot_om(ax_left, ax_right, ad_om_lub, ad_om_ana_r, ad_om_ana_i, i):
         draw_point(ax_right, Zl, clrlub)
     if i==1:
         draw_point(ax_left ,Zl, clrlub)
-        ax_right.scatter(Zo[0], Zo[1], s=50, zorder=10, edgecolor="k", marker="*", facecolor=clrinertia, linewidth=0.25)    
+        ax_right.scatter(Zo[0], Zo[1], s=80, zorder=10, marker="*", facecolor=clrinertia, linewidth=0.25)
 
 
 #Add the annotations with arrows and text
@@ -151,33 +145,32 @@ def arrow(ax, x1, y1, x2, y2, rad = "0.3"):
                 arrowprops=dict(arrowstyle="->", linewidth=0.5, 
                                 connectionstyle="arc3,rad=" + rad))
 
-def ax_text(ax, x, y, text, clr='black', usetex = True):
-    ax.text(x, y, text, size="x-small", usetex = usetex, transform=ax.transAxes)
-
 def add_arr_text(ax_left, ax_right, ad_om_lub, ad_om_ana_r, ad_om_ana_i, ad_split, i):
+    kw_left = dict(size="x-small", transform=ax_left.transAxes)
+    kw_right = dict(size="x-small", transform=ax_right.transAxes)
     #Add arrows and text 
     if i == 0:       
         arrow(ax_left, ad_split - 1e-4, 0.,-8, 15, rad="-0.3")
         arrow(ax_left, ad_split, 0.,-8, -20)
-        ax_text(ax_left, 0., 0.7, "branch \ncut", usetex = False)
-        ax_text(ax_left, 0.15, 0.23, "branch \npoint", usetex = False)
+        ax_left.text(0., 0.7, "branch \ncut", **kw_left)
+        ax_left.text(0.15, 0.23, "branch \npoint", **kw_left)
             
         arrow(ax_right, -ad_om_lub-1e-5, -0.05,-8, -15, rad="-0.3")
-        ax_text(ax_right, -0.02, 0.23, r'$\omega_\mathrm{lub}$')
-        ax_text(ax_right,0.35, 0.7, "pole", usetex = False)
+        ax_right.text(-0.02, 0.23, r'$\omega_\mathrm{lub}$', **kw_right, usetex = True)
+        ax_right.text(0.35, 0.7, "pole", **kw_right)
         
         arrow(ax_right, ad_om_ana_r+1e-5, 0.05,12, 15, rad="-0.3")
         
     else:
         arrow(ax_left,-ad_om_lub-0.01, -0.1,-8, -15,rad="-0.3")
-        ax_text(ax_left,0.25, 0.23, r'$\omega_\mathrm{lub}$')
+        ax_left.text(0.25, 0.23, r'$\omega_\mathrm{lub}$', **kw_left, usetex = True)
         arrow(ax_right,ad_om_ana_r-0.02, ad_om_ana_i, -20, 5,rad="-0.3")
-        ax_text(ax_right,0.3, 0.85, "pole", usetex = False)
+        ax_right.text(0.3, 0.85, "pole", **kw_right)
         arrow(ax_right,-0.01, -1.01, -20, -5,rad="0.3")
-        ax_text(ax_right,0.25, 0.08, "pulsation", usetex = False)
+        ax_right.text(0.25, 0.08, "pulsation", **kw_right)
         
-    ax_text(ax_right,0.43, 0.98, r'$\mathfrak{I}(s/\omega_0)$')
-    ax_text(ax_right,0.76, 0.56, r'$\mathcal{R}(s/\omega_0)$') 
+    ax_right.text(0.43, 0.98, r'$\mathfrak{I}(s/\omega_0)$', **kw_right, usetex = True)
+    ax_right.text(0.76, 0.56, r'$\mathcal{R}(s/\omega_0)$', **kw_right, usetex = True) 
     
 def plot_fig1(Oh_list, k_list, all_datas):
     ## Ploting datas, create different sections
@@ -230,15 +223,16 @@ def plot_fig2(Oh_list, Bo, k, om_ana, om_0):
     colors = np.vstack((colors1, colors2))
     mymap = mcolors.LinearSegmentedColormap.from_list('my_colormap', colors)
     
+  
     ## Ploting datas
     plt.figure(constrained_layout=False, figsize = (5,2.5))
-    [plt.scatter(0, 1, label = 'Inviscid pulsations', marker = 'P', s = 50, c = 'black'),
-         plt.scatter(-0.93, 0, label = 'Split point', marker = '*', s = 40, c = 'black')]
-    plt.scatter(0, -1, marker = 'P', s = 50, c = 'black')
+    [plt.scatter(0, 1, label = 'Inviscid pulsations',  s=100, marker="*", c=clrinertia, linewidth=0.5),
+         plt.scatter(-0.93, 0, label = 'Split point', marker = 'P', s = 80, c = clrlaplace, linewidth=0.5)]
+    plt.scatter(0, -1,  s=100, marker="*", c=clrinertia, linewidth=0.5)
     for i in [1, -1]:
-        plt.arrow(-0.91, i*0.05, 0.05, i*0.2, head_width = 0.02, color = 'black')
+        plt.arrow(-0.91, i*0.05, 0.05, i*0.2, head_width = 0.02)
         plt.scatter(om_ana[:,0]/om_0, i*om_ana[:,1]/om_0, s = 10, c = Oh_list, 
-                    cmap=mymap, norm=mcolors.LogNorm())
+                    edgecolor = 'None', cmap=mymap, norm=mcolors.LogNorm())
     
     ## Axes titles
     plt.xlabel('$\omega_{relax}/\omega_0 = \Re(s/\omega_0)$', usetex=True)      
@@ -271,23 +265,11 @@ def add_text(ax, x, y, string, va="center", ha="center", size = 12, usetex = Fal
     transform=ax.transAxes,
     size=size,
     ha=ha,
-    color="black",
     usetex = usetex
     )
     text.set_path_effects(
         [path_effects.Stroke(linewidth=2, foreground="white"), 
          path_effects.Normal()]
-    )
-
-def simple_text(ax, x, y, string):
-    ax.text(
-    x,
-    y,
-    string,
-    va="top",
-    size=8,
-    ha="right",
-    usetex = True
     )
     
 def draw_split_line(ax, splitpoints, color):
@@ -364,35 +346,24 @@ def draw_scheme(ax):
     ax.set_axisbelow(True)
 
     ax.set_xlim(-7, 3)
-    ax.xaxis.set_major_locator(ticker.MultipleLocator(1.00))
-    ax.xaxis.set_minor_locator(ticker.MultipleLocator(1.00))
     ax.set_xticklabels([])
 
     ax.set_ylim(-8, 2)
-    ax.yaxis.set_major_locator(ticker.MultipleLocator(1.00))
-    ax.yaxis.set_minor_locator(ticker.MultipleLocator(1.00))
     ax.set_yticklabels([])
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
-    ax.spines['bottom'].set_position(('data', 0))
-    ax.spines['left'].set_position(('data', 0))
+    ax.spines[['top', 'right']].set_visible(False)
+    ax.spines[['bottom', 'left']].set_position(('data', 0))
     ax.yaxis.set_ticks_position('left')
     ax.xaxis.set_ticks_position('bottom')
 
     ax.grid(color=".9", linestyle="--")
 
-    Zx = [-2.]
-    Zy = [-3.]
-    ax.scatter(Zx, Zy, s=20, zorder=10, edgecolor="black", facecolor=colors["amber"][2], linewidth=0.3)
-    Zx = [-6.]
-    Zy = [-5.]
-    ax.scatter(Zx, Zy, s=20, zorder=10, edgecolor="black", facecolor=colors["d.orange"][2], linewidth=0.3)
+    ax.scatter(-2, -3, s=20, zorder=10, facecolor=colors["amber"][2], linewidth=0.3)
+    ax.scatter(-6, -5, s=20, zorder=10, facecolor=colors["d.orange"][2], linewidth=0.3)
     # note, the points lie on the line 0.5 x - 2
 
-   
-    simple_text(ax, -2, -4.8, r"$\Delta \omega$")
-    simple_text(ax, -5.2, -6, r"$\omega$")
-    simple_text(ax, -0.3, -1, r"$\omega_\mathrm{model}$")
+    ax.text(-4.2, -5.9, r"$\Delta \omega$", size=8, usetex = True)
+    ax.text(-6, -7.1, r"$\omega$", size=8, usetex = True)
+    ax.text(-5.2, -2.1, r"$\omega_\mathrm{model}$", size=8, usetex = True)
 
     ax.annotate('', xy=(-5.9, 0.5*(-5.9)-2.), xytext=(-2.1, 0.5*(-2.1)-2.),
                 arrowprops=dict(facecolor='black', lw = 0.5, arrowstyle='<->'))
@@ -431,10 +402,8 @@ def draw_major_plot(ax, hb_main, hb_array, splitline):
     ax.set_ylabel(r"$k$", usetex = True)
     
     #Add text
-    add_text(ax, 0.85, 0.85, "modes")
-    add_text(ax, 0.85, 0.9, "Damped")
-    add_text(ax, 0.15, 0.85, "modes")
-    add_text(ax, 0.15, 0.9, "Oscillating")
+    add_text(ax, 0.85, 0.9, "Damped\nmodes")
+    add_text(ax, 0.15, 0.9, "Oscillating\nmodes")
     
     #Add Split line
     draw_split_line(ax, splitline, colors["blue grey"][5])
