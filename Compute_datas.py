@@ -18,16 +18,17 @@ from Functions import om_normal_mode_viscous, puls_normal_mode_inertial, om_norm
 def datas_fig1(Oh, Bo, k):
     om_lub_relax = om_lub(Oh, Bo, k)
     om_0 = pulsation(Bo, k)
-    om_ana = om_analytic(Oh, Bo, k)/om_lub_relax
+    root_denom = om_analytic(Oh, Bo, k)
+    om_ana=(float(mp.re(root_denom)), float(mp.im(root_denom)))
+    split = - Oh*k**2 
     
     t_all = np.linspace(0.0001, 1., 300) * max(abs(5./om_lub_relax), 13./om_0)
     sampled_t = abs(t_all*om_lub_relax)
     sampled_eta = freeSurface(t_all, Oh, Bo, k)
     sampled_eta_lub = np.exp(-t_all*om_lub_relax)
-    sampled_eta_ana = decaying_sinusoid(sampled_t, float(-mp.re(om_ana)), 
-                                        float(mp.im(om_ana)))
+    sampled_eta_ana = decaying_sinusoid(t_all, -om_ana[0], om_ana[1])
                                                 
-    return sampled_t, sampled_eta, sampled_eta_lub, sampled_eta_ana
+    return sampled_t, sampled_eta, sampled_eta_lub, sampled_eta_ana, om_lub_relax, om_0, om_ana[0], om_ana[1], split
 
 ############################# Figure 2 ########################################
 # For a given couple (Bo, k), this function returns the analytical value of the 

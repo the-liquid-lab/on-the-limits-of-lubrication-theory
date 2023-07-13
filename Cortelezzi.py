@@ -18,105 +18,18 @@ fig_init()
 
 #%% Figure 1
 
-import matplotlib.pyplot as plt
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-from matplotlib import ticker
+## Parameters
+Bo = 0.001
+Oh_list = [10, 0.01]
+k_list = [0.1, 0.5]
+all_datas = []
 
-#Colors
-import vapeplot
-clrs = vapeplot.palette('vaporwave')
-clrlub=clrs[2]
-clrpole=clrs[6]
+#Compute datas 
+#t, eta, eta_lub, eta_ana, om_lub, om_0, om_ana_r, om_ana_i, split
+for Oh, k in zip(Oh_list, k_list):
+    all_datas.append(datas_fig1(Oh, Bo, k))
 
-#Comparison between lubrication, analytical and numerical results for 2 different situations : oscillations and relaxation
-def plotHeight(Oh, Bo, k, ax, labelinset):
-
-    t, eta, eta_lub, eta_ana = datas_fig1(Oh, Bo, k)
-    
-    ax.plot(t, np.abs(eta_ana), color=clrpole, ls=":", dash_capstyle="round", 
-            linewidth=2, label = 'Analytical resolution')
-    ax.plot(t, eta_lub, color=clrlub, ls=(0,(0.01,2)), 
-            linewidth=2, dash_capstyle="round", label = 'Lubrication theory')
-    ax.plot(t, np.abs(eta), color=clrs[8], dash_capstyle="round", linewidth=2)
-    text = r'Time (in $\mathregular{\tau_{relax}}$ units)'        
-    ax.set_xlabel(text, family = "Roboto", weight="ultralight")
-    textOh = "Oh = " + str(Oh) 
-    textk  = "k = " + str(k)
-    axinset = inset_axes(ax, width="40%", height="40%", borderpad=0.5)
-    axinset.linewidth=0.5
-
-    axinset.tick_params(axis=u'both', which=u'both',width=0.2)
-    props = dict(facecolor='white', alpha=0.8, edgecolor="None")
-    plt.setp(axinset.get_xticklabels(), bbox=props,
-             family = "Roboto", size=6, weight="light")
-    plt.setp(axinset.get_yticklabels(), bbox=props,
-             family = "Roboto", size=6, weight="light")
-    ax.text(0.09, 0.92, textOh, size="large", 
-            ha="left", va="center", family = "Source Sans Pro", weight="ultralight",
-            transform=ax.transAxes)
-    ax.text(0.13, 0.85, textk, size="large", 
-            ha="left", va="center", family = "Source Sans Pro", weight="ultralight",
-            transform=ax.transAxes)
-    error_lub=np.subtract(eta,eta_lub)
-    error_pole=np.subtract(eta,eta_ana)
-    axinset.semilogy(t, np.abs(error_lub), color=clrlub, linewidth=1.5)
-    axinset.semilogy(t, np.abs(error_pole), color=clrpole, linewidth=1.5)
-        ## set y ticks
-    y_major = ticker.LogLocator(base = 10.0, numticks = 5)
-    axinset.yaxis.set_major_locator(y_major)
-    y_minor = ticker.LogLocator(base = 10.0, subs = np.arange(1.0, 10.0) * 0.1, numticks = 10)
-    axinset.yaxis.set_minor_locator(y_minor)
-    axinset.yaxis.set_minor_formatter(ticker.NullFormatter())
-    axinset.set_xticks(t[-1]*np.arange(5)/4)
-
- #   axinset.set_xlim(0, 4), axinset.set_xticks(0.5*np.arange(1,8))
-  #  axinset.set_ylim(0, 8), axinset.set_yticks(np.arange(1,8))
-    axinset.grid(True, axis='both', which='both', linewidth=0.125, alpha=0.5) # which='major',
-    axinset.set_axisbelow(True)
-    for axis in ['top','bottom','left','right']:
-        axinset.spines[axis].set_linewidth(0.5)
-    axinset.patch.set_alpha(0.5)
-#    textxinset = r'Time'
-#    textyinset = r'Abs. error'
-    axinset.set_xlabel(text, family = "Roboto", weight="ultralight", fontsize=6)
-    axinset.set_ylabel(text, family = "Roboto", weight="ultralight", fontsize=6)
-    for i in axinset.xaxis.get_ticklines():
-        # reach in and poke the guts 
-        # USE AT YOUR OWN RISK
-        i._marker._capstyle = 'round' 
-        # this is not officially supported
-    for i in axinset.yaxis.get_ticklines():
-        # reach in and poke the guts 
-        # USE AT YOUR OWN RISK
-        i._marker._capstyle = 'round' 
-        # this is not officially supported
-    if labelinset:
-        axinset.text(0.33, 0.25, "discrete pole", size="x-small", 
-                     ha="left", va="center", family = "Roboto Condensed", weight="bold",
-                     transform=axinset.transAxes, color=clrpole)
-        axinset.text(0.15, 0.85, "lubrication", size="x-small", 
-                     ha="left", va="center", family = "Roboto Condensed", weight="bold",
-                     transform=axinset.transAxes, color=clrlub)
-
-            
-    # ax.plot(t[::8],np.abs(eta), '.b', ms = 6., label = r'Numerical resolution')
-    # ax.plot(t, np.abs(decaying_sinusoid(t, float(-mp.re(om_ana)), float(mp.im(om_ana)))), 'red', label = 'Analytical resolution')
-    # ax.plot(t,eta_lub, 'green', label = 'Lubrication theory')
-    # ax.set_xlabel('Time (in $\tau_{relax}$)')
-    
-fig, ax = plt.subplots(ncols = 2, figsize=(6+6/8, 3+3/8), sharey=True)
-for i, axis in enumerate(ax):
-    axis.set_box_aspect(1)
-plotHeight(10, 0.001, 0.1, ax[0], True)
-plotHeight(0.01, 0.001, 0.5, ax[1], False)
-
-#ax.set_aspect('square')
-
-#lines, labels = ax[-1].get_legend_handles_labels()
-#fig.legend(lines, labels, loc = 'lower center', borderaxespad=0.1, ncol=3)
-ax[0].set_ylabel('Relative amplitude', family = "Roboto", weight="ultralight")
-
-plot_fig1()
+plot_fig1(Oh_list, k_list, all_datas)
 #%% Figure 2
 
 ## Parameters

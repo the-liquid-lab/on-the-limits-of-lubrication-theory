@@ -25,16 +25,197 @@ def fig_init():
     plt.rc('font', size=10.5)  # general font size
     plt.rc('axes', labelsize=10.5, titlesize=10.5, linewidth=1.)
     plt.rc('lines', markersize=8, markeredgewidth=0., linewidth=0.4)
-    plt.rc('xtick',  labelsize=8, direction='in', bottom='true', top='true')
-    plt.rc('ytick',  labelsize=8, direction='in', left='true', right='true')
+    plt.rc('xtick',  labelsize=10.5, direction='in', bottom='true', top='true')
+    plt.rc('ytick',  labelsize=10.5, direction='in', left='true', right='true')
     plt.rc('legend',  fontsize=8)
     plt.rc('savefig', bbox='tight', transparent=True, dpi=300) 
+    
+    plt.rc('text.latex', preamble=r'\usepackage{amsmath} \usepackage{amssymb}')
 
     #Old parameters for Latex
     # plt.rcParams['text.latex.preamble'] = r'\usepackage{amsmath,amssymb} \usepackage[squaren,Gray]{SIunits} \usepackage{nicefrac}'
 
+clrpole = colors["teal"][6]
+clrlub = colors["pink"][6]
+clrlaplace = colors["amber"][7]
+clrinertia = colors["blue"][1]
+
 ############################# Figure 1 ########################################
-def plot_fig1():
+##Function to plot the evolution of the amplitude (top figure)
+def plot_amplitude(Oh, k, t, eta, eta_lub, eta_ana, ax, hide_axis):
+    ax.set_ylim([-0.05,1.05])
+    ax.plot(t, np.abs(eta_ana), color=clrpole, ls=":", dash_capstyle="round", 
+            linewidth=2, label = 'Analytical resolution')
+    ax.plot(t, eta_lub, color=clrlub, ls=(0,(0.01,2)), 
+            linewidth=2, dash_capstyle="round", label = 'Lubrication theory')
+    ax.plot(t, np.abs(eta), color=clrlaplace, solid_capstyle="round", linewidth=1)
+    
+    ax.text(0.09, 0.9, r"Oh = " + str(Oh), transform=ax.transAxes)
+    ax.text(0.14, 0.81, r"k = " + str(k), transform=ax.transAxes)
+    
+    if hide_axis:
+        plt.setp(ax.get_yticklabels(), visible=False)
+    else:
+        textxlabel = r'($\times\tau_\mathregular{relax}$)'
+        ax.text(0.80, -0.08, textxlabel, transform=ax.transAxes)
+        ax.set_ylabel('Amplitude')
+        plot_inset(t, eta, eta_lub, eta_ana, ax)
+
+##Function to plot the error on the amplitude (inset in tht top left figure)
+def plot_inset(t, eta, eta_lub, eta_ana, ax):
+    ax = ax.inset_axes([0.57,0.57,0.4,0.4])
+    ax.linewidth=0.5
+    ax.set_ylabel('Error', size="x-small", labelpad = 1.0)
+    ax.set_xlabel(r't/$\tau_\mathregular{relax}$', size="x-small", labelpad = 1.0)
+    error_lub=np.subtract(eta,eta_lub)
+    error_pole=np.subtract(eta,eta_ana)
+    ax.semilogy(t, np.abs(error_lub), color=clrlub, solid_capstyle='round', linewidth=1.5)
+    ax.semilogy(t, np.abs(error_pole), color=clrpole, solid_capstyle='round', linewidth=1.5)
+    y_major = ticker.LogLocator(base = 10.0, numticks = 5)
+    ax.yaxis.set_major_locator(y_major)
+    y_minor = ticker.LogLocator(base = 10.0, subs = np.arange(1.0, 10.0) * 0.1, numticks = 10)
+    ax.yaxis.set_minor_locator(y_minor)
+    ax.yaxis.set_minor_formatter(ticker.NullFormatter())
+    ax.set_xticks(np.arange(6))
+    ax.grid(True, axis='both', which='both', linewidth=0.125, alpha=0.5) # which='major',
+    ax.set_axisbelow(True)
+    for axis in ['top','bottom','left','right']:
+        ax.spines[axis].set_linewidth(0.5)
+    ax.patch.set_alpha(0.5)
+    ax.tick_params(axis='both', which='major', labelsize=6, width=0.5)
+    ax.tick_params(axis='both', which='minor', labelsize=6, width=0.25)
+    ax.text(0.25, 0.3, "discrete pole", transform=ax.transAxes, 
+                size = "x-small", weight="regular", color=clrpole)
+    ax.text(0.15, 0.77, "lubrication", transform=ax.transAxes, 
+                size = "x-small", weight="regular", color=clrlub)
+
+
+##In this section, the functions are made to plot the bottom graph which is 
+#separated into two parts
+
+#Initialisation of each part and plot the branch cut
+def branch_cut(ax, xmin, xmax, y, ad_split, xtrsl = 0., dilat = 1.):   
+    ax.set_xlim(xmin, xmax)
+    ax.set_xticks([])
+    ax.set_ylim(-y, y)
+    ax.set_yticks([])
+    
+    ax.spines[['top', 'right', 'bottom']].set_visible(False)
+    if xmax > 0:
+        ax.spines['left'].set_position(('data', 0))
+    else:
+        ax.spines['left'].set_visible(False)
+    
+    tax = np.linspace(max(ad_split, xmin+2e-5),xmax-1e-5,3)
+    if ad_split < xmax:
+        ax.plot (tax, 0. * tax, color="black", solid_capstyle='round', linewidth = 1)
+
+    if ad_split > xmin:
+        x0 = min(ad_split, xmax)
+        tcut = np.linspace(xmin+xtrsl,x0,200)
+        zcut = -0.05*y*np.sin(2.*np.pi*9.*dilat/(xmax-xmin)*(tcut-x0))
+        ax.plot (tcut, zcut, color=colors["amber"][6], solid_capstyle='round', linewidth = 1.5)
+        if ad_split  < xmax:
+            ax.scatter([ad_split], [0], s=10, zorder=20, edgecolor="black", facecolor=colors["amber"][6], linewidth=0.5)
+
+    #Draw the diagonal for separation (X position depends on left or right side)
+    d = .03
+    if xmax > 0:
+        X = (d/2, d+d/2)
+    else:
+        X = (1-2*d, 1.)
+    ax.plot(X, (0.5-d, 0.5+d), transform=ax.transAxes,
+                  solid_capstyle='round', linewidth = 1, color='k', clip_on=False)
+
+#Draw the points for the different omega
+def draw_point(ax, Zl, clr, marker='o'):
+        ax.scatter(Zl[0], Zl[1], s=20, zorder=10, edgecolor="black", facecolor="None", linewidth=0.75)
+        ax.scatter(Zl[0], Zl[1], s=20, zorder=20, edgecolor="None", facecolor=clr, alpha=0.75)
+ 
+def plot_om(ax_left, ax_right, ad_om_lub, ad_om_ana_r, ad_om_ana_i, i):
+    Za = [[ad_om_ana_r,ad_om_ana_r], [ad_om_ana_i,-ad_om_ana_i]]
+    draw_point(ax_right, Za, clrpole)
+    Zl = [-ad_om_lub, 0.]
+    Zo = [[0., 0.] , [1., -1.]]
+    if i==0:
+        draw_point(ax_right, Zl, clrlub)
+    if i==1:
+        draw_point(ax_left ,Zl, clrlub)
+        ax_right.scatter(Zo[0], Zo[1], s=50, zorder=10, edgecolor="k", marker="*", facecolor=clrinertia, linewidth=0.25)    
+
+
+#Add the annotations with arrows and text
+def arrow(ax, x1, y1, x2, y2, rad = "0.3"):
+    ax.annotate("", (x1,y1), size="x-small", xytext=(x2, y2), 
+                textcoords="offset points",
+                arrowprops=dict(arrowstyle="->", linewidth=0.5, 
+                                connectionstyle="arc3,rad=" + rad))
+
+def ax_text(ax, x, y, text, clr='black', usetex = True):
+    ax.text(x, y, text, size="x-small", usetex = usetex, transform=ax.transAxes)
+
+def add_arr_text(ax_left, ax_right, ad_om_lub, ad_om_ana_r, ad_om_ana_i, ad_split, i):
+    #Add arrows and text 
+    if i == 0:       
+        arrow(ax_left, ad_split - 1e-4, 0.,-8, 15, rad="-0.3")
+        arrow(ax_left, ad_split, 0.,-8, -20)
+        ax_text(ax_left, 0., 0.7, "branch \ncut", usetex = False)
+        ax_text(ax_left, 0.15, 0.23, "branch \npoint", usetex = False)
+            
+        arrow(ax_right, -ad_om_lub-1e-5, -0.05,-8, -15, rad="-0.3")
+        ax_text(ax_right, -0.02, 0.23, r'$\omega_\mathrm{lub}$')
+        ax_text(ax_right,0.35, 0.7, "pole", usetex = False)
+        
+        arrow(ax_right, ad_om_ana_r+1e-5, 0.05,12, 15, rad="-0.3")
+        
+    else:
+        arrow(ax_left,-ad_om_lub-0.01, -0.1,-8, -15,rad="-0.3")
+        ax_text(ax_left,0.25, 0.23, r'$\omega_\mathrm{lub}$')
+        arrow(ax_right,ad_om_ana_r-0.02, ad_om_ana_i, -20, 5,rad="-0.3")
+        ax_text(ax_right,0.3, 0.85, "pole", usetex = False)
+        arrow(ax_right,-0.01, -1.01, -20, -5,rad="0.3")
+        ax_text(ax_right,0.25, 0.08, "pulsation", usetex = False)
+        
+    ax_text(ax_right,0.43, 0.98, r'$\mathfrak{I}(s/\omega_0)$')
+    ax_text(ax_right,0.76, 0.56, r'$\mathcal{R}(s/\omega_0)$') 
+    
+def plot_fig1(Oh_list, k_list, all_datas):
+    ## Ploting datas, create different sections
+    fig = plt.figure(constrained_layout=False, figsize = (5,3.9775))
+    w0, w1, w2, w3, w4 = 0.82, 1.63, 0.1, 0.82, 1.63
+    h1, h2, h3 = 2.45, 0.3, 1.225
+    gspec = gridspec.GridSpec(ncols=5, nrows=3, figure=fig, 
+                              width_ratios=[w0, w1, w2, w3, w4], 
+                              height_ratios=[h1,h2,h3], hspace=0., wspace=0.)
+
+    ## Two cases for the different (Oh, k) couples
+    for Oh, k, datas, i in zip(Oh_list, k_list, all_datas, [0,1]):
+        #Extract datas 
+        t, eta, eta_lub, eta_ana, om_lub, om_0, om_ana_r, om_ana_i, split = datas
+        ad_om_lub, ad_om_ana_r, ad_om_ana_i, ad_split = (om_lub, om_ana_r, om_ana_i, split)/om_0
+    
+        #Define and plot the top figure
+        ax = fig.add_subplot(gspec[0,0+3*i:2+3*i])
+        plot_amplitude(Oh, k, t, eta, eta_lub, eta_ana, ax, i)    
+
+        #Define and plot the bottom figure       
+        ax_left = plt.subplot(gspec[2, 0+3*i])
+        ax_right = plt.subplot(gspec[2, 1+3*i])
+        #Declare the limits of the bottom graph
+        #Plot the branch cut, horizontal lines and separations
+        y = 1.+i/2.
+        if i == 0:
+            x1,x2,x3,x4 = ad_split - 2e-4, ad_split + 1e-4, -4.5e-4, 1.5e-4
+            branch_cut(ax_left, x1, x2, y, ad_split)
+            branch_cut(ax_right, x3, x4, y, ad_split)
+        else:
+            x1,x2,x3,x4 = -9, -8.5, -0.75, 0.25
+            branch_cut(ax_left, x1, x2, y, ad_split, xtrsl = 0.1)
+            branch_cut(ax_right, x3, x4, y, ad_split, xtrsl = 0.03, dilat = 2.)
+
+        plot_om(ax_left, ax_right, ad_om_lub, ad_om_ana_r, ad_om_ana_i, i)
+        add_arr_text(ax_left, ax_right, ad_om_lub, ad_om_ana_r, ad_om_ana_i, ad_split, i)
+    
     plt.tight_layout(pad=1.)
     plt.savefig("figure1.pdf")
     
