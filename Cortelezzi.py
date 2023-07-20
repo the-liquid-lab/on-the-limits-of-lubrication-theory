@@ -35,7 +35,11 @@ plot_fig1(Oh_list, k_list, all_datas)
 ## Parameters
 Bo = 0.001
 k = 0.5
-Oh_list = np.logspace(-3.5, 0.5, 600)
+exponentsraw=np.linspace(-3.5,0.5,60)
+distortfactor=np.power(np.arctanh(0.0555142*np.power(exponentsraw,2)+0.54734*exponentsraw+0.474046),3)
+exponentsdistorted=-0.61*np.power(distortfactor,2)+2*distortfactor-0.89
+Oh_list = np.power(10,exponentsdistorted)
+
 
 ## Import datas
 om_ana, om_0 = datas_fig2(Oh_list, Bo, k)

@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from matplotlib import gridspec, ticker
 from Colors import cmap_amber, cmap_lblue, cmap_pink, colors
-from Colors import cols_amber_rgba, cols_dpurple_rgba, cols_lblue_rgba, cols_indigo_rgba
+from Colors import cols_amber, cols_lblue, cols_amber_rgba, cols_dpurple_rgba, cols_lblue_rgba, cols_indigo_rgba
 clrpole = colors["teal"][6]
 clrlub = colors["pink"][6]
 clrlaplace = colors["amber"][7]
@@ -216,13 +216,13 @@ def plot_fig1(Oh_list, k_list, all_datas):
 def plot_fig2(Oh_list, Bo, k, om_ana, om_0):
     ## Creation of the colormap.
     #Two colormap are sampled to be printed on each side of the split point
-    split = int(np.sum(om_ana[:,1]<0.018)/len(om_ana)*256)
-    colors1 = plt.cm.YlOrBr_r(np.linspace(0.1, 0.9, 256-split))
-    colors2 = plt.cm.Blues(np.linspace(0.3, 1, split))
+    split = int(np.sum(om_ana[:,1]<0.018)/len(om_ana)*60)
+    colors1 = cmap_amber(np.linspace(0, 0.87, 69-split)) #plt.cm.YlOrBr_r(np.linspace(0.1, 0.9, 256-split))
+    colors2 = cmap_lblue(np.linspace(0, 0.87, split)) #plt.cm.Blues(np.linspace(0.3, 1, split))
+    colors2 = np.flip(colors2,0)
     # These are then combined and used to build a new colormap
     colors = np.vstack((colors1, colors2))
-    mymap = mcolors.LinearSegmentedColormap.from_list('my_colormap', colors)
-    
+    mymap = mcolors.LinearSegmentedColormap.from_list('my_colormap', colors)  
   
     ## Ploting datas
     plt.figure(constrained_layout=False, figsize = (5,2.5))
@@ -231,8 +231,13 @@ def plot_fig2(Oh_list, Bo, k, om_ana, om_0):
     plt.scatter(0, -1,  s=100, marker="*", c=clrinertia, linewidth=0.5)
     for i in [1, -1]:
         plt.arrow(-0.91, i*0.05, 0.05, i*0.2, head_width = 0.02)
-        plt.scatter(om_ana[:,0]/om_0, i*om_ana[:,1]/om_0, s = 10, c = Oh_list, 
-                    edgecolor = 'None', cmap=mymap, norm=mcolors.LogNorm())
+        plt.scatter(om_ana[:,0]/om_0, i*om_ana[:,1]/om_0, zorder = 10, s = 10, c = Oh_list, 
+                    facecolor = 'None', linewidth=0.75, cmap=mymap, norm=mcolors.LogNorm())
+        plt.scatter(om_ana[:,0]/om_0, i*om_ana[:,1]/om_0, zorder = 15, s = 10, c = Oh_list, 
+                    facecolor = 'white', edgecolor='None')
+        plt.scatter(om_ana[:,0]/om_0, i*om_ana[:,1]/om_0, zorder = 20, s = 10, c = Oh_list, 
+                    edgecolor = 'None', cmap=mymap, norm=mcolors.LogNorm(),alpha=0.75)
+
     
     ## Axes titles
     plt.xlabel('$\omega_{relax}/\omega_0 = \Re(s/\omega_0)$', usetex=True)      
