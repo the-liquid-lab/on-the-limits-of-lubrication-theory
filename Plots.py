@@ -7,11 +7,11 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from matplotlib import gridspec, ticker
 from Colors import cmap_amber, cmap_lblue, cmap_pink, colors
-from Colors import cols_amber, cols_lblue, cols_amber_rgba, cols_dpurple_rgba, cols_lblue_rgba, cols_indigo_rgba
+from Colors import cols_amber_rgba, cols_dpurple_rgba, cols_lblue_rgba, cols_indigo_rgba
 clrpole = colors["teal"][6]
 clrlub = colors["pink"][6]
-clrlaplace = colors["amber"][7]
-clrinertia = colors["blue"][1]
+clrlaplace = colors["amber"][6]
+clrinertia = colors["amber"][9]
 
 
 ########################### Initialisation ####################################
@@ -102,7 +102,7 @@ def branch_cut(ax, xmin, xmax, y, ad_split, xtrsl = 0., dilat = 1.):
     
     tax = np.linspace(max(ad_split, xmin+2e-5),xmax-1e-5,3)
     if ad_split < xmax:
-        ax.plot (tax, 0. * tax, solid_capstyle='round', linewidth = 1)
+        ax.plot (tax, 0. * tax, solid_capstyle='round', color = "k", linewidth = 1)
 
     if ad_split > xmin:
         x0 = min(ad_split, xmax)
@@ -124,8 +124,9 @@ def branch_cut(ax, xmin, xmax, y, ad_split, xtrsl = 0., dilat = 1.):
 #Draw the points for the different omega
 def draw_point(ax, Zl, clr, marker='o'):
         ax.scatter(Zl[0], Zl[1], s=20, zorder=10, facecolor="None", linewidth=0.75)
+        ax.scatter(Zl[0], Zl[1], s=20, zorder=15, edgecolor="None", facecolor='white')
         ax.scatter(Zl[0], Zl[1], s=20, zorder=20, edgecolor="None", facecolor=clr, alpha=0.75)
- 
+         
 def plot_om(ax_left, ax_right, ad_om_lub, ad_om_ana_r, ad_om_ana_i, i):
     Za = [[ad_om_ana_r,ad_om_ana_r], [ad_om_ana_i,-ad_om_ana_i]]
     draw_point(ax_right, Za, clrpole)
@@ -216,9 +217,9 @@ def plot_fig1(Oh_list, k_list, all_datas):
 def plot_fig2(Oh_list, Bo, k, om_ana, om_0):
     ## Creation of the colormap.
     #Two colormap are sampled to be printed on each side of the split point
-    split = int(np.sum(om_ana[:,1]<0.018)/len(om_ana)*60)
-    colors1 = cmap_amber(np.linspace(0, 0.87, 69-split)) #plt.cm.YlOrBr_r(np.linspace(0.1, 0.9, 256-split))
-    colors2 = cmap_lblue(np.linspace(0, 0.87, split)) #plt.cm.Blues(np.linspace(0.3, 1, split))
+    split = int(np.sum(om_ana[:,1]/om_0<0.05)/len(om_ana)*60)
+    colors1 = cmap_amber(np.linspace(0, 0.7, 60-split)) #plt.cm.YlOrBr_r(np.linspace(0.1, 0.9, 256-split))
+    colors2 = cmap_lblue(np.linspace(0, 0.75, split)) #plt.cm.Blues(np.linspace(0.3, 1, split))
     colors2 = np.flip(colors2,0)
     # These are then combined and used to build a new colormap
     colors = np.vstack((colors1, colors2))
@@ -226,29 +227,34 @@ def plot_fig2(Oh_list, Bo, k, om_ana, om_0):
   
     ## Ploting datas
     plt.figure(constrained_layout=False, figsize = (5,2.5))
-    [plt.scatter(0, 1, label = 'Inviscid pulsations',  s=100, marker="*", c=clrinertia, linewidth=0.5),
-         plt.scatter(-0.93, 0, label = 'Split point', marker = 'P', s = 80, c = clrlaplace, linewidth=0.5)]
-    plt.scatter(0, -1,  s=100, marker="*", c=clrinertia, linewidth=0.5)
-    for i in [1, -1]:
-        plt.arrow(-0.91, i*0.05, 0.05, i*0.2, head_width = 0.02)
-        plt.scatter(om_ana[:,0]/om_0, i*om_ana[:,1]/om_0, zorder = 10, s = 10, c = Oh_list, 
-                    facecolor = 'None', linewidth=0.75, cmap=mymap, norm=mcolors.LogNorm())
-        plt.scatter(om_ana[:,0]/om_0, i*om_ana[:,1]/om_0, zorder = 15, s = 10, c = Oh_list, 
-                    facecolor = 'white', edgecolor='None')
-        plt.scatter(om_ana[:,0]/om_0, i*om_ana[:,1]/om_0, zorder = 20, s = 10, c = Oh_list, 
-                    edgecolor = 'None', cmap=mymap, norm=mcolors.LogNorm(),alpha=0.75)
+    plt.scatter(-0.93, 0, label = 'Split point', marker = 'X', zorder = 120, s = 80, c = clrpole, linewidth=1.)
 
+    for i in [1, -1]:
+        plt.scatter(0, i, label = 'Inviscid pulsations',  s=120, marker="*", zorder = 100, c=clrinertia, linewidth=1.)
+        plt.scatter(om_ana[:,0]/om_0, i*om_ana[:,1]/om_0, zorder = 10, s = 15, c = Oh_list, 
+                    facecolor = 'None', linewidth=0.75, cmap=mymap, norm=mcolors.LogNorm())
+        plt.scatter(om_ana[:,0]/om_0, i*om_ana[:,1]/om_0, zorder = 15, s = 15, c = Oh_list, 
+                    facecolor = 'white', edgecolor='None')
+        plt.scatter(om_ana[:,0]/om_0, i*om_ana[:,1]/om_0, zorder = 20, s = 15, c = Oh_list, 
+                    edgecolor = 'None', cmap=mymap, norm=mcolors.LogNorm(),alpha=0.75)
+    
+    plt.annotate("Inviscid\npulsation", (0.,0.92), xytext=(-60, -30), textcoords="offset points",
+                arrowprops=dict(arrowstyle="->", linewidth=0.5, 
+                                connectionstyle="arc3,rad=0.3"))
+
+    plt.annotate("Split\npoint", (-0.935,-0.05), xytext=(10, -50), textcoords="offset points",
+                arrowprops=dict(arrowstyle="->", linewidth=0.5, 
+                                connectionstyle="arc3,rad=-0.3"))
     
     ## Axes titles
     plt.xlabel('$\omega_{relax}/\omega_0 = \Re(s/\omega_0)$', usetex=True)      
     plt.ylabel('$\omega_{osc}/\omega_0 = \Im(s/\omega_0)$', usetex=True)
     plt.colorbar(label = 'Oh')
-    plt.legend(loc = 3)
     plt.tight_layout(pad=1.)
     
     ##Save figure
     plt.savefig("figure2.pdf")
-    
+
 ############################# Figure 3 ########################################
 from matplotlib.textpath import TextPath
 from matplotlib.patches import PathPatch
@@ -479,17 +485,17 @@ def plot_fig4(Oh_list, k_list, k_list2, om_gwr_Oh, om_potential, om_norm_in, om_
     
     fig, ax = plt.subplots(1,2, figsize=(5, 4))
         
-    ax[1].plot(k_list, om_potential, lw=1.0, alpha = 0.4, color = 'black', label = r'Potential')
-    ax[1].plot(k_list, om_norm_in, '-', lw=1.0, alpha = 0.4, color = 'red', label = 'Normal mode')
+    ax[1].plot(k_list, om_potential, lw=2., solid_capstyle="round", color = clrinertia, label = r'Potential')
+    ax[1].plot(k_list, om_norm_in, ':', lw=2., dash_capstyle="round", color = clrpole, label = 'Normal mode')
     
     ax[0].set_ylabel(r'$\omega$', usetex = True)
-    ax[0].plot(k_list2, om_lub_list, '-', lw=1.0, alpha = 0.4, color = 'blue', label = 'Lubrication')
-    ax[0].plot(k_list2, om_norm_visc, '-', lw=1.0, alpha = 0.4, color = 'red', label = 'Normal mode')
+    ax[0].plot(k_list2, om_lub_list, '-', lw=2., solid_capstyle="round", color = clrlub, label = 'Lubrication')
+    ax[0].plot(k_list2, om_norm_visc, ':', lw=2., dash_capstyle="round", color = clrpole, label = 'Normal mode')
     
     for Oh, axx, om_gwr in zip(Oh_list, [ax[1],ax[0]], om_gwr_Oh):
         axx.set_xlabel(r'$k$', usetex = True)
         axx.set_title('$Oh = ' + str(Oh) + '$', usetex = True)
-        axx.plot(k_list, np.abs(om_gwr), '--', lw=1.0, color = 'orange', alpha = 0.8, label = r'Cortelezzi resolution')
+        axx.plot(k_list, np.abs(om_gwr), linewidth=1., color = clrlaplace, solid_capstyle="round", label = r'Cortelezzi resolution')
         axx.legend(loc = 3)
     
     plt.tight_layout(pad=1.)
