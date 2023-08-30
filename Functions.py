@@ -19,6 +19,9 @@ from gwr_inversion import gwr
 def decaying_sinusoid(t, om_dec, om_osc, amp = 1., phi = 0.):
     return amp*np.exp(- om_dec * t)*np.cos(om_osc * t + phi)
 
+def decaying_sinusoid_zero_initial_velocity(t, om_dec, om_osc, amp = 1., phi = 0.):
+    return amp*np.exp(- om_dec * t)*(np.cos(om_osc * t + phi) + np.sin(om_osc * t + phi) * om_dec / om_osc)
+
 ################# Basic length of Cortelezzi resolution #######################
 def ker_sy (s, Oh, Bo, k, lbda):
     return 2*Oh/s*k*(k-lbda*tanh(k)) - Oh/s*(4*lbda*k*sinh(k)*(k*exp(-lbda)

@@ -5,7 +5,7 @@
 
 import numpy as np
 from mpmath import mp, j
-from Functions import freeSurface, om_lub, pulsation, om_analytic, om_numerical, decaying_sinusoid
+from Functions import freeSurface, om_lub, pulsation, om_analytic, om_numerical, decaying_sinusoid, decaying_sinusoid_zero_initial_velocity
 from Functions import om_normal_mode_viscous, puls_normal_mode_inertial, om_normal_mode_inertial
 
 ############################# Figure 1 ########################################
@@ -26,7 +26,10 @@ def datas_fig1(Oh, Bo, k):
     sampled_t = abs(t_all*om_lub_relax)
     sampled_eta = freeSurface(t_all, Oh, Bo, k)
     sampled_eta_lub = np.exp(-t_all*om_lub_relax)
-    sampled_eta_ana = decaying_sinusoid(t_all, -om_ana[0], om_ana[1])
+    if (abs(om_ana[1]) < 1e-10):
+        sampled_eta_ana = decaying_sinusoid(t_all, -om_ana[0], om_ana[1])
+    else:
+        sampled_eta_ana = decaying_sinusoid_zero_initial_velocity(t_all, -om_ana[0], om_ana[1])
                                                 
     return sampled_t, sampled_eta, sampled_eta_lub, sampled_eta_ana, om_lub_relax, om_0, om_ana[0], om_ana[1], split
 
